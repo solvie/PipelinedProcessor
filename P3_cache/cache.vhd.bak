@@ -54,11 +54,11 @@ begin
   IF cache(input_index)(147 downto 128) = input_tag and cache(input_index)(148)='1' THEN
       IF input_byteoffset = "00" THEN
         s_readdata <=cache(input_index)(127 downto 96);
-      ELSIF input_byteoffset = "01" THEN
+      ELSIF input_byteoffset = '01' THEN
         s_readdata <=cache(input_index)(95 downto 64);
-      ELSIF input_byteoffset = "10" THEN
+      ELSIF input_byteoffset = '10' THEN
         s_readdata <=cache(input_index)(63 downto 32);
-      ELSIF input_byteoffset = "11" THEN
+      ELSIF input_byteoffset = '11' THEN
         s_readdata <=cache(input_index)(31 downto 0);
       END IF;
   
