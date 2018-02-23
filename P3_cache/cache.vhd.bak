@@ -5,9 +5,9 @@ use IEEE.std_logic_signed.all;
 
 entity cache is
 generic(
-  ram_size : INTEGER := 32768;
-  word_size : INTEGER := 32;
-  cache_size : INTEGER := 32
+  	ram_size : INTEGER := 32768;
+ 	word_size : INTEGER := 32;
+	cache_size : INTEGER := 32
 );
 port(
 	clock : in std_logic;
@@ -32,49 +32,91 @@ end cache;
 
 architecture arch of cache is
 
+type state_type is (
+	idle_state, -- No commands have been given to cache
+	ca2cpu_state, -- State in which we attempt to read from cache to CPU
+	load_mem_state, -- State in which data is being loaded from memory
+	mem2ca_state, -- State in which we write a block from memory to cache
+	store_mem_state, -- State in which we write a block to memory
+	cpu2ca_state -- State in which we attempt to write to the cache
+);
 -- declare signals here
-signal input_tag : std_logic_vector(19 downto 0);
+signal s: state_type;
+signal input_tag : std_logic_vector(14 downto 0);
 signal input_index : Integer;
 signal input_byteoffset : std_logic_vector(1 downto 0);
 
 -- cache block declaration
-type cache_body is array(0 to 31) of std_logic_vector(148 downto 0);
+-- |1 valid|1 dirty|15 tag|128 block bits| = 145 bits total per row
+type cache_body is array(0 to 31) of std_logic_vector(144 downto 0);
 signal cache : cache_body;
 
+process(clock)
 begin
-  
-process (clock)
-  
-begin
--- make circuits here
-  input_tag<=s_addr(31 downto 12);
-  input_index<=conv_integer(s_addr(11 downto 2));
-  input_byteoffset<=s_addr(1 downto 0);
-  
-  IF cache(input_index)(147 downto 128) = input_tag and cache(input_index)(148)='1' THEN
-      IF input_byteoffset = "00" THEN
-        s_readdata <=cache(input_index)(127 downto 96);
-      ELSIF input_byteoffset = '01' THEN
-        s_readdata <=cache(input_index)(95 downto 64);
-      ELSIF input_byteoffset = '10' THEN
-        s_readdata <=cache(input_index)(63 downto 32);
-      ELSIF input_byteoffset = '11' THEN
-        s_readdata <=cache(input_index)(31 downto 0);
-      END IF;
-  
-  END IF;
-  
-  ----for loop
-  --FOR I IN 0 TO cache_size-1 LOOP   
-  --END LOOP;
+	if rising_edge(clock) then
+		if (reset = '1') then -- on reset, go to the Idle state
+			s <= idle_state;
+		else 
+			case s is
+				-- in the idle_state wait to receive orders for write or read to cache
+				when idle_state=> 
+					if (s_read = '1' AND s_write='0') then
+						s<= ca2cpu_state;
+					elsif (s_read = '0' AND s_write='1') then
+						s<= cpu2ca_state;
+					end if;
+					s_waitrequest<='1';
 
+				-- in the ca2cpu_state, check if we have a cache hit or miss, and go to the appropriate state
+				when ca2cpu_state=>
+					input_tag<=s_addr(21 downto 7); -- we only care about the lowest 15 bits of tag
+					input_index<=conv_integer(s_addr(6 downto 2)); -- 5 bit index field
+					input_byteoffset<=s_addr(1 downto 0); --2 bit offset field
 
+					if cache(input_index)(144)='1' and cache(input_index)(142 downto 128) = input_tag then
+						-- cache hit
+						IF input_byteoffset = "00" THEN
+       							s_readdata <=cache(input_index)(127 downto 96);
+     						ELSIF input_byteoffset = "01" THEN
+				     			s_readdata <=cache(input_index)(95 downto 64);
+   					   	ELSIF input_byteoffset = "10" THEN
+    				    			s_readdata <=cache(input_index)(63 downto 32);
+    				  		ELSIF input_byteoffset = "11" THEN
+    				    			s_readdata <=cache(input_index)(31 downto 0);
+  						END IF;
+						s_waitrequest<='0';
+						s<= idle_state;
+					else  
+						-- cache miss, and we need to evict a block
+						s<=load_mem_state;
+					end if;
+					s_waitrequest<='1';
+				when cpu2ca_state=>
+					-- if cache hit, write and set dirty
+					-- else go to load_mem_state
+				when mem2ca_state=>
+					-- TODO:
+					-- if dirty, we go to write to mem state after which it will become clean
+					-- else if we are here from a read op, output, then go to idle
+					-- else if we are here from a write op, go to cpu2ca_state, from which we'll do the cache hit action
+					
+				when load_mem_state=>
+					--after fetching everything, go to mem2ca_state
+				
+					--TODO: fetch stuff
+					s<=mem2ca_state;
+					s_waitrequest<='1';
+				when store_mem_state=>
+					--after writing everything, go to mem2ca_state
+				
+					--TODO: store stuff
+					s<=mem2ca_state;
+					s_waitrequest<='1';
 
-
-
-
-
-
+			end case;
+		end if;
+	end if;
 end process;
+-- make circuits here
 
 end arch;
