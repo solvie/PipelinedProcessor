@@ -168,10 +168,17 @@ begin
 					end if;
 				when store_mem_state=>
 					--after writing everything, go to mem2ca_state
-				
-					--TODO: store stuff
-					s<=mem2ca_state;
-					s_waitrequest<='1';
+					m_write<='1';
+					m_addr<=conv_integer(input_tag)+write_counter;
+					if (m_waitrequest = '0' and write_counter < 16) then
+						-- put data and increment counter
+						top<=block_size- write_counter*8-1;
+						m_writedata<=cache(input_index)(top downto top-7);
+						write_counter<=write_counter+1;
+					elsif (write_counter=16) then
+						s<=mem2ca_state;
+						s_waitrequest<='1';
+					end if;
 			end case;
 		end if;
 	end if;
