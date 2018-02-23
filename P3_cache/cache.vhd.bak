@@ -7,7 +7,8 @@ entity cache is
 generic(
   	ram_size : INTEGER := 32768;
  	word_size : INTEGER := 32;
-	cache_size : INTEGER := 32
+	cache_size : INTEGER := 32;
+	block_size : INTEGER := 128
 );
 port(
 	clock : in std_logic;
@@ -46,6 +47,10 @@ signal input_tag : std_logic_vector(14 downto 0);
 signal input_index : Integer;
 signal input_byteoffset : std_logic_vector(1 downto 0);
 
+signal write_counter : Integer;
+signal read_counter : Integer;
+
+signal top : Integer;
 signal loaded_block : std_logic_vector(127 downto 0);
 
 -- cache block declaration
@@ -63,6 +68,10 @@ begin
 			case s is
 				-- in the idle_state wait to receive orders for write or read to cache
 				when idle_state=> 
+					write_counter<=0;
+					read_counter<=0;
+					m_read<='0';
+					m_write<='0';
 					-- TODO: latch values from here so that we dont detect changes in them until we return to idle.
 					if (s_read = '1' AND s_write='0') then
 						s<= ca2cpu_state;
@@ -122,7 +131,7 @@ begin
 					if cache(input_index)(143)='0' then
 						s<=store_mem_state;
 						s_waitrequest<='1';
-					else if (s_read = '1' AND s_write='0') then
+					elsif (s_read = '1' AND s_write='0') then
 						-- if we are here from a read op, put the stuff into cache, output, then go to idle
 						cache(input_index)(127 downto 0)<=loaded_block;
 						cache(input_index)(143)<='0'; --set clean
@@ -145,10 +154,18 @@ begin
 					end if;
 				when load_mem_state=>
 					--after fetching everything, go to mem2ca_state
-					
-					--TODO: fetch stuff to loaded_block
-					s<=mem2ca_state;
-					s_waitrequest<='1';
+					m_read<='1';
+					m_addr<=conv_integer(input_tag)+read_counter;
+					if (m_waitrequest = '0' and read_counter < 16) then
+						-- get data and increment counter
+						top<=block_size- read_counter*8-1;
+						loaded_block(top downto top-7)<=m_readdata;
+						read_counter<=read_counter+1;
+					--TODO: check ordering
+					elsif (read_counter = 16) then
+						s<=mem2ca_state;
+						s_waitrequest<='0';
+					end if;
 				when store_mem_state=>
 					--after writing everything, go to mem2ca_state
 				
