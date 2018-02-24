@@ -149,6 +149,7 @@ begin
 						cache(input_index)(127 downto 0)<=loaded_block;
 						cache(input_index)(143)<='0'; --set clean
 						cache(input_index)(144)<='1'; --set valid
+						cache(input_index)(142 downto 128)<=input_tag;
 						-- if we are here from a read op, give it to s_read then go to idle
 						if (latched_s_read = '1' AND latched_s_write='0') then
 							IF input_byteoffset = "00" THEN
@@ -182,8 +183,10 @@ begin
 					if (read_counter = 16) then
 						s<=mem2ca_state;
 						data_to_read<='0';
-						s_waitrequest<='0';
+						--s_waitrequest<='0';
+					--else
 					end if;
+					s_waitrequest<='1';
 				when store_mem_state=>
 					m_write<='1'; -- tell memory we want to write
 					m_addr<=conv_integer(input_tag)+write_counter; -- to this address
@@ -195,10 +198,10 @@ begin
 						write_counter<=write_counter+1;
 					end if;
 					if (write_counter=16) then
-					  data_to_write <='0';
+					  	data_to_write <='0';
 						s<=mem2ca_state;
-						s_waitrequest<='1';
 					end if;
+					s_waitrequest<='1';
 			end case;
 		end if;
 	end if;

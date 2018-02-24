@@ -26,6 +26,7 @@ ARCHITECTURE rtl OF memory IS
 	SIGNAL read_address_reg: INTEGER RANGE 0 to ram_size-1;
 	SIGNAL write_waitreq_reg: STD_LOGIC := '1';
 	SIGNAL read_waitreq_reg: STD_LOGIC := '1';
+
 BEGIN
 	--This is the main section of the SRAM model
 	mem_process: PROCESS (clock)
