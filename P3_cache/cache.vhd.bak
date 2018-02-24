@@ -85,7 +85,6 @@ begin
 					if (s_read = '1' AND s_write='0') then
 						s<= ca2cpu_state;
 					elsif (s_read = '0' AND s_write='1') then
-
 						s<= cpu2ca_state;
 					end if;
 					s_waitrequest<='1';
@@ -110,6 +109,8 @@ begin
 						s<=load_mem_state;
 					end if;
 					s_waitrequest<='1';
+
+				-- in the cpu2ca_state, check if we have a cache hit or miss. Write to cache if hit, else go to load_mem_state
 				when cpu2ca_state=>
 					if cache(input_index)(144)='1' and cache(input_index)(142 downto 128) = input_tag then
 						-- cache hit, write 
@@ -129,9 +130,11 @@ begin
 						s<=load_mem_state;
 						s_waitrequest<='1';
 					end if;
+
+				-- in the mem2ca_state, we check if we need to evict anything from the cache. If we do need to, 
 				when mem2ca_state=>
 					-- if dirty, we go to write to mem state after which it will become clean
-					if cache(input_index)(143)='0' then
+					if cache(input_index)(143)='1' then
 						s<=store_mem_state;
 						s_waitrequest<='1';
 					elsif (latched_s_read = '1' AND latched_s_write='0') then
@@ -150,7 +153,7 @@ begin
   						END IF;
 						s_waitrequest<='0';
 						s<= idle_state;
-					elsif (latched_s_read = '0' AND latched_s_write='1') 
+					elsif (latched_s_read = '0' AND latched_s_write='1') then 
 						--we are here from a write op, go to cpu2ca_state, from which we'll do the cache hit action
 						s<=cpu2ca_state;
 						s_waitrequest<='1';

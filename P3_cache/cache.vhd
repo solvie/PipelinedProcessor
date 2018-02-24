@@ -85,7 +85,6 @@ begin
 					if (s_read = '1' AND s_write='0') then
 						s<= ca2cpu_state;
 					elsif (s_read = '0' AND s_write='1') then
-
 						s<= cpu2ca_state;
 					end if;
 					s_waitrequest<='1';
@@ -110,6 +109,8 @@ begin
 						s<=load_mem_state;
 					end if;
 					s_waitrequest<='1';
+
+				-- in the cpu2ca_state, check if we have a cache hit or miss. Write to cache if hit, else go to load_mem_state
 				when cpu2ca_state=>
 					if cache(input_index)(144)='1' and cache(input_index)(142 downto 128) = input_tag then
 						-- cache hit, write 
@@ -129,31 +130,36 @@ begin
 						s<=load_mem_state;
 						s_waitrequest<='1';
 					end if;
+
+				-- in the mem2ca_state, we check if we need to evict anything from the cache. If we do need to, go to store_mem_state. Otherwise go to 
 				when mem2ca_state=>
-					-- if dirty, we go to write to mem state after which it will become clean
-					if cache(input_index)(143)='0' then
+					-- if dirty, we go to write to mem state after which it will become clean 
+					if cache(input_index)(143)='1' then
 						s<=store_mem_state;
 						s_waitrequest<='1';
-					elsif (latched_s_read = '1' AND latched_s_write='0') then
-						-- if we are here from a read op, put the stuff into cache, output, then go to idle
+					else
+						-- if clean, put the loaded stuff into cache
 						cache(input_index)(127 downto 0)<=loaded_block;
 						cache(input_index)(143)<='0'; --set clean
 						cache(input_index)(144)<='1'; --set valid
-						IF input_byteoffset = "00" THEN
-       							s_readdata <=cache(input_index)(127 downto 96);
-     						ELSIF input_byteoffset = "01" THEN
-				     			s_readdata <=cache(input_index)(95 downto 64);
-   					   	ELSIF input_byteoffset = "10" THEN
-    				    			s_readdata <=cache(input_index)(63 downto 32);
-    				  		ELSIF input_byteoffset = "11" THEN
-    				    			s_readdata <=cache(input_index)(31 downto 0);
-  						END IF;
-						s_waitrequest<='0';
-						s<= idle_state;
-					elsif (latched_s_read = '0' AND latched_s_write='1') then 
-						--we are here from a write op, go to cpu2ca_state, from which we'll do the cache hit action
-						s<=cpu2ca_state;
-						s_waitrequest<='1';
+						-- if we are here from a read op, give it to s_read then go to idle
+						if (latched_s_read = '1' AND latched_s_write='0') then
+							IF input_byteoffset = "00" THEN
+       								s_readdata <=cache(input_index)(127 downto 96);
+     							ELSIF input_byteoffset = "01" THEN
+				     				s_readdata <=cache(input_index)(95 downto 64);
+   					   		ELSIF input_byteoffset = "10" THEN
+    				    				s_readdata <=cache(input_index)(63 downto 32);
+    				  			ELSIF input_byteoffset = "11" THEN
+    				    				s_readdata <=cache(input_index)(31 downto 0);
+  							END IF;
+							s_waitrequest<='0';
+							s<= idle_state;
+						elsif (latched_s_read = '0' AND latched_s_write='1') then 
+							--we are here from a write op, go to cpu2ca_state, from which we'll do the cache hit action
+							s<=cpu2ca_state;
+							s_waitrequest<='1';
+						end if;
 					end if;
 				when load_mem_state=>
 					--after fetching everything, go to mem2ca_state
