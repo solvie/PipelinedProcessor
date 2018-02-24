@@ -43,6 +43,10 @@ type state_type is (
 );
 -- declare signals here
 signal s: state_type;
+
+signal latched_s_read : std_logic;
+signal latched_s_write : std_logic;
+
 signal input_tag : std_logic_vector(14 downto 0);
 signal input_index : Integer;
 signal input_byteoffset : std_logic_vector(1 downto 0);
@@ -72,20 +76,22 @@ begin
 					read_counter<=0;
 					m_read<='0';
 					m_write<='0';
-					-- TODO: latch values from here so that we dont detect changes in them until we return to idle.
+					-- latch values from here so that we dont detect changes in them until we return to idle.
+					input_tag<=s_addr(21 downto 7); -- we only care about the lowest 15 bits of tag
+					input_index<=conv_integer(s_addr(6 downto 2)); -- 5 bit index field
+					input_byteoffset<=s_addr(1 downto 0); --2 bit offset field
+					latched_s_read<=s_read;
+					latched_s_write<=s_write;
 					if (s_read = '1' AND s_write='0') then
 						s<= ca2cpu_state;
 					elsif (s_read = '0' AND s_write='1') then
+
 						s<= cpu2ca_state;
 					end if;
 					s_waitrequest<='1';
 
 				-- in the ca2cpu_state, check if we have a cache hit or miss, and go to the appropriate state
 				when ca2cpu_state=>
-					input_tag<=s_addr(21 downto 7); -- we only care about the lowest 15 bits of tag
-					input_index<=conv_integer(s_addr(6 downto 2)); -- 5 bit index field
-					input_byteoffset<=s_addr(1 downto 0); --2 bit offset field
-
 					if cache(input_index)(144)='1' and cache(input_index)(142 downto 128) = input_tag then
 						-- cache hit
 						IF input_byteoffset = "00" THEN
@@ -105,9 +111,6 @@ begin
 					end if;
 					s_waitrequest<='1';
 				when cpu2ca_state=>
-					input_tag<=s_addr(21 downto 7); -- we only care about the lowest 15 bits of tag
-					input_index<=conv_integer(s_addr(6 downto 2)); -- 5 bit index field
-					input_byteoffset<=s_addr(1 downto 0); --2 bit offset field
 					if cache(input_index)(144)='1' and cache(input_index)(142 downto 128) = input_tag then
 						-- cache hit, write 
 						IF input_byteoffset = "00" THEN
@@ -131,7 +134,7 @@ begin
 					if cache(input_index)(143)='0' then
 						s<=store_mem_state;
 						s_waitrequest<='1';
-					elsif (s_read = '1' AND s_write='0') then
+					elsif (latched_s_read = '1' AND latched_s_write='0') then
 						-- if we are here from a read op, put the stuff into cache, output, then go to idle
 						cache(input_index)(127 downto 0)<=loaded_block;
 						cache(input_index)(143)<='0'; --set clean
@@ -147,7 +150,7 @@ begin
   						END IF;
 						s_waitrequest<='0';
 						s<= idle_state;
-					else
+					elsif (latched_s_read = '0' AND latched_s_write='1') 
 						--we are here from a write op, go to cpu2ca_state, from which we'll do the cache hit action
 						s<=cpu2ca_state;
 						s_waitrequest<='1';
