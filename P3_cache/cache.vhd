@@ -49,7 +49,7 @@ signal latched_s_write : std_logic;
 
 signal input_tag : std_logic_vector(14 downto 0);
 signal input_index : Integer;
-signal input_byteoffset : std_logic_vector(1 downto 0);
+signal input_byteoffset : Integer;
 
 signal write_counter : Integer;
 signal read_counter : Integer;
@@ -83,7 +83,7 @@ begin
 					-- latch values from here so that we dont detect changes in them until we return to idle.
 					input_tag<=s_addr(21 downto 7); -- we only care about the lowest 15 bits of tag
 					input_index<=conv_integer(s_addr(6 downto 2)); -- 5 bit index field
-					input_byteoffset<=s_addr(1 downto 0); --2 bit offset field
+					input_byteoffset<=conv_integer(s_addr(1 downto 0)); --2 bit offset field
 					latched_s_read<=s_read;
 					latched_s_write<=s_write;
 
@@ -99,15 +99,7 @@ begin
 					-- valid bit is set and tag matches
 					if cache(input_index)(144)='1' and cache(input_index)(142 downto 128) = input_tag then
 						-- cache hit
-						IF input_byteoffset = "00" THEN
-       							s_readdata <=cache(input_index)(127 downto 96);
-     						ELSIF input_byteoffset = "01" THEN
-				     			s_readdata <=cache(input_index)(95 downto 64);
-   					   	ELSIF input_byteoffset = "10" THEN
-    				    			s_readdata <=cache(input_index)(63 downto 32);
-    				  		ELSIF input_byteoffset = "11" THEN
-    				    			s_readdata <=cache(input_index)(31 downto 0);
-  						END IF;
+						s_readdata <=cache(input_index)(127- input_byteoffset*32 downto 128- (input_byteoffset+1)*32);
 						s_waitrequest<='0';
 						s<= idle_state;
 					else  
@@ -120,15 +112,7 @@ begin
 					-- valid bit is set and tag matches
 					if cache(input_index)(144)='1' and cache(input_index)(142 downto 128) = input_tag then
 						-- cache hit, write 
-						IF input_byteoffset = "00" THEN
-       							cache(input_index)(127 downto 96)<= s_writedata;
-     						ELSIF input_byteoffset = "01" THEN
-				     			cache(input_index)(95 downto 64)<= s_writedata;
-   					   	ELSIF input_byteoffset = "10" THEN
-    				    			cache(input_index)(63 downto 32)<= s_writedata;
-    				  		ELSIF input_byteoffset = "11" THEN
-    				    			cache(input_index)(31 downto 0)<= s_writedata;
-  						END IF;
+						cache(input_index)(127- input_byteoffset*32 downto 128- (input_byteoffset+1)*32)<= s_writedata;
 						cache(input_index)(143)<='1'; --set dirty
 						s_waitrequest<='0';
 						s<= idle_state;
@@ -151,15 +135,7 @@ begin
 						cache(input_index)(142 downto 128)<=input_tag;
 						-- if we are here from a read op, give it to s_read then go to idle
 						if (latched_s_read = '1' AND latched_s_write='0') then
-							IF input_byteoffset = "00" THEN
-       								s_readdata <=cache(input_index)(127 downto 96);
-     							ELSIF input_byteoffset = "01" THEN
-				     				s_readdata <=cache(input_index)(95 downto 64);
-   					   		ELSIF input_byteoffset = "10" THEN
-    				    				s_readdata <=cache(input_index)(63 downto 32);
-    				  			ELSIF input_byteoffset = "11" THEN
-    				    				s_readdata <=cache(input_index)(31 downto 0);
-  							END IF;
+       							s_readdata <=cache(input_index)(127- input_byteoffset*32 downto 128- (input_byteoffset+1)*32);
 							s_waitrequest<='0';
 							s<= idle_state;
 						elsif (latched_s_read = '0' AND latched_s_write='1') then 
