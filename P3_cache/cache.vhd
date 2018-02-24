@@ -54,6 +54,9 @@ signal input_byteoffset : std_logic_vector(1 downto 0);
 signal write_counter : Integer;
 signal read_counter : Integer;
 
+signal data_to_read : std_logic;
+signal data_to_write : std_logic;
+
 signal loaded_block : std_logic_vector(127 downto 0);
 
 -- cache block declaration
@@ -168,23 +171,31 @@ begin
 				when load_mem_state=>
 					m_read<='1'; -- tell memory we want to read
 					m_addr<=conv_integer(input_tag)+read_counter; -- from this address
-					if (m_waitrequest = '0' and read_counter < 16) then
+					if(m_waitrequest = '0') then
+					  data_to_read<='1';
+					end if;
+					if (data_to_read='1' and read_counter < 16) then
 						loaded_block(block_size- read_counter*8-1 downto block_size- read_counter*8-8)<=m_readdata; -- get the data from mem
 						read_counter<=read_counter+1;
 						--TODO: check ordering
 					end if;
 					if (read_counter = 16) then
 						s<=mem2ca_state;
+						data_to_read<='0';
 						s_waitrequest<='0';
 					end if;
 				when store_mem_state=>
 					m_write<='1'; -- tell memory we want to write
 					m_addr<=conv_integer(input_tag)+write_counter; -- to this address
-					if (m_waitrequest = '0' and write_counter < 16) then
+					if(m_waitrequest = '0') then
+					  data_to_write<='1';
+					end if;
+					if (data_to_write = '1' and write_counter < 16) then
 						m_writedata<=cache(input_index)(block_size- write_counter*8-1 downto block_size- write_counter*8-8); -- write data 
 						write_counter<=write_counter+1;
 					end if;
 					if (write_counter=16) then
+					  data_to_write <='0';
 						s<=mem2ca_state;
 						s_waitrequest<='1';
 					end if;

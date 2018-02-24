@@ -116,7 +116,40 @@ test_process : process
 begin
 
 -- put your tests here
-	
+
+  reset<='1';
+  wait for 1*clk_period;
+  reset<='0';
+	s_write <= '0' ;
+  s_read <= '0'; 
+  wait for 1*clk_period;
+  
+  s_read <= '1'; 
+  s_write <= '0';
+  s_addr <= std_logic_vector(to_unsigned(0, 32));
+  wait until s_waitrequest <='1'; 
+  
+  s_read <= '0'; 
+  s_write <='1';
+  s_addr <= "00000000000000000000000000000000"; 
+  s_writedata <= "00000000000000000000000000000001";
+  wait until s_waitrequest <='1';
+  
+  s_read <= '1'; 
+  s_write <='0';
+  s_addr <= "00000000000000000000000000000000"; 
+  wait until s_waitrequest <='1';
+
+  s_read <= '0'; 
+  s_write <='1';
+  s_writedata <= "00000000000000000000000000000001";
+  wait until s_waitrequest <='1';
+  
+  s_read <= '1'; 
+  s_write <='0';
+  s_writedata <= "00000000000000000000000000000001";
+  wait until s_waitrequest <='1';
+
 end process;
 	
 end;
