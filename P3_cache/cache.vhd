@@ -72,16 +72,19 @@ begin
 			case s is
 				-- in the idle_state wait to receive orders for write or read to cache
 				when idle_state=> 
+					-- reset write and read counters, and commands
 					write_counter<=0;
 					read_counter<=0;
 					m_read<='0';
 					m_write<='0';
+
 					-- latch values from here so that we dont detect changes in them until we return to idle.
 					input_tag<=s_addr(21 downto 7); -- we only care about the lowest 15 bits of tag
 					input_index<=conv_integer(s_addr(6 downto 2)); -- 5 bit index field
 					input_byteoffset<=s_addr(1 downto 0); --2 bit offset field
 					latched_s_read<=s_read;
 					latched_s_write<=s_write;
+
 					if (s_read = '1' AND s_write='0') then
 						s<= ca2cpu_state;
 					elsif (s_read = '0' AND s_write='1') then
@@ -91,6 +94,7 @@ begin
 
 				-- in the ca2cpu_state, check if we have a cache hit or miss, and go to the appropriate state
 				when ca2cpu_state=>
+					-- valid bit is set and tag matches
 					if cache(input_index)(144)='1' and cache(input_index)(142 downto 128) = input_tag then
 						-- cache hit
 						IF input_byteoffset = "00" THEN
@@ -112,6 +116,7 @@ begin
 
 				-- in the cpu2ca_state, check if we have a cache hit or miss. Write to cache if hit, else go to load_mem_state
 				when cpu2ca_state=>
+					-- valid bit is set and tag matches
 					if cache(input_index)(144)='1' and cache(input_index)(142 downto 128) = input_tag then
 						-- cache hit, write 
 						IF input_byteoffset = "00" THEN
@@ -162,29 +167,27 @@ begin
 						end if;
 					end if;
 				when load_mem_state=>
-					--after fetching everything, go to mem2ca_state
-					m_read<='1';
-					m_addr<=conv_integer(input_tag)+read_counter;
+					m_read<='1'; -- tell memory we want to read
+					m_addr<=conv_integer(input_tag)+read_counter; -- from this address
 					if (m_waitrequest = '0' and read_counter < 16) then
-						-- get data and increment counter
 						top<=block_size- read_counter*8-1;
-						loaded_block(top downto top-7)<=m_readdata;
+						loaded_block(top downto top-7)<=m_readdata; -- get the data from mem
 						read_counter<=read_counter+1;
 						--TODO: check ordering
-					elsif (read_counter = 16) then
+					end if;
+					if (read_counter = 16) then
 						s<=mem2ca_state;
 						s_waitrequest<='0';
 					end if;
 				when store_mem_state=>
-					--after writing everything, go to mem2ca_state
-					m_write<='1';
-					m_addr<=conv_integer(input_tag)+write_counter;
+					m_write<='1'; -- tell memory we want to write
+					m_addr<=conv_integer(input_tag)+write_counter; -- to this address
 					if (m_waitrequest = '0' and write_counter < 16) then
-						-- put data and increment counter
 						top<=block_size- write_counter*8-1;
-						m_writedata<=cache(input_index)(top downto top-7);
+						m_writedata<=cache(input_index)(top downto top-7); -- write data 
 						write_counter<=write_counter+1;
-					elsif (write_counter=16) then
+					end if;
+					if (write_counter=16) then
 						s<=mem2ca_state;
 						s_waitrequest<='1';
 					end if;
