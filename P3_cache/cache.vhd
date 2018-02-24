@@ -158,8 +158,6 @@ begin
 					if (read_counter = 16) then
 						s<=mem2ca_state;
 						data_to_read<='0';
-						--s_waitrequest<='0';
-					--else
 					end if;
 					s_waitrequest<='1';
 				when store_mem_state=>
@@ -181,6 +179,5 @@ begin
 		end if;
 	end if;
 end process;
--- make circuits here
 
 end arch;
