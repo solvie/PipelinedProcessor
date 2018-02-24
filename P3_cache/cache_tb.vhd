@@ -116,7 +116,8 @@ test_process : process
 begin
 
 -- put your tests here
-  reset<='1';
+
+ reset<='1';
   wait for 1*clk_period;
   reset<='0';
   s_write <= '0' ;
@@ -129,10 +130,6 @@ begin
   s_addr <= "00000000000000000000000000000000"; 
   s_writedata <= "00000000000000000000000000000001";
   wait until s_waitrequest = '0';
-
-  s_write <= '0' ;-- stay in idle state for a while
-  s_read <= '0'; 
-  wait for 3*clk_period;
   
   -- read from 0x00000000
   s_read <= '1'; 
@@ -147,11 +144,33 @@ begin
   s_writedata <= "00000000000000000000000000000010";
   wait until s_waitrequest = '0';
   
-  --read from 0x00000001
+  -- read to 0x00000001
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000001"; 
+  wait until s_waitrequest = '0';
+  
+--blocks = 32blocks, 2048 in mem, 2^6 address difference for direct mapped
+  
+  -- write in 0x00000032
+  s_read <= '0'; 
+  s_write <='1';
+  s_addr <= "00000000000000000001000000000000";  
+  s_writedata <= "00000000000000000000000000000100";
+  wait until s_waitrequest = '0';
+  
+  -- read from 0x00000032
+  s_read <= '1'; 
+  s_write <='0';
+  s_addr <= "00000000000000000001000000000000"; 
+  wait until s_waitrequest = '0';
+  
+  --check 0x00000000
+  s_read <= '1'; 
+  s_write <='0';
+  s_addr <= "00000000000000000000000000000000"; 
 wait;
+
 
  
 end process;

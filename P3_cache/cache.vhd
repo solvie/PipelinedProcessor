@@ -173,6 +173,7 @@ begin
 					if (write_counter=16) then
 					  	data_to_write <='0';
 						s<=mem2ca_state;
+						cache(input_index)(143)<='0';
 					end if;
 					s_waitrequest<='1';
 			end case;
