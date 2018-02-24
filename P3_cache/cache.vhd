@@ -113,9 +113,8 @@ begin
 					else  
 						-- cache miss, and we need to evict a block
 						s<=load_mem_state;
+						s_waitrequest<='1';
 					end if;
-					s_waitrequest<='1';
-
 				-- in the cpu2ca_state, check if we have a cache hit or miss. Write to cache if hit, else go to load_mem_state
 				when cpu2ca_state=>
 					-- valid bit is set and tag matches
