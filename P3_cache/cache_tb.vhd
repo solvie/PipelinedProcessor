@@ -123,52 +123,87 @@ begin
   s_write <= '0' ;
   s_read <= '0'; 
   wait for 1*clk_period;
-  
-  -- write in 0x00000000
+  -- CASES NOT DIRTY
+  --1) write in 0x00000000
   s_read <= '0'; 
   s_write <='1';
   s_addr <= "00000000000000000000000000000000"; 
   s_writedata <= "00000000000000000000000000000001";
   wait until s_waitrequest = '0';
   
-  -- read from 0x00000000
+  --2) read from 0x00000000
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000000"; 
   wait until s_waitrequest = '0';
   
-  -- write to 0x00000001
+  --3) write to 0x00000001
   s_read <= '0'; 
   s_write <='1';
   s_addr <= "00000000000000000000000000000001"; 
   s_writedata <= "00000000000000000000000000000010";
   wait until s_waitrequest = '0';
   
-  -- read to 0x00000001
+  --4) read to 0x00000001
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000001"; 
   wait until s_waitrequest = '0';
   
---blocks = 32blocks, 2048 in mem, 2^6 address difference for direct mapped
-  
-  -- write in 0x00000032
+  --blocks = 32blocks, 2048 in mem, 2^6 address difference for direct mapped
+  -- CASE DIRTY BIT = 1 on addr 0x00000000 from 1) and tag is not equal, addr 0x00000000 and addr 0x00000032
+  --5) write in 0x00000032
   s_read <= '0'; 
   s_write <='1';
   s_addr <= "00000000000000000001000000000000";  
   s_writedata <= "00000000000000000000000000000100";
   wait until s_waitrequest = '0';
   
-  -- read from 0x00000032
+  --6) read from 0x00000032
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000001000000000000"; 
   wait until s_waitrequest = '0';
   
-  --check 0x00000000
+  --7) check 0x00000000
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000000"; 
+  wait until s_waitrequest = '0';
+  
+  --8) write invalid clean 
+  s_read <= '0';
+  s_write <= '1';
+  s_addr <= std_logic_vector(to_unsigned(16, 32)); 
+  wait until s_waitrequest = '0'; 
+  
+  --9) write valid dirty
+  s_read <= '0';
+  s_write <= '1';
+  S_writedata <= "00000000000000000000000000000011";
+  s_addr <= std_logic_vector(to_unsigned(16, 32)); 
+  wait until s_waitrequest = '0';
+  
+  --10) read data from 9)
+  s_read <= '1';
+  s_write <= '0';
+  s_addr <= std_logic_vector(to_unsigned(16, 32)); 
+  wait until s_waitrequest = '0';
+  
+  --11)retest
+  --write
+  s_read <= '0'; 
+  s_write <='1';
+  s_addr <= "00000000000000000000000000000000"; 
+  s_writedata <= "00000000000000000000000000000001";
+  wait until s_waitrequest = '0';
+  
+  -- read
+  s_read <= '1'; 
+  s_write <='0';
+  s_addr <= "00000000000000000000000000000000"; 
+  
+  
 wait;
 
 
