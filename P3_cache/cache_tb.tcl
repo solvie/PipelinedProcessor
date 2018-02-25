@@ -16,6 +16,7 @@ proc AddWaves {} {
 }
 
 proc AddAll {} {
+;#add all waves
     add wave -r /*
 }
 
@@ -34,8 +35,8 @@ vsim cache_tb
 force -deposit clk 0 0 ns, 1 0.5 ns -repeat 1 ns
 
 ;# Add the waves
-;# AddWaves
-AddAll
+ AddWaves
+;#AddAll
 
-;# Run for 50 ns
+;# Run for 220 ns
 run 220ns

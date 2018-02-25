@@ -153,6 +153,7 @@ begin
   --blocks = 32blocks, 2048 in mem, 2^6 address difference for direct mapped
   -- CASE DIRTY BIT = 1 on addr 0x00000000 from 1) and tag is not equal, addr 0x00000000 and addr 0x00000032
   --5) write in 0x00000032
+  -- cache miss happens here
   s_read <= '0'; 
   s_write <='1';
   s_addr <= "00000000000000000001000000000000";  
