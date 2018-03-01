@@ -137,7 +137,7 @@ begin
 						cache(input_index)(142 downto 128)<=input_tag;
 						-- if we are here from a read op, give it to s_read then go to idle
 						if (latched_s_read = '1' AND latched_s_write='0') then
-       							s_readdata <=cache(input_index)(127- input_byteoffset*32 downto 128- (input_byteoffset+1)*32);
+       							s_readdata <=loaded_block(127- input_byteoffset*32 downto 128- (input_byteoffset+1)*32);
 							s_waitrequest<='0';
 							s<= idle_state;
 						elsif (latched_s_read = '0' AND latched_s_write='1') then 
@@ -152,8 +152,10 @@ begin
 					if(m_waitrequest = '0') then
 						data_to_read<='1';
 					end if;
-					if (data_to_read='1' and read_counter < 16) then
-						loaded_block(block_size- read_counter*8-1 downto block_size- read_counter*8-8)<=m_readdata; -- get the data from mem
+					if (data_to_read='1' and read_counter < 18) then
+						if (1 < read_counter) then
+							loaded_block(block_size- (read_counter-2)*8-1 downto block_size- (read_counter-2)*8-8)<=m_readdata; -- get the data from mem
+						end if;
 						read_counter<=read_counter+1;
 						--TODO: check ordering
 					end if;

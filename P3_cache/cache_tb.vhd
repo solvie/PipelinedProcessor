@@ -195,9 +195,6 @@ begin
   wait until s_waitrequest = '0';
   wait for 1*clk_period;
 
-
-
-
   -- Up to this point, one block has been written to.
   
   -- blocks = 32blocks, 2048 in mem, 2^6 address difference for direct mapped
