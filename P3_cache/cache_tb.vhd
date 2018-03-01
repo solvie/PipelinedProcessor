@@ -239,6 +239,7 @@ begin
   s_read <= '0';
   s_write <= '1';
   s_addr <= std_logic_vector(to_unsigned(16, 32)); 
+  s_writedata <= "00001111000111101011010100001111";
   wait for 1*clk_period;
   reset<='0';
   s_write <= '0' ;
@@ -249,7 +250,7 @@ begin
   --11) write valid dirty
   s_read <= '0';
   s_write <= '1';
-  S_writedata <= "00000000000000000000000000000011";
+  s_writedata <= "11000000000000001100000000000011";
   s_addr <= std_logic_vector(to_unsigned(16, 32)); 
   wait for 1*clk_period;
   reset<='0';
@@ -290,12 +291,9 @@ begin
   reset<='0';
   s_write <= '0' ;
   s_read <= '0'; 
-  
-  
 wait;
 
 
- 
 end process;
 	
 end;
