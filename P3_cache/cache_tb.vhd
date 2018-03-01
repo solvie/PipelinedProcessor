@@ -123,86 +123,176 @@ begin
   s_write <= '0' ;
   s_read <= '0'; 
   wait for 1*clk_period;
+
   -- CASES NOT DIRTY
-  --1) write in 0x00000000
+  --1) write in 0x00000000 (BLOCK 0 IN INDEX 0)
   s_read <= '0'; 
   s_write <='1';
   s_addr <= "00000000000000000000000000000000"; 
-  s_writedata <= "00000000000000000000000000000001";
+  s_writedata <= "11100000000000000000000000000101";
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0';
+  wait for 1*clk_period;
   
   --2) read from 0x00000000
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000000"; 
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0';
+  wait for 1*clk_period;
   
-  --3) write to 0x00000001
+  --3) write to 0x00000001 (BLOCK 1 IN INDEX 0)
   s_read <= '0'; 
   s_write <='1';
   s_addr <= "00000000000000000000000000000001"; 
-  s_writedata <= "00000000000000000000000000000010";
+  s_writedata <= "10111000000000011100000000010010";
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0';
+  wait for 1*clk_period;
   
-  --4) read to 0x00000001
+  --4) read from 0x00000001
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000001"; 
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0';
+  wait for 1*clk_period;
+
+  --5) write to 0x00000001 (BLOCK 2 IN INDEX 0)
+  s_read <= '0'; 
+  s_write <='1';
+  s_addr <= "00000000000000000000000000000010"; 
+  s_writedata <= "00000000000000000000000000000000";
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
+  wait until s_waitrequest = '0';
+  wait for 1*clk_period;
+
+  --6) write to 0x00000001 (BLOCK 3 IN INDEX 0)
+  s_read <= '0'; 
+  s_write <='1';
+  s_addr <= "00000000000000000000000000000011"; 
+  s_writedata <= "11111111111111111111111111111111";
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
+  wait until s_waitrequest = '0';
+  wait for 1*clk_period;
+
+
+
+
+  -- Up to this point, one block has been written to.
   
-  --blocks = 32blocks, 2048 in mem, 2^6 address difference for direct mapped
+  -- blocks = 32blocks, 2048 in mem, 2^6 address difference for direct mapped
   -- CASE DIRTY BIT = 1 on addr 0x00000000 from 1) and tag is not equal, addr 0x00000000 and addr 0x00000032
-  --5) write in 0x00000032
-  -- cache miss happens here
+
+  --7) write in 0x00000032 (BLOCK 0 AT INDEX 0, BUT FOR DIFFERENT TAG THAN BEFORE)
+  -- cache miss happens here, and must evict current cache entry at index 0 to replace with this one
   s_read <= '0'; 
   s_write <='1';
   s_addr <= "00000000000000000001000000000000";  
   s_writedata <= "00000000000000000000000000000100";
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0';
+  wait for 1*clk_period;
   
-  --6) read from 0x00000032
+  --8) read from 0x00000032 
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000001000000000000"; 
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0';
+  wait for 1*clk_period;
   
-  --7) check 0x00000000
+  --9) check 0x00000000
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000000"; 
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0';
+  wait for 1*clk_period;
   
-  --8) write invalid clean 
+  --10) write invalid clean 
   s_read <= '0';
   s_write <= '1';
   s_addr <= std_logic_vector(to_unsigned(16, 32)); 
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0'; 
+  wait for 1*clk_period;
   
-  --9) write valid dirty
+  --11) write valid dirty
   s_read <= '0';
   s_write <= '1';
   S_writedata <= "00000000000000000000000000000011";
   s_addr <= std_logic_vector(to_unsigned(16, 32)); 
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0';
+  wait for 1*clk_period;
   
-  --10) read data from 9)
+  --12) read data from 9)
   s_read <= '1';
   s_write <= '0';
   s_addr <= std_logic_vector(to_unsigned(16, 32)); 
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0';
+  wait for 1*clk_period;
   
-  --11)retest
+  --13)retest
   --write
   s_read <= '0'; 
   s_write <='1';
   s_addr <= "00000000000000000000000000000000"; 
   s_writedata <= "00000000000000000000000000000001";
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   wait until s_waitrequest = '0';
+  wait for 1*clk_period;
   
-  -- read
+  --14) read
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000000"; 
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0' ;
+  s_read <= '0'; 
   
   
 wait;

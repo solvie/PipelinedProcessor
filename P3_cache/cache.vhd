@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use IEEE.std_logic_signed.all;
+--use IEEE.std_logic_signed.all;
 
 entity cache is
 generic(
@@ -58,6 +58,7 @@ signal data_to_read : std_logic;
 signal data_to_write : std_logic;
 
 signal loaded_block : std_logic_vector(127 downto 0);
+signal writeback_tag : std_logic_vector(14 downto 0);
 
 -- cache block declaration
 -- |1 valid|1 dirty|15 tag|128 block bits| = 145 bits total per row
@@ -82,8 +83,8 @@ begin
 
 					-- latch values from here so that we dont detect changes in them until we return to idle.
 					input_tag<=s_addr(21 downto 7); -- we only care about the lowest 15 bits of tag
-					input_index<=conv_integer(s_addr(6 downto 2)); -- 5 bit index field
-					input_byteoffset<=conv_integer(s_addr(1 downto 0)); --2 bit offset field
+					input_index<=to_integer(unsigned(s_addr(6 downto 2))); -- 5 bit index field
+					input_byteoffset<=to_integer(unsigned(s_addr(1 downto 0))); --2 bit offset field
 					latched_s_read<=s_read;
 					latched_s_write<=s_write;
 
@@ -126,6 +127,7 @@ begin
 					-- if dirty, we go to write to mem state after which it will become clean 
 					if cache(input_index)(143)='1' then
 						s<=store_mem_state;
+						writeback_tag<=cache(input_index)(142 downto 128);
 						s_waitrequest<='1';
 					else
 						-- if clean, put the loaded stuff into cache
@@ -146,9 +148,9 @@ begin
 					end if;
 				when load_mem_state=>
 					m_read<='1'; -- tell memory we want to read
-					m_addr<=conv_integer(input_tag)+read_counter; -- from this address
+					m_addr<=to_integer(unsigned(input_tag))+read_counter; -- from this address
 					if(m_waitrequest = '0') then
-					  data_to_read<='1';
+						data_to_read<='1';
 					end if;
 					if (data_to_read='1' and read_counter < 16) then
 						loaded_block(block_size- read_counter*8-1 downto block_size- read_counter*8-8)<=m_readdata; -- get the data from mem
@@ -162,7 +164,7 @@ begin
 					s_waitrequest<='1';
 				when store_mem_state=>
 					m_write<='1'; -- tell memory we want to write
-					m_addr<=conv_integer(input_tag)+write_counter; -- to this address
+					m_addr<=to_integer(unsigned(writeback_tag))+write_counter; -- to this address
 					if(m_waitrequest = '0') then
 					  data_to_write<='1';
 					end if;
