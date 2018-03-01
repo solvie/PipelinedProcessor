@@ -71,7 +71,7 @@ signal m_waitrequest : std_logic;
 begin
 
 -- Connect the components which we instantiated above to their
--- respective signals.
+-- respective signals
 dut: cache 
 port map(
     clock => clk,
@@ -115,7 +115,7 @@ end process;
 test_process : process
 begin
 
--- put your tests here
+-- Initializing Values for tests
 
  reset<='1';
   wait for 1*clk_period;
