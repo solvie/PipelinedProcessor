@@ -137,7 +137,7 @@ begin
   wait for 1*clk_period;
   
   -- Test 2) read from 0x00000000 the data that was written in test 1
-  -- Conditions tested: valid = 0, dirty = 0, read/write = read, hit = 1 -- should result in reading to cpu
+  -- Conditions tested: valid = 1, dirty = 0, read/write = read, hit = 1 -- should result in reading to cpu
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000000"; 
@@ -149,8 +149,8 @@ begin
   wait for 1*clk_period;
   Assert(s_readdata = "11100000000000000000000000000101") Report "Failure to succesfully complete test 2" Severity ERROR;
 
-  -- Tests 3-6 are to Ensure proper functioning of writing and reading to different blocks
-  -- Test 3) write to 0x00000001 (BLOCK 1 IN INDEX 0)
+  -- Tests 3-6 are to Ensure proper functioning of writing and reading to different blocks (This was used to debug)
+  -- Test 3) write to 0x00000001 (BLOCK 0 WORD 1 IN INDEX 0)
   -- Conditions tested: valid = 0, dirty = 0, read/write = write, hit = 0 -- should result in writing to cache
   
   s_read <= '0'; 
@@ -165,7 +165,7 @@ begin
   wait for 1*clk_period;
   
   --Test 4) read from 0x00000001 the data that was written in test 3
-  -- Conditions tested: valid = 0, dirty = 0, read/write = read, hit = 1 -- should result in reading to cpu
+  -- Conditions tested: valid = 1, dirty = 0, read/write = read, hit = 1 -- should result in reading to cpu
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000001"; 
@@ -177,7 +177,7 @@ begin
   wait for 1*clk_period;
   Assert(s_readdata = "10111000000000011100000000010010") Report "Failure to succesfully complete test 4" Severity ERROR;
   
-  -- Test 5) write to 0x00000001 (BLOCK 2 IN INDEX 0)
+  -- Test 5) write to 0x00000001 (BLOCK 0 WORD 2 IN INDEX 0)
   -- Conditions tested: valid = 0, dirty = 0, read/write = write, hit = 0 -- should result in writing to cache
 
   s_read <= '0'; 
@@ -191,7 +191,7 @@ begin
   wait until s_waitrequest = '0';
   wait for 1*clk_period;
 
-  -- Test 6) write to 0x00000001 (BLOCK 3 IN INDEX 0)
+  -- Test 6) write to 0x00000001 (BLOCK 0 WORD 3 IN INDEX 0)
   -- Conditions tested: valid = 0, dirty = 0, read/write = write, hit = 0 -- should result in writing to cache
 
   s_read <= '0'; 
@@ -205,12 +205,12 @@ begin
   wait until s_waitrequest = '0';
   wait for 1*clk_period;
 
-  -- Up to this point, one block has been written to.
+  -- Up to this point, one block has been written to
   -- blocks = 32blocks, 2048 in mem, 2^6 address difference for direct mapped
   -- CASE DIRTY BIT = 1 on addr 0x00000000 from 1) and tag is not equal, addr 0x00000000 and addr 0x00000032
 
   -- Test 7) write in 0x00000032 (BLOCK 0 AT INDEX 0, BUT FOR DIFFERENT TAG THAN BEFORE)
-  -- Conditions tested: valid = 0, dirty = 1, read/write = write, hit = 1 -- should result in cache miss, and must evict current cache entry at index 0 to replace with this one
+  -- Conditions tested: valid = 1, dirty = 1, read/write = write, hit = 0 -- should result in cache miss, and must evict current cache entry at index 0 to replace with this one
   s_read <= '0'; 
   s_write <='1';
   s_addr <= "00000000000000000001000000000000";  
@@ -236,7 +236,7 @@ begin
 
   
   -- Test 8) check 0x00000000
-  -- Conditions tested: valid = 0, dirty = 1, read/write = write, hit = 1 -- should result in
+  -- Conditions tested: valid = 1, dirty = 0, read/write = read, hit = 0 -- Should miss at cache, and retrieve from main memory
   s_read <= '1'; 
   s_write <='0';
   s_addr <= "00000000000000000000000000000000"; 
@@ -246,9 +246,10 @@ begin
   s_read <= '0'; 
   wait until s_waitrequest = '0';
   wait for 1*clk_period;
-  
+  Assert(s_readdata = "11100000000000000000000000000101") Report "Failure to succesfully complete test 7" Severity ERROR;
+
   -- Test 9) write invalid clean 
-  -- Conditions tested: valid = 0, dirty = 0, read/write = write, hit = 1 -- should result in
+  -- Conditions valid = 1, dirty = 1, read/write = write, hit = 1 -- should result in
   s_read <= '0';
   s_write <= '1';
   s_addr <= std_logic_vector(to_unsigned(16, 32)); 
@@ -259,9 +260,7 @@ begin
   s_read <= '0'; 
   wait until s_waitrequest = '0'; 
   wait for 1*clk_period;
-  
-  -- Test 10) write valid dirty
-  -- Conditions tested: valid = 0, dirty = 1, read/write = write, hit = 1 -- should result in
+
   s_read <= '0';
   s_write <= '1';
   s_writedata <= "11000000000000001100000000000011";
@@ -273,8 +272,8 @@ begin
   wait until s_waitrequest = '0';
   wait for 1*clk_period;
   
-  -- Test 11) read data from 9)
-  -- Conditions tested: valid = 0, dirty = 1, read/write = write, hit = 1 -- should result in  
+  -- Test 10) read data from 9)
+  -- Conditions tested: valid = 1, dirty = 1, read/write = reat, hit = 1  
   s_read <= '1';
   s_write <= '0';
   s_addr <= std_logic_vector(to_unsigned(16, 32)); 
@@ -284,12 +283,11 @@ begin
   s_read <= '0'; 
   wait until s_waitrequest = '0';
   wait for 1*clk_period;
-  Assert(s_readdata = "00001111000111101011010100001111") Report "Failure to succesfully complete test 11" Severity ERROR;
+  Assert(s_readdata = "11000000000000001100000000000011") Report "Failure to succesfully complete test 10" Severity ERROR;
 
   
-  -- Test 12)retest
-  --write
-  -- Conditions tested: valid = 0, dirty = 1, read/write = write, hit = 1 -- should result in
+  -- Test 11) retest write
+  -- Conditions tested: valid = 1, dirty = 0, read/write = write, hit = 1 
   s_read <= '0'; 
   s_write <='1';
   s_addr <= "00000000000000000000000000000000"; 
@@ -301,19 +299,45 @@ begin
   wait until s_waitrequest = '0';
   wait for 1*clk_period;
   
-  -- Test 13) read
-  -- Conditions tested: valid = 0, dirty = 1, read/write = write, hit = 1 -- should result in
+  -- Test 12) read in 0x00000032
+  -- Conditions tested: valid = 1, dirty = 1, read/write = read, hit = 0 
   s_read <= '1'; 
   s_write <='0';
-  s_addr <= "00000000000000000000000000000000"; 
+  s_addr <= "00000000000000000001000000000000"; 
   wait for 1*clk_period;
   reset<='0';
   s_write <= '0';
   s_read <= '0'; 
   wait until s_waitrequest = '0';
   wait for 1*clk_period;
-  Assert(s_readdata = "00000000000000000000000000000001") Report "Failure to succesfully complete test 13" Severity ERROR;
+  Assert(s_readdata = "00000000000000000000000000000100") Report "Failure to succesfully complete test 12" Severity ERROR;
 
+   -- Test 13) write in 0x00000096
+  -- Conditions tested: valid = 1, dirty = 0, read/write = write, hit = 0 
+  s_read <= '0'; 
+  s_write <='1';
+  s_addr <= "00000000000000000011000000000000"; 
+  s_writedata <= "00000000000000000000000000000011";
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0';
+  s_read <= '0'; 
+  wait until s_waitrequest = '0';
+  wait for 1*clk_period;
+  
+  -- Read and verify 0x00000096 
+  s_read <= '1'; 
+  s_write <='0';
+  s_addr <= "00000000000000000011000000000000"; 
+  wait for 1*clk_period;
+  reset<='0';
+  s_write <= '0';
+  s_read <= '0'; 
+  wait until s_waitrequest = '0';
+  wait for 1*clk_period;
+  Assert(s_readdata = "00000000000000000000000000000011") Report "Failure to succesfully complete test 13" Severity ERROR;
+
+  
 wait;
 
 
