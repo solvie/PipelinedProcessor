@@ -3,7 +3,14 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity IF_stage is
-
+port( 
+	clock : IN std_logic;
+	reset : IN std_logic;
+	mux_input_to_stage1 : IN std_logic_vector(31 downto 0); -- this will come from the EX/MEM buffer
+	mux_select_sig_to_stage1 : IN std_logic;
+	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0)
+	--memory_out_stage_1 : OUT std_logic_vector(31 downto 0)
+ );
 end IF_stage;
 
 architecture behavior of IF_stage is
@@ -24,53 +31,27 @@ port(
 	q: out std_logic_vector(31 downto 0) ); -- output
 end component;
 
-component memory is
-GENERIC(
-	ram_size : INTEGER := 32768;
-	mem_delay : time := 1 ns;
-	clock_period : time := 1 ns
-);
-port (
-	clock: IN STD_LOGIC;
-	writedata: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-	address: IN INTEGER RANGE 0 TO ram_size-1;
-	memwrite: IN STD_LOGIC;
-	memread: IN STD_LOGIC;
-	readdata: OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
-	waitrequest: OUT STD_LOGIC
-);
-end component;
-
 component mux_2_to_1 is
-    Port ( SEL : in  STD_LOGIC;
-           A   : in  STD_LOGIC_VECTOR (31 downto 0);
-           B   : in  STD_LOGIC_VECTOR (31 downto 0);
-           Output   : out STD_LOGIC_VECTOR (31 downto 0));
+Port ( 
+	SEL : in  STD_LOGIC;
+        A   : in  STD_LOGIC_VECTOR (31 downto 0);
+        B   : in  STD_LOGIC_VECTOR (31 downto 0);
+        Output   : out STD_LOGIC_VECTOR (31 downto 0)
+);
 end component;
 
-
-signal reset : std_logic := '0';
-signal clock : std_logic := '0';
-signal load : std_logic := '0';
-signal selectsig : std_logic;
-
+signal load : std_logic := '1';
 signal adder_out : std_logic_vector(31 downto 0);
-signal mux_out : std_logic_vector(31 downto 0);
 signal pc_out : std_logic_vector(31 downto 0);
 signal four : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(4,32));
 
-signal temp : std_logic_vector(31 downto 0); -- this will come from the EX/MEM buffer
-
-constant clk_period : time := 1 ns;
-
 begin
-
 pc: register32 
 port map(
 	clk => clock,
 	rst => reset,
 	ld => load,
-	d => mux_out,
+	d => mux_output_stage_1,
 	q => pc_out
 );
 
@@ -83,36 +64,10 @@ port map(
 
 mux: mux_2_to_1
 port map(
-	SEL => selectsig,
+	SEL => mux_select_sig_to_stage1,
 	A   => adder_out,
-	B   => temp,
-	Output   => mux_out
+	B   => mux_input_to_stage1,
+	Output   => mux_output_stage_1
 );
-
-clk_process : process
-begin
-  clock <= '0';
-  wait for clk_period/2;
-  clock <= '1';
-  wait for clk_period/2;
-end process;
-
-test_process : process
-begin
-
-  reset<='1';
-  selectsig<= '1';
-  temp <= std_logic_vector(to_unsigned(40,32));
-  wait for 1*clk_period;
-  reset<='0';
-  wait for 1*clk_period;
-  load <= '1'; 
-
-  wait for 5*clk_period;
-  selectsig<= '0';
-
-wait;
-
-end process;
 	
 end;
