@@ -5,7 +5,19 @@ use ieee.numeric_std.all;
 entity stage1_tb is
 end stage1_tb;
 
-architecture behavior of stage1_tb is
+architecture 
+behavior of stage1_tb is
+
+component adder32 is
+generic(
+  	size : INTEGER := 32
+);
+port( 
+	input1: in std_logic_vector(size-1 downto 0); -- input
+	input2: in std_logic_vector(size-1 downto 0); -- will be hardcoded to 4 from outside
+	result: out std_logic_vector(size-1 downto 0) -- output
+ );
+end component;
 
 component register32 is
 generic(
@@ -25,6 +37,7 @@ signal clock : std_logic := '0';
 signal load : std_logic := '0';
 signal data : std_logic_vector(31 downto 0);
 signal qout : std_logic_vector(31 downto 0);
+signal four : std_logic_vector(31 downto 0):=std_logic_vector(to_unsigned(4,32));
 
 constant clk_period : time := 1 ns;
 
@@ -41,7 +54,14 @@ port map(
     d => data,
     q => qout
 );
-		
+
+add: adder32 
+port map(
+    input1 => qout,
+    input2 => four,
+    result => data
+);
+
 clk_process : process
 begin
   clock <= '0';
@@ -54,17 +74,15 @@ test_process : process
 begin
 
 -- Resetting all values, then initializing in preparation for tests
-
+  --data <= "00000000000000000000000000001010"; 
   reset<='1';
   wait for 1*clk_period;
   reset<='0';
   wait for 1*clk_period;
 
   load <= '1'; 
-  data <= "00000000000000000000000000001010"; 
-  wait for 1*clk_period;
-  load <= '0';
-  data <= "00000000000000000000000000001010"; 
+
+
 wait;
 
 end process;

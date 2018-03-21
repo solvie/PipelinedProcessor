@@ -17,6 +17,7 @@ vlib work
 ;# Compile components if any
 vcom stage1_tb.vhd
 vcom register32.vhd
+vcom adder32.vhd
 
 
 ;# Start simulation

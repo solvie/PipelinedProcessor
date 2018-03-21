@@ -6,7 +6,7 @@ USE ieee.numeric_std.all;
 ENTITY memory IS
 	GENERIC(
 		ram_size : INTEGER := 32768;
-		mem_delay : time := 10 ns;
+		mem_delay : time := 1 ns;
 		clock_period : time := 1 ns
 	);
 	PORT (
