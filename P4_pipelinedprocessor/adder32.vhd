@@ -4,13 +4,10 @@ use ieee.numeric_std.all;
 use ieee.std_logic_unsigned.all;
 
 entity adder32 is -- This is an adder with 32 bit inputs
-generic(
-  	size : INTEGER := 32
-);
 port( 
-	input1: in std_logic_vector(size-1 downto 0); -- input
-	input2: in std_logic_vector(size-1 downto 0); -- will be hardcoded to 4 from outside
-	result: out std_logic_vector(size-1 downto 0) -- output
+	input1: in std_logic_vector(31 downto 0); -- input
+	input2: in std_logic_vector(31 downto 0); -- will be hardcoded to 4 from outside
+	result: out std_logic_vector(31 downto 0) -- output
  );
 end entity adder32;
 
