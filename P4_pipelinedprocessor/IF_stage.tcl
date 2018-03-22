@@ -2,10 +2,8 @@ proc AddWaves {} {
 	;#Add waves we're interested in to the Wave window
     add wave -position end sim:/IF_stage/clock
     add wave -position end sim:/IF_stage/reset
-    add wave -position end sim:/IF_stage/mux_input_to_stage1
-    add wave -position end sim:/IF_stage/mux_select_sig_to_stage1
-    add wave -position end sim:/IF_stage/mux_output_stage_1
-    add wave -position end sim:/IF_stage/memory_out_stage_1
+    add wave -position end sim:/IF_stage/load
+    add wave -position end sim:/IF_stage/pc_out
 }
 
 proc AddAll {} {
@@ -16,12 +14,15 @@ proc AddAll {} {
 vlib work
 
 ;# Compile components if any
-vcom stage1_tb.vhd
 vcom IF_stage.vhd
+vcom register32.vhd
+vcom adder32.vhd
+vcom memory.vhd
+vcom mux_2_to_1.vhd
 
 
 ;# Start simulation
-vsim stage1_tb
+vsim IF_stage
 
 ;# Generate a clock with 1ns period
 force -deposit clock 0 0 ns, 1 0.5 ns -repeat 1 ns
