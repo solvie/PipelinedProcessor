@@ -24,7 +24,7 @@ port(
 	q: out std_logic_vector(31 downto 0) ); -- output
 end component;
 
-component InstructionMemory is
+component memory is
 GENERIC(
 	ram_size : INTEGER := 32768;
 	mem_delay : time := 1 ns;
