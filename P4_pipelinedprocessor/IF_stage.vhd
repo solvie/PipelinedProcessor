@@ -8,8 +8,13 @@ port(
 	reset : IN std_logic;
 	mux_input_to_stage1 : IN std_logic_vector(31 downto 0); -- this will come from the EX/MEM buffer
 	mux_select_sig_to_stage1 : IN std_logic;
-	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0)
-	--memory_out_stage_1 : OUT std_logic_vector(31 downto 0)
+	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0);
+	memory_out_stage_1 : OUT std_logic_vector(31 downto 0);
+	pc_out_as_int : INOUT Integer;
+	tempwaitreqout : OUT std_logic;
+	tempreadreq: IN std_logic;
+	tempwritereq: IN std_logic;
+	tempwritedata: IN std_logic_vector(31 downto 0)
  );
 end IF_stage;
 
@@ -40,10 +45,26 @@ Port (
 );
 end component;
 
+component memory is 
+GENERIC(
+	ram_size : INTEGER := 1024
+);
+PORT (
+	clock: IN STD_LOGIC;
+	writedata: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
+	address: IN INTEGER RANGE 0 TO ram_size-1;
+	memwrite: IN STD_LOGIC;
+	memread: IN STD_LOGIC;
+	readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
+	waitrequest: OUT STD_LOGIC
+);
+end component;
+
 signal load : std_logic := '1';
 signal adder_out : std_logic_vector(31 downto 0);
 signal pc_out : std_logic_vector(31 downto 0);
 signal four : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(4,32));
+
 
 begin
 pc: register32 
@@ -69,5 +90,20 @@ port map(
 	B   => mux_input_to_stage1,
 	Output   => mux_output_stage_1
 );
-	
-end;
+
+mem: memory
+port map(
+	clock=> clock,
+	writedata=> tempwritedata,
+	address=> pc_out_as_int,
+	memwrite=>tempwritereq,
+	memread=> tempreadreq,
+	readdata=> memory_out_stage_1,
+	waitrequest=>tempwaitreqout
+);
+
+process (pc_out)
+begin
+	pc_out_as_int <= to_integer(unsigned(pc_out));
+end process;
+end behavior;
