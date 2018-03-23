@@ -64,7 +64,7 @@ BEGIN
 	waitrequest <= write_waitreq_reg and read_waitreq_reg;
 
 
-END rtl;
+END behaviour;
 		
 		
 		
