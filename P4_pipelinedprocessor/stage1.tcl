@@ -23,7 +23,7 @@ vcom IF_stage.vhd
 vcom register32.vhd
 vcom mux_2_to_1.vhd
 vcom adder32.vhd
-vcom memory.vhd
+vcom instruction_memory.vhd
 
 ;# Start simulation
 vsim stage1_tb

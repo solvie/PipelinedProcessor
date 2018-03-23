@@ -45,7 +45,7 @@ Port (
 );
 end component;
 
-component memory is 
+component instruction_memory is 
 GENERIC(
 	ram_size : INTEGER := 1024
 );
@@ -91,7 +91,7 @@ port map(
 	Output   => mux_output_stage_1
 );
 
-mem: memory
+instmem: instruction_memory
 port map(
 	clock=> clock,
 	writedata=> tempwritedata,
