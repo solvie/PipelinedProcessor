@@ -11,6 +11,14 @@ proc AddWaves {} {
     add wave -position end sim:/ID_stage/s_r_d
     add wave -position end sim:/ID_stage/s_opcode
     add wave -position end sim:/ID_stage/s_pseudo_address
+    add wave -position end sim:/ID_stage/s_RegDst   
+    add wave -position end sim:/ID_stage/s_ALUSrc  
+    add wave -position end sim:/ID_stage/s_MemtoReg
+    add wave -position end sim:/ID_stage/s_RegWrite
+    add wave -position end sim:/ID_stage/s_MemRead 
+    add wave -position end sim:/ID_stage/s_MemWrite
+    add wave -position end sim:/ID_stage/s_Branch  
+    add wave -position end sim:/ID_stage/s_ALUctrl 
 
 }
 
@@ -24,6 +32,7 @@ vlib work
 ;# Compile components if any
 vcom registers.vhd
 vcom ID_stage.vhd
+vcom control.vhd
 
 ;# Start simulation
 vsim ID_stage
@@ -35,5 +44,5 @@ force -deposit clk 0 0 ns, 1 0.5 ns -repeat 1 ns
  AddWaves
 ;#AddAll
 
-;# Run for 300 ns
-run 300ns
+;# Run for 100ns
+run 100ns

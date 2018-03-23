@@ -29,7 +29,7 @@ end registers;
 architecture arch of registers is
 type registers_body is array(0 to 31) of std_logic_vector(31 downto 0);
 signal register_block : registers_body;
-
+--https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
 begin
 process(clock)
 begin
@@ -49,13 +49,13 @@ begin
 		  funct<=instruction(5 downto 0);
 		  pseudo_address<= instruction(25 downto 0);
 		  if(
-        instruction(31 downto 26) = "001100" or --andi
+        (instruction(31 downto 26) = "001100")or --andi
         instruction(31 downto 26) = "001101" --ori
       ) then
       --zero extension
       data_out_imm <= std_logic_vector(resize(unsigned(instruction(15 downto 0)),32));--zero extend
       else
-      data_out_imm <= std_logic_vector(resize(signed(instruction(15 downto 0)),32));--zero extend
+      data_out_imm <= std_logic_vector(resize(signed(instruction(15 downto 0)),32));--sign extend
       end if;
     end if;
  end if;

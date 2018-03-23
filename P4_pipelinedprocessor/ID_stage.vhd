@@ -3,7 +3,10 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity ID_stage is
-
+port( 
+	clock : IN std_logic;
+	reset : IN std_logic
+);
 end ID_stage;
 
 architecture behavior of ID_stage is
@@ -30,6 +33,25 @@ port(
  );
 end component;
 
+component control is
+port(
+	clock : in std_logic;
+	reset : in std_logic;
+	-- Avalon interface --
+  op_code : in std_logic_vector(5 downto 0);
+	funct_code : in std_logic_vector(5 downto 0);
+	
+	RegDst   : out std_logic;
+	ALUSrc   : out std_logic;
+	MemtoReg : out std_logic;
+	RegWrite : out std_logic;
+	MemRead  : out std_logic;
+	MemWrite : out std_logic;
+	Branch   : out std_logic;
+	ALUctrl   : out std_logic_vector(2 downto 0)
+);
+end component;
+
 signal rst : std_logic := '0';
 signal clk : std_logic := '0';
 constant clk_period : time := 1 ns;
@@ -49,7 +71,35 @@ signal	s_r_d: std_logic_vector (4 downto 0);
 signal	s_opcode: std_logic_vector(5 downto 0);
 signal	s_pseudo_address : std_logic_vector(25 downto 0);
 
+signal temp_opcode : std_logic_vector(5 downto 0);
+signal s_RegDst   : std_logic;
+signal	s_ALUSrc   : std_logic;
+signal	s_MemtoReg : std_logic;
+signal	s_RegWrite : std_logic;
+signal	s_MemRead  : std_logic;
+signal	s_MemWrite : std_logic;
+signal	s_Branch   : std_logic;
+signal	s_ALUctrl  : std_logic_vector(2 downto 0);
+
 begin
+ctrl : control
+port map(
+  clock =>clk,
+	reset =>rst,
+	-- Avalon interface --
+  op_code =>temp_opcode,
+	funct_code =>s_funct,
+	
+	RegDst   =>s_RegDst,
+	ALUSrc   =>s_ALUSrc,
+	MemtoReg =>s_MemtoReg,
+	RegWrite =>s_RegWrite,
+	MemRead  =>s_MemRead,
+	MemWrite =>s_MemWrite,
+	Branch   =>s_Branch,
+	ALUctrl  =>s_ALUctrl
+);
+
 reg : registers
 port map(
   clock =>clk,
@@ -58,18 +108,18 @@ port map(
 	-- Avalon interface --
   instruction =>s_instruction,
 	
-	wb_signal =>s_wb_signal,
-	wb_addr =>s_wb_addr,
-	wb_data =>s_wb_data,
+	wb_signal  =>s_wb_signal,
+	wb_addr    =>s_wb_addr,
+	wb_data    =>s_wb_data,
 	
-	data_out_left=>s_data_out_left,
+	data_out_left =>s_data_out_left,
 	data_out_right=>s_data_out_right,
-	data_out_imm=>s_data_out_imm,
-	shamt =>s_shamt,
-	funct =>s_funct,
-	r_d=>s_r_d,
-	opcode=>s_opcode,
-	pseudo_address =>s_pseudo_address
+	data_out_imm  =>s_data_out_imm,
+	shamt         =>s_shamt,
+	funct         =>s_funct,
+	r_d           =>s_r_d,
+	opcode        =>s_opcode,
+	pseudo_address=>s_pseudo_address
 );
 
 
@@ -91,7 +141,7 @@ begin
   s_wb_signal<='1';
   s_wb_addr <="00001";
 	s_wb_data <="11111111111111111111111111111111";
-	
+	temp_opcode<="000000";
   wait for 1*clk_period;
   s_wb_signal<='0';
   s_instruction <= "00001100001000010000100001000000";
@@ -112,8 +162,9 @@ begin
 	s_instruction <= "00011100011000110001100011000000";
   wait for 1*clk_period;
   s_wb_signal<='0';
-  s_instruction <= "00011100011000110001100011000000";
-
+  s_instruction <= "00011100011000110001100011100101";
+  wait for 1*clk_period;
+  s_instruction <= "10001000011000110001100011100101";
 wait;
 
 end process;
