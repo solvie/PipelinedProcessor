@@ -15,8 +15,7 @@ port(
 	clock : in std_logic;
 	reset : in std_logic;
 	
-	-- Avalon interface --
-  instruction : in std_logic_vector(31 downto 0);
+	instruction : in std_logic_vector(31 downto 0);
 	
 	wb_signal : in std_logic;
 	wb_addr : in std_logic_vector (4 downto 0);
@@ -25,6 +24,7 @@ port(
 	data_out_left: out std_logic_vector (31 downto 0);
 	data_out_right: out std_logic_vector (31 downto 0);
 	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
+	
 	shamt : out std_logic_vector(4 downto 0);
 	funct : out std_logic_vector(5 downto 0);
 	r_d: out std_logic_vector (4 downto 0);
@@ -37,8 +37,8 @@ component control is
 port(
 	clock : in std_logic;
 	reset : in std_logic;
-	-- Avalon interface --
-  op_code : in std_logic_vector(5 downto 0);
+	
+	op_code : in std_logic_vector(5 downto 0);
 	funct_code : in std_logic_vector(5 downto 0);
 	
 	RegDst   : out std_logic;
@@ -84,12 +84,10 @@ signal	s_ALUctrl  : std_logic_vector(2 downto 0);
 begin
 ctrl : control
 port map(
-  clock =>clk,
+	clock =>clk,
 	reset =>rst,
-	-- Avalon interface --
-  op_code =>temp_opcode,
+	op_code =>temp_opcode,
 	funct_code =>s_funct,
-	
 	RegDst   =>s_RegDst,
 	ALUSrc   =>s_ALUSrc,
 	MemtoReg =>s_MemtoReg,
@@ -102,11 +100,10 @@ port map(
 
 reg : registers
 port map(
-  clock =>clk,
-  reset =>rst,
+	clock =>clk,
+	reset =>rst,
 	
-	-- Avalon interface --
-  instruction =>s_instruction,
+	instruction =>s_instruction,
 	
 	wb_signal  =>s_wb_signal,
 	wb_addr    =>s_wb_addr,
