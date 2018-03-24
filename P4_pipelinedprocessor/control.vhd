@@ -32,6 +32,8 @@ begin
 process(clock)
 begin
 	--PLA style,https://cs.nyu.edu/courses/fall00/V22.0436-001/class-notes.html
+	--parsed operation control for ALU
+	-- PLA style control parse.JPG
 	if rising_edge(clock) then
 	  if(op_code = "000000")then
       RegDst <= '1';
@@ -82,7 +84,9 @@ begin
       MemWrite <= '0';
       ALUOp0<='0';
     end if;
-
+    
+    -- ALU operation decoding from opcode and control parsed
+    -- ALU operation truth table.JPG
  	  if(ALUOp1 = '0' and ALUOp0 = '0') then
  	    ALUctrl<="010";
  	  elsif(ALUOp1 = '0' and ALUOp0 = '1') then
