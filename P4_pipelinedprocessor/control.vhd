@@ -8,7 +8,7 @@ port(
 	clock : in std_logic;
 	reset : in std_logic;
 	-- Avalon interface --
-  op_code : in std_logic_vector(5 downto 0);
+    op_code : in std_logic_vector(5 downto 0);
 	funct_code : in std_logic_vector(5 downto 0);
 	
 	RegDst   : out std_logic;
