@@ -55,6 +55,7 @@ signal im_write : std_logic;
 signal im_writedata : std_logic_vector (31 downto 0);
 signal im_waitrequest : std_logic; 
 signal verify_instMem: std_logic_vector (31 downto 0);
+signal verify_pc_out: std_logic_vector (31 downto 0);
 
 
 file file_VECTORS : text;
@@ -95,32 +96,61 @@ variable v_temp_sig: std_logic_vector (31 downto 0);
 variable i: integer := 0;
 
 begin
+wait until rising_edge(clock);
+im_read <= '1';
+im_read <= '0';
   file_open(file_VECTORS, "program.txt",  read_mode);
 	im_write <= '1';
   	while not endfile(file_VECTORS) and i < 1024 loop
+		
+		im_addr <= i;
 		readline(file_VECTORS, v_ILINE);
 		read(v_ILINE, v_temp_sig);
-		im_addr <= i;
 		im_writedata <= v_temp_sig;
 		i := i + 1;
 		wait for 1*clk_period;
+		
 	end loop;
+
+	im_addr <= i;
+	im_writedata <= std_logic_vector(to_unsigned(0,32));
+	wait for 1*clk_period;
 	im_write <= '0';
+im_addr <= 0;
 i := i - 1;
-im_read <= '1';
-while i>= 0 loop
-im_addr <= i;
-verify_instMem <= im_readdata;
-i := i - 1;
+--im_read <= '1';
+--while i>= 0 loop
+--	im_addr <= i;
+--	verify_instMem <= im_readdata;
+--	i := i - 1;
+--	wait for 1*clk_period;
+--end loop;
+--im_read <= '0';
+
+
+
+--reading instructinon mem using pc
+verify_pc_out <=std_logic_vector(to_unsigned(1,32));
+reset<='1';
+mux_select_sig_to_stage1<= '1';
+mux_input_to_stage1 <= std_logic_vector(to_unsigned(0,32));
 wait for 1*clk_period;
+reset<='0';
+
+
+im_read <= '1';
+wait for 1*clk_period;
+while verify_pc_out /= std_logic_vector(to_unsigned(0,32)) loop
+	im_addr <= pc_out_as_int;
+	verify_pc_out <= im_readdata;
+	wait for 1*clk_period;
+	
 end loop;
+
+
 im_read <= '0';
+-------------------------------------------
 
-
-  reset<='1';
-  mux_select_sig_to_stage1<= '1';
-  mux_input_to_stage1 <= std_logic_vector(to_unsigned(0,32));
-  wait for 1*clk_period;
   reset<='0';
 
   wait for 7*clk_period;
@@ -131,7 +161,6 @@ im_read <= '0';
 
 
 wait;
-
 end process;
 	
 end;

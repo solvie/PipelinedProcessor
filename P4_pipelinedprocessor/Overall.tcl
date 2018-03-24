@@ -5,8 +5,12 @@ proc AddWaves {} {
     add wave -position end sim:/Overall_tb/mux_input_to_stage1
     add wave -position end sim:/Overall_tb/mux_select_sig_to_stage1
     add wave -position end sim:/Overall_tb/mux_output_stage_1
-    add wave -position end sim:/Overall_tb/verify_instMem
-    #add wave -position end sim:/Overall_tb/memory_out_stage_1
+    add wave -position end sim:/Overall_tb/im_readdata
+    add wave -position end sim:/Overall_tb/verify_pc_out
+    add wave -position end sim:/Overall_tb/pc_out_as_int
+    add wave -position end sim:/Overall_tb/im_read
+    add wave -position end sim:/Overall_tb/im_write
+    add wave -position end sim:/Overall_tb/im_writedata
 }
 
 proc AddAll {} {
