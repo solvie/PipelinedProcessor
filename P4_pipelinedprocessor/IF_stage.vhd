@@ -8,7 +8,8 @@ port(
 	reset : IN std_logic;
 	mux_input_to_stage1 : IN std_logic_vector(31 downto 0); -- this will come from the EX/MEM buffer
 	mux_select_sig_to_stage1 : IN std_logic;
-	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0)
+	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0);
+	pc_out_as_int : OUT integer
  );
 end IF_stage;
 
@@ -41,8 +42,8 @@ end component;
 
 signal load : std_logic := '1';
 signal adder_out : std_logic_vector(31 downto 0);
-signal pc_out : std_logic_vector(31 downto 0);
 signal four : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(4,32));
+signal pc_out : std_logic_vector(31 downto 0);
 
 begin
 pc: register32 
@@ -68,5 +69,9 @@ port map(
 	B   => mux_input_to_stage1,
 	Output   => mux_output_stage_1
 );
+
+process(pc_out) begin
+	pc_out_as_int<= to_integer(unsigned(pc_out));
+end process;
 	
 end;

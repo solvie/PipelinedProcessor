@@ -16,8 +16,8 @@ port(
 	reset : IN std_logic;
 	mux_input_to_stage1 : IN std_logic_vector(31 downto 0); -- this will come from the EX/MEM buffer
 	mux_select_sig_to_stage1 : IN std_logic;
-	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0)
-	--memory_out_stage_1 : OUT std_logic_vector(31 downto 0)
+	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0);
+	pc_out_as_int : OUT Integer
  );
 end component;
 
@@ -45,7 +45,7 @@ signal reset : std_logic;
 signal mux_input_to_stage1 : std_logic_vector(31 downto 0);
 signal mux_select_sig_to_stage1: std_logic;
 signal mux_output_stage_1 : std_logic_vector(31 downto 0);
---signal memory_out_stage_1 : std_logic_vector(31 downto 0);
+signal pc_out_as_int: Integer;
 
 --initialize instruction memory
 signal im_addr : integer range 0 to 1023;
@@ -77,8 +77,8 @@ port map(
     reset => reset,
     mux_input_to_stage1 => mux_input_to_stage1,
     mux_select_sig_to_stage1 => mux_select_sig_to_stage1,
-    mux_output_stage_1 => mux_output_stage_1
-    --memory_out_stage_1 => memory_out_stage_1
+    mux_output_stage_1 => mux_output_stage_1,
+    pc_out_as_int => pc_out_as_int
 );
 
 clk_process : process

@@ -18,7 +18,7 @@ vlib work
 
 ;# Compile components if any
 vcom instruction_memory.vhd
-vcom IF_stage_for_Overall_Testing.vhd
+vcom IF_stage.vhd
 vcom register32.vhd
 vcom mux_2_to_1.vhd
 vcom adder32.vhd
