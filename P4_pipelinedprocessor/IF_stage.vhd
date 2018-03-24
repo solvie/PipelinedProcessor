@@ -42,7 +42,8 @@ end component;
 
 signal load : std_logic := '1';
 signal adder_out : std_logic_vector(31 downto 0);
-signal four : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(4,32));
+--signal four : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(4,32));
+signal one : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(1,32));
 signal pc_out : std_logic_vector(31 downto 0);
 
 begin
@@ -58,7 +59,7 @@ port map(
 adder: adder32 
 port map(
 	input1 => pc_out,
- 	input2 => four,
+ 	input2 => one,
 	result => adder_out
 );
 
