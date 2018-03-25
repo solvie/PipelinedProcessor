@@ -8,7 +8,7 @@ port(
 	clock : in std_logic;
 	reset : in std_logic;
 	
-    op_code : in std_logic_vector(5 downto 0);
+  op_code : in std_logic_vector(5 downto 0);
 	funct_code : in std_logic_vector(5 downto 0);
 	
 	RegDst   : out std_logic;
@@ -18,7 +18,8 @@ port(
 	MemRead  : out std_logic;
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
-	ALUctrl  : out std_logic_vector(2 downto 0)
+	
+	op_code_alu : out std_logic_vector(5 downto 0)
   
 );
 end control;
@@ -83,6 +84,7 @@ begin
 			MemWrite <= '0';
 			ALUOp0<='0';
 		end if;
+		op_code_alu <= op_code;
 
 	end if;
 	
