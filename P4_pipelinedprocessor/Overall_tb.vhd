@@ -24,7 +24,7 @@ end component;
 component instruction_memory IS
 	GENERIC(
 		ram_size : INTEGER := 1024;
-		mem_delay : time := 1 ns;
+		mem_delay : time := 0 ns;
 		clock_period : time := 1 ns
 	);
 	PORT (
@@ -113,11 +113,13 @@ im_read <= '0';
 	end loop;
 
 	im_addr <= i;
-	im_writedata <= std_logic_vector(to_unsigned(0,32));
+	im_writedata <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+	
 	wait for 1*clk_period;
 	im_write <= '0';
-im_addr <= 0;
-i := i - 1;
+	i := i - 1;
+--	im_addr <= 0;
+
 --im_read <= '1';
 --while i>= 0 loop
 --	im_addr <= i;
@@ -130,7 +132,7 @@ i := i - 1;
 
 
 --reading instructinon mem using pc
-verify_pc_out <=std_logic_vector(to_unsigned(1,32));
+verify_pc_out <= std_logic_vector(to_unsigned(0,32));
 reset<='1';
 mux_select_sig_to_stage1<= '1';
 mux_input_to_stage1 <= std_logic_vector(to_unsigned(0,32));
@@ -140,10 +142,12 @@ reset<='0';
 
 im_read <= '1';
 wait for 1*clk_period;
-while verify_pc_out /= std_logic_vector(to_unsigned(0,32)) loop
+while verify_pc_out /= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" loop
 	im_addr <= pc_out_as_int;
+	wait for 1*clk_period; 
 	verify_pc_out <= im_readdata;
-	wait for 1*clk_period;
+	i := i - 1;
+	
 	
 end loop;
 

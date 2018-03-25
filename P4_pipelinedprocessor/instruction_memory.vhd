@@ -45,28 +45,29 @@ BEGIN
 					ram_block(address) <= writedata;
 				END IF;
 			END IF;
-		read_address_reg <= address;
+		--read_address_reg <= address;
 		END IF;
 	END PROCESS;
-	readdata <= ram_block(read_address_reg);
+	readdata <= ram_block(address);
 
 
 	--The waitrequest signal is used to vary response time in simulation
 	--Read and write should never happen at the same time.
-	waitreq_w_proc: PROCESS (memwrite)
-	BEGIN
-		IF(memwrite'event AND memwrite = '1')THEN
-			write_waitreq_reg <= '0';
-		END IF;
-	END PROCESS;
+	--waitreq_w_proc: PROCESS (memwrite)
+	--BEGIN
+	--	IF(memwrite'event AND memwrite = '1')THEN
+	--		write_waitreq_reg <= '0';
+	--	END IF;
+	--END PROCESS;
 
-	waitreq_r_proc: PROCESS (memread)
-	BEGIN
-		IF(memread'event AND memread = '1')THEN
-			read_waitreq_reg <= '0';
-		END IF;
-	END PROCESS;
-	waitrequest <= write_waitreq_reg and read_waitreq_reg;
+	--waitreq_r_proc: PROCESS (memread)
+	--BEGIN
+	--	IF(memread'event AND memread = '1')THEN
+	--		read_waitreq_reg <= '0';
+	--	END IF;
+	--END PROCESS;
+	--waitrequest <= write_waitreq_reg and read_waitreq_reg;
+	waitrequest <= '0';
 
 
 END rtl;
