@@ -71,7 +71,6 @@ signal	s_r_d: std_logic_vector (4 downto 0);
 signal	s_opcode: std_logic_vector(5 downto 0);
 signal	s_pseudo_address : std_logic_vector(25 downto 0);
 
-signal temp_opcode : std_logic_vector(5 downto 0);
 signal s_RegDst   : std_logic;
 signal	s_ALUSrc   : std_logic;
 signal	s_MemtoReg : std_logic;
@@ -86,7 +85,7 @@ ctrl : control
 port map(
 	clock =>clk,
 	reset =>rst,
-	op_code =>temp_opcode,
+	op_code =>s_opcode,
 	funct_code =>s_funct,
 	RegDst   =>s_RegDst,
 	ALUSrc   =>s_ALUSrc,
@@ -138,11 +137,11 @@ begin
   s_wb_signal<='1';
   s_wb_addr <="00001";
 	s_wb_data <="11111111111111111111111111111111";
-	temp_opcode<="000000";
+	
   wait for 1*clk_period;
   s_wb_signal<='0';
   s_instruction <= "00001100001000010000100001000000";
-  
+   
   wait for 1*clk_period;
   s_instruction <= "00011100011000110001100011000001";
   
@@ -162,6 +161,16 @@ begin
   s_instruction <= "00011100011000110001100011100101";
   wait for 1*clk_period;
   s_instruction <= "10001000011000110001100011100101";
+  
+  wait for 1*clk_period;
+  s_instruction <= "00000000011000110001100011100101";
+  wait for 1*clk_period;
+  s_instruction <= "10001100011000110001100011100101";
+  wait for 1*clk_period;
+  s_instruction <= "10101100011000110001100011100101";
+  wait for 1*clk_period;
+  s_instruction <= "00010000011000110001100011100101";
+  
 wait;
 
 end process;
