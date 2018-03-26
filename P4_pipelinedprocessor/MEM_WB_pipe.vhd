@@ -11,7 +11,7 @@ port(
 	ALU_in : IN std_logic_vector(31 downto 0); -- EX ALU in 
 	ALU_out : OUT std_logic_vector(31 downto 0); --EX ALU out
 	instruction_in : IN std_logic_vector(31 downto 0); -- instruction in 
-	instruction_out : OUT std_logic_vector(31 downto 0) -- instruction out
+	instruction_out : OUT std_logic_vector(31 downto 0); -- instruction out
     sel_sig_in : IN std_logic; -- select signal for mux in WB stage in
     sel_sig_out : OUT std_logic -- select signal for mux in WB stage out
  );
