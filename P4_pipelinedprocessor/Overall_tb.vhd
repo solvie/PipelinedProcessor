@@ -21,27 +21,10 @@ port(
  );
 end component;
 
---component instruction_memory IS
---	GENERIC(
---		ram_size : INTEGER := 1024;
---		mem_delay : time := 0 ns;
---		clock_period : time := 1 ns
---	);
---	PORT (
---		clock: IN STD_LOGIC;
---		writedata: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
---		address: IN INTEGER RANGE 0 TO ram_size-1;
---		memwrite: IN STD_LOGIC;
---		memread: IN STD_LOGIC;
---		readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
---		waitrequest: OUT STD_LOGIC
---	);
---END component;
-
-component memory IS
+component instruction_memory IS
 	GENERIC(
-		ram_size : INTEGER := 8192;
-		mem_delay : time := 10 ns;
+		ram_size : INTEGER := 1024;
+		mem_delay : time := 0 ns;
 		clock_period : time := 1 ns
 	);
 	PORT (
@@ -77,9 +60,10 @@ signal verify_pc_out: std_logic_vector (31 downto 0);
 
 file file_VECTORS : text;
 file file_Output : text;
+
 begin
 
-LoadToInstMem: memory 
+LoadToInstMem: instruction_memory 
 port map(
     clock => clock,
     writedata => im_writedata,
@@ -113,6 +97,7 @@ variable v_ILINE: line;
 variable v_OLINE: line;
 variable v_temp_sig: std_logic_vector (31 downto 0);
 variable i: integer := 0;
+variable j: integer := 0;
 
 begin
 wait until rising_edge(clock);
@@ -136,7 +121,7 @@ im_read <= '0';
 	
 	wait for 1*clk_period;
 	im_write <= '0';
-	i := i - 1;
+	--i := i - 1;
 --	im_addr <= 0;
 
 --im_read <= '1';
@@ -151,7 +136,7 @@ im_read <= '0';
 
 
 --reading instructinon mem using pc
-verify_pc_out <=std_logic_vector(to_unsigned(0,32));
+
 reset<='1';
 mux_select_sig_to_stage1<= '1';
 mux_input_to_stage1 <= std_logic_vector(to_unsigned(0,32));
@@ -160,32 +145,30 @@ reset<='0';
 
 
 im_read <= '1';
---wait for 1*clk_period;
-while verify_pc_out/= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" loop
+verify_pc_out <= std_logic_vector(to_unsigned(0,32));
+wait for 1*clk_period;
+while verify_pc_out /= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" loop
 	im_addr <= pc_out_as_int;
+	wait for 1*clk_period; 
 	verify_pc_out <= im_readdata;
-	i := i - 1;
-	wait for 1*clk_period;
-	
+end loop;
+verify_pc_out <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+im_read <= '0';
+-----Write to file-------------------------------
+file_open(file_Output, "output_results.txt", write_mode);
+
+im_read <= '1';
+wait for 1*clk_period;
+while j < i loop
+	im_addr <= j;
+	wait for 1*clk_period; 
+	write(v_OLINE, im_readdata, right, 32);
+	writeline(file_Output, v_OLINE);
+	j := j + 1;
 end loop;
 
 
-im_read <= '0';
------Write to File------------------------------------
---wait for 1*clk_period;
---file_open(file_Output, "output_results.txt", write_mode);
---im_read <= '1';
-----wait for 1*clk_period;
---while verify_pc_out/= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" loop
---	im_addr <= pc_out_as_int;
---	verify_pc_out <= im_readdata;
---	i := i - 1;
---	wait for 1*clk_period;
-	
---end loop;
-
-
-------------------------------------------------------
+-----------------------------------------------
   reset<='0';
 
   wait for 7*clk_period;
