@@ -31,7 +31,9 @@ port(
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
 	
-	ALUcalc_operationcode : out std_logic_vector(3 downto 0 )
+	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
+
+	write_to_file : in std_logic
 );
 end ID_stage;
 
@@ -56,7 +58,8 @@ port(
 	funct : out std_logic_vector(5 downto 0);
 	r_s: out std_logic_vector (4 downto 0);
 	opcode: out std_logic_vector(5 downto 0);
-	pseudo_address : out std_logic_vector(25 downto 0)
+	pseudo_address : out std_logic_vector(25 downto 0);
+	write_to_file : in std_logic
  );
 end component;
 
@@ -116,7 +119,8 @@ port map(
 	funct         =>funct,
 	r_s           =>r_s,
 	opcode        =>s_opcode,
-	pseudo_address=>pseudo_address
+	pseudo_address=>pseudo_address,
+	write_to_file => write_to_file
 );
 
 process (instruction_loc_in) begin

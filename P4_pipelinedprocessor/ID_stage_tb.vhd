@@ -44,7 +44,9 @@ port(
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
 	
-	ALUcalc_operationcode : out std_logic_vector(3 downto 0)
+	ALUcalc_operationcode : out std_logic_vector(3 downto 0);
+
+	write_to_file : in std_logic
 );
 end component;
 
@@ -75,6 +77,8 @@ signal	s_Branch   : std_logic;
 
 signal ALUcalc_operationcode : std_logic_vector(3 downto 0);
 
+signal s_write_to_file : std_logic;
+
 begin
 
 id_s : ID_stage
@@ -104,7 +108,8 @@ port map(
   MemWrite => s_MemWrite,
   Branch   => s_Branch,
   
-  ALUcalc_operationcode => ALUcalc_operationcode
+  ALUcalc_operationcode => ALUcalc_operationcode,
+  write_to_file => s_write_to_file
 );
 
 
@@ -122,6 +127,7 @@ begin
   rst<='1';
   wait for 1*clk_period;
   rst<='0';
+wait for 1*clk_period;
   --s_instruction <= "000011 00001 00001 00001 00001 000000"
   s_wb_signal<='1';
   s_wb_addr <="00001";
@@ -159,7 +165,8 @@ begin
   s_instruction <= "10101100011000110001100011100101";
   wait for 1*clk_period;
   s_instruction <= "00010000011000110001100011100101";
-  
+  wait for 1*clk_period;
+  s_write_to_file <= '1';
 wait;
 
 end process;
