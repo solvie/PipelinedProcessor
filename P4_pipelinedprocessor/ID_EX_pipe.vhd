@@ -19,7 +19,6 @@ port(
 	d_RegDst   : in std_logic;
 	d_ALUSrc   : in std_logic;
 	d_MemtoReg : in std_logic;
-	d_RegWrite : in std_logic;
 	d_MemRead  : in std_logic;
 	d_MemWrite : in std_logic;
 	d_Branch   : in std_logic;
@@ -33,7 +32,7 @@ port(
 	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
   funct : out std_logic_vector(5 downto 0);
 	shamt : out std_logic_vector(4 downto 0);
-	r_d: out std_logic_vector (4 downto 0);
+	r_s: out std_logic_vector (4 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0);
 	
 	-- from control
@@ -48,7 +47,7 @@ port(
 	mux2_control : out std_logic;
 	mux3_control : out std_logic;
 	MemRead : out std_logic;
-	MemWrite : out std_logic;
+	MemWrite : out std_logic
  );
 end ID_EX_pipe;
 
@@ -77,8 +76,7 @@ process(reset, clock)
 	          MemRead <=d_MemRead;
 	          MemWrite <=d_MemWrite;
 	          
-	          --to-do;
-            RegWrite<='0';
+	         
         end if;
     end process;
 end;
