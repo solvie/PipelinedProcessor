@@ -2,6 +2,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use IEEE.std_logic_signed.all;
+use STD.textio.all;
+use ieee.std_logic_textio.all;
 
 entity registers is
 port(
@@ -22,13 +24,16 @@ port(
 	funct : out std_logic_vector(5 downto 0);
 	r_s: out std_logic_vector (4 downto 0);
 	opcode: out std_logic_vector(5 downto 0);
-	pseudo_address : out std_logic_vector(25 downto 0)
+	pseudo_address : out std_logic_vector(25 downto 0);
+
+	write_to_file : in std_logic
 );
 end registers;
 
 architecture arch of registers is
 type registers_body is array(0 to 31) of std_logic_vector(31 downto 0);
 signal register_block : registers_body;
+file file_Output : text;
 --https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
 begin
 process(clock)
@@ -61,4 +66,20 @@ begin
     end if;
  end if;
 end process;
+
+	write_file: PROCESS (write_to_file)
+	variable i: integer := 0;
+	variable v_OLINE: line;
+	BEGIN
+		--if write_to_file is true, loop through memory array and write all lines(even unused ones) in to the file
+		IF(write_to_file = '1')THEN
+			file_open(file_Output, "output_results_reg.txt", write_mode);
+			while i < 32 loop
+					write(v_OLINE, register_block(i), right, 32);
+					writeline(file_Output, v_OLINE);
+					i := i + 1;
+			end loop;
+		end if;
+
+	END PROCESS;
 end arch;
