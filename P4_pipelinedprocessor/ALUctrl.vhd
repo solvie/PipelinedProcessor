@@ -4,6 +4,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity ALUctrl is
     Port ( 
+        clock : in STD_LOGIC;
         opcode : in  STD_LOGIC_VECTOR (5 downto 0);
         ALUcalc_operationcode : out  STD_LOGIC_VECTOR (3 downto 0)
 		);
@@ -14,6 +15,7 @@ architecture Behavior of ALUctrl is
 
 begin
 --Codes from: https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
+  if rising_edge(clock) then
     ALUcalc_operationcode <=
 		"0000" when(opcode = "100000" or opcode = "001000" or opcode = "100011" or opcode = "101011") else  -- Add
 		"0001" when(opcode = "100010") else 						-- Subtract
@@ -32,5 +34,6 @@ begin
 		"1110" when(opcode = "000011") else							-- Shift Right Arithmetic
 		"1111" when(opcode = "000100" or opcode = "000101") else	-- Branch on Equal
 		"0000"; -- default to add
+  end if;
 		
 end Behavior;

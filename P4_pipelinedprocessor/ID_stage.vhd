@@ -19,7 +19,7 @@ port(
 	data_out_left: out std_logic_vector (31 downto 0);
 	data_out_right: out std_logic_vector (31 downto 0);
 	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
-	
+	funct : out std_logic_vector(5 downto 0);
 	shamt : out std_logic_vector(4 downto 0);
 	r_d: out std_logic_vector (4 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0);
@@ -68,7 +68,6 @@ port(
 	reset : in std_logic;
 	
 	op_code : in std_logic_vector(5 downto 0);
-	funct_code : in std_logic_vector(5 downto 0);
 	
 	RegDst   : out std_logic;
 	ALUSrc   : out std_logic;
@@ -82,7 +81,6 @@ port(
 );
 end component;
 
-signal	s_funct : std_logic_vector(5 downto 0);
 signal	s_opcode: std_logic_vector(5 downto 0);
 
 begin
@@ -91,7 +89,6 @@ port map(
 	clock =>clock,
 	reset =>reset,
 	op_code =>s_opcode,
-	funct_code =>s_funct,
 	RegDst   =>RegDst,
 	ALUSrc   =>ALUSrc,
 	MemtoReg =>MemtoReg,
@@ -117,7 +114,7 @@ port map(
 	data_out_right=>data_out_right,
 	data_out_imm  =>data_out_imm,
 	shamt         =>shamt,
-	funct         =>s_funct,
+	funct         =>funct,
 	r_d           =>r_d,
 	opcode        =>s_opcode,
 	pseudo_address=>pseudo_address
