@@ -42,8 +42,7 @@ end EX_stage_tb;
 architecture behavior of EX_stage_tb is
 component EX_stage is
 port( 
-	clock : IN std_logic;
-	
+	clock : in std_logic;
 	ALUcalc_operationcode : in std_logic_vector(3 downto 0 );
 	data_out_left: in std_logic_vector (31 downto 0);
 	data_out_right: in std_logic_vector (31 downto 0);
@@ -88,15 +87,7 @@ signal s_funct : std_logic_vector(5 downto 0);
 signal	s_shamt : std_logic_vector(4 downto 0);
 signal	s_r_s: std_logic_vector (4 downto 0);
 signal	s_pseudo_address : std_logic_vector(25 downto 0);
-	
-	-- from control
-	--RegDst   : in std_logic;
-	--ALUSrc   : in std_logic;
-	--MemtoReg : in std_logic;
-	--RegWrite : in std_logic;
-	--MemRead  : in std_logic;
-	--MemWrite : in std_logic;
-	--Branch   : in std_logic
+
 signal	s_mux1_control : std_logic;
 signal	s_mux2_control : std_logic;
 signal	s_mux3_control : std_logic;
@@ -108,14 +99,12 @@ signal s_zeroOut : STD_LOGIC;
 	
 signal s_out_mux3_control : std_logic;
 signal s_out_MemRead: std_logic;
-signal s_out_MemWrite: std_logic
+signal s_out_MemWrite: std_logic;
 
 begin
-
-ex_stage: EX_stage 
+ex_stage2: EX_stage 
 port map( 
 	clock =>clk,
-	reset =>rst,
 	
 	ALUcalc_operationcode =>s_ALUcalc_operationcode,
 	data_out_left=>s_data_out_left,
@@ -133,13 +122,13 @@ port map(
 	MemWrite => s_MemWrite,
 	
   ALUOuput =>s_ALUOuput,
-  zeroOut =>s_zeroOut
+  zeroOut =>s_zeroOut,
 	
   out_mux3_control =>s_out_mux3_control,
   out_MemRead =>s_out_MemRead,
   out_MemWrite=>s_out_MemWrite
 );
-end component;
+
 
 clk_process : process
 begin
@@ -152,9 +141,9 @@ end process;
 test_process : process
 begin
 
-  rst<='1';
+  
   wait for 1*clk_period;
-  rst<='0';
+  
   --s_instruction <= "000011 00001 00001 00001 00001 000000"
   s_mux1_control <='0';
 	s_mux2_control<='0';

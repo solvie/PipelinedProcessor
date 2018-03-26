@@ -27,14 +27,14 @@ begin
 	if (operationcode = "0010") then
 		hi <= long(63 downto 32);	  						-- Multiply
 	elsif(operationcode = "0011") then
-		hi <= STD_LOGIC_VECTOR(signed(A) rem signed(B);		-- Divide
+		hi <= STD_LOGIC_VECTOR(signed(A) rem signed(B));		-- Divide
 	end if;
 	
 	if (operationcode = "0010") then
 	lo <= long(31 downto 0);								-- Multiply
 	elsif(operationcode = "0011") then
 	lo <= STD_LOGIC_VECTOR(signed(A) rem signed(B));		-- Divide
-	
+	end if;
 
 --Codes from: https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
 	if (operationcode = "0000") then
@@ -42,36 +42,37 @@ begin
 	elsif(operationcode = "0001") then
 	alucalcresult <=STD_LOGIC_VECTOR(signed(A)-signed(B)); 		-- Subract
 	elsif (operationcode = "0101") then
-	alucalcresult <=A AND B   									-- And
+	alucalcresult <=A AND B;   									-- And
 	elsif (operationcode = "0110") then
-	alucalcresult <=A OR B   									-- OR
+	alucalcresult <=A OR B ;  									-- OR
 	elsif (operationcode = "0111") then
-	alucalcresult <=A NOR B   									-- NOR
+	alucalcresult <=A NOR B ;  									-- NOR
 	elsif (operationcode = "1000") then
-	alucalcresult <=A XOR B   									-- XOR
+	alucalcresult <=A XOR B ;  									-- XOR
 	elsif (operationcode = "1001") then
-	alucalcresult <=hi  										-- Move From Hi
+	alucalcresult <=hi;  										-- Move From Hi
 	elsif (operationcode = "1010") then 
-	alucalcresult <=lo 											-- Move From Lo
+	alucalcresult <=lo; 											-- Move From Lo
 	elsif (operationcode = "1011") then
-	alucalcresult <=STD_LOGIC_VECTOR(shift_left(signed(A), 16)) -- Load Upper Immediate
+	alucalcresult <=STD_LOGIC_VECTOR(shift_left(signed(A), 16)); -- Load Upper Immediate
 	elsif (operationcode = "1100") then
-	alucalcresult <= STD_LOGIC_VECTOR(shift_left(signed(A), to_integer(signed(B)))) 	-- Shift Left Logical
+	alucalcresult <= STD_LOGIC_VECTOR(shift_left(signed(A), to_integer(signed(B)))); 	-- Shift Left Logical
 	elsif (operationcode = "1101") then
-	alucalcresult <=STD_LOGIC_VECTOR(shift_right(signed(A), to_integer(signed(B))))   	-- Shift Right Logical
+	alucalcresult <=STD_LOGIC_VECTOR(shift_right(signed(A), to_integer(signed(B))));   	-- Shift Right Logical
 	elsif (operationcode = "1110") then
-	alucalcresult <=to_stdlogicvector(to_bitvector(A) sra to_integer(signed(B))) 	 	-- Shift Right Arithmetic
-	elsif (operationcode = "0100" and A<B)
-	alucalcresult <="00000000000000000000000000000001"  	-- Set Less Than
+	alucalcresult <=to_stdlogicvector(to_bitvector(A) sra to_integer(signed(B))); 	 	-- Shift Right Arithmetic
+	elsif (operationcode = "0100" and A<B) then
+	alucalcresult <="00000000000000000000000000000001";  	-- Set Less Than
 	else
 	alucalcresult <="00000000000000000000000000000000"; -- Default to 0
 	end if;
 	
 	if (operationcode = "1111" and A=B) then
-	zero <='1' 	-- Branch on Equal
+	zero <='1'; 	-- Branch on Equal
 	else
 	zero <='0';
   end if;
 	
-
+end if;
+end process;
 end Behavior;
