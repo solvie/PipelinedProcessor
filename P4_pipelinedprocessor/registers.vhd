@@ -20,7 +20,7 @@ port(
 	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
 	shamt : out std_logic_vector(4 downto 0);
 	funct : out std_logic_vector(5 downto 0);
-	r_d: out std_logic_vector (4 downto 0);
+	r_s: out std_logic_vector (4 downto 0);
 	opcode: out std_logic_vector(5 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0)
 );
@@ -42,9 +42,10 @@ begin
     		register_block(to_integer(unsigned(wb_addr)))<= wb_data;
 		else
 		  opcode <=instruction(31 downto 26);
-		  data_out_left<=register_block(to_integer(unsigned(instruction(25 downto 21))));
-		  data_out_right<=register_block(to_integer(unsigned(instruction(20 downto 16))));
-		  r_d<=instruction(15 downto 11);
+		  data_out_left<=register_block(to_integer(unsigned(instruction(20 downto 16))));
+		  data_out_right<=register_block(to_integer(unsigned(instruction(15 downto 11))));
+		  r_s<=instruction(25 downto 21);
+		  
 		  shamt<=instruction(10 downto 6);
 		  funct<=instruction(5 downto 0);
 		  pseudo_address<= instruction(25 downto 0);

@@ -7,12 +7,11 @@ proc AddWaves {} {
     add wave -position end sim:/ID_stage_tb/s_data_out_right
     add wave -position end sim:/ID_stage_tb/s_data_out_imm
     add wave -position end sim:/ID_stage_tb/s_shamt
-    add wave -position end sim:/ID_stage_tb/s_r_d
+    add wave -position end sim:/ID_stage_tb/s_r_s
     add wave -position end sim:/ID_stage_tb/s_pseudo_address
     add wave -position end sim:/ID_stage_tb/s_RegDst
     add wave -position end sim:/ID_stage_tb/s_ALUSrc
     add wave -position end sim:/ID_stage_tb/s_MemtoReg
-    add wave -position end sim:/ID_stage_tb/s_RegWrite
     add wave -position end sim:/ID_stage_tb/s_MemRead
     add wave -position end sim:/ID_stage_tb/s_MemWrite
     add wave -position end sim:/ID_stage_tb/s_Branch

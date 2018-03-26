@@ -12,7 +12,6 @@ port(
 	instruction_loc_out : out std_logic_vector(31 downto 0);
 	
 	-- from registers
-	wb_signal : in std_logic;
 	wb_addr : in std_logic_vector (4 downto 0);
 	wb_data : in std_logic_vector (31 downto 0);
 	
@@ -21,19 +20,18 @@ port(
 	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
 	funct : out std_logic_vector(5 downto 0);
 	shamt : out std_logic_vector(4 downto 0);
-	r_d: out std_logic_vector (4 downto 0);
+	r_s: out std_logic_vector (4 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0);
 	
 	-- from control
 	RegDst   : out std_logic;
 	ALUSrc   : out std_logic;
 	MemtoReg : out std_logic;
-	RegWrite : out std_logic;
 	MemRead  : out std_logic;
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
 	
-	op_code_alu : out std_logic_vector(5 downto 0 )
+	ALUcalc_operationcode : out std_logic_vector(3 downto 0 )
 );
 end ID_stage;
 
@@ -56,7 +54,7 @@ port(
 	
 	shamt : out std_logic_vector(4 downto 0);
 	funct : out std_logic_vector(5 downto 0);
-	r_d: out std_logic_vector (4 downto 0);
+	r_s: out std_logic_vector (4 downto 0);
 	opcode: out std_logic_vector(5 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0)
  );
@@ -67,7 +65,7 @@ port(
 	clock : in std_logic;
 	reset : in std_logic;
 	
-	op_code : in std_logic_vector(5 downto 0);
+	opcode : in std_logic_vector(5 downto 0);
 	
 	RegDst   : out std_logic;
 	ALUSrc   : out std_logic;
@@ -77,26 +75,27 @@ port(
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
 	
-	op_code_alu : out std_logic_vector(5 downto 0)
+	ALUcalc_operationcode : out std_logic_vector(3 downto 0)
 );
 end component;
 
 signal	s_opcode: std_logic_vector(5 downto 0);
+signal	s_regWrite: std_logic;
 
 begin
 ctrl : control
 port map(
 	clock =>clock,
 	reset =>reset,
-	op_code =>s_opcode,
+	opcode =>s_opcode,
 	RegDst   =>RegDst,
 	ALUSrc   =>ALUSrc,
 	MemtoReg =>MemtoReg,
-	RegWrite =>RegWrite,
+	RegWrite =>s_regWrite,
 	MemRead  =>MemRead,
 	MemWrite =>MemWrite,
 	Branch   =>Branch,
-	op_code_alu => op_code_alu
+	ALUcalc_operationcode => ALUcalc_operationcode
 );
 
 reg : registers
@@ -106,7 +105,7 @@ port map(
 	
 	instruction =>instruction,
 	
-	wb_signal  =>wb_signal,
+	wb_signal  =>s_regWrite,
 	wb_addr    =>wb_addr,
 	wb_data    =>wb_data,
 	
@@ -115,7 +114,7 @@ port map(
 	data_out_imm  =>data_out_imm,
 	shamt         =>shamt,
 	funct         =>funct,
-	r_d           =>r_d,
+	r_s           =>r_s,
 	opcode        =>s_opcode,
 	pseudo_address=>pseudo_address
 );

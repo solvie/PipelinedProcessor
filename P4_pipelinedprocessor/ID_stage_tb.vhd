@@ -25,7 +25,6 @@ port(
 	instruction_loc_out : out std_logic_vector(31 downto 0);
 	
 	-- from registers
-	wb_signal : in std_logic;
 	wb_addr : in std_logic_vector (4 downto 0);
 	wb_data : in std_logic_vector (31 downto 0);
 	
@@ -34,19 +33,18 @@ port(
 	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
 	
 	shamt : out std_logic_vector(4 downto 0);
-	r_d: out std_logic_vector (4 downto 0);
+	r_s: out std_logic_vector (4 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0);
 	
 	-- from control
 	RegDst   : out std_logic;
 	ALUSrc   : out std_logic;
 	MemtoReg : out std_logic;
-	RegWrite : out std_logic;
 	MemRead  : out std_logic;
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
 	
-	op_code_alu : out std_logic_vector(5 downto 0)
+	ALUcalc_operationcode : out std_logic_vector(3 downto 0)
 );
 end component;
 
@@ -64,7 +62,7 @@ signal	s_data_out_left: std_logic_vector (31 downto 0);
 signal	s_data_out_right: std_logic_vector (31 downto 0);
 signal	s_data_out_imm: std_logic_vector (31 downto 0); -- sign/zero extended value will come out
 signal	s_shamt : std_logic_vector(4 downto 0);
-signal	s_r_d: std_logic_vector (4 downto 0);
+signal	s_r_s: std_logic_vector (4 downto 0);
 signal	s_pseudo_address : std_logic_vector(25 downto 0);
 
 signal s_RegDst   : std_logic;
@@ -75,7 +73,7 @@ signal	s_MemRead  : std_logic;
 signal	s_MemWrite : std_logic;
 signal	s_Branch   : std_logic;
 
-signal op_code_alu : std_logic_vector(5 downto 0);
+signal ALUcalc_operationcode : std_logic_vector(3 downto 0);
 
 begin
 
@@ -88,7 +86,6 @@ port map(
 	instruction_loc_in=> instruction_loc_in,
 	instruction_loc_out=>instruction_loc_out,
 	
-	wb_signal  =>s_wb_signal,
 	wb_addr    =>s_wb_addr,
 	wb_data    =>s_wb_data,
 	
@@ -97,18 +94,17 @@ port map(
 	data_out_imm  =>s_data_out_imm,
 	
 	shamt         =>s_shamt,
-	r_d           =>s_r_d,
+	r_s           =>s_r_s,
 	pseudo_address=>s_pseudo_address,
 	
   RegDst   => s_RegDst,
   ALUSrc   => s_ALUSrc,
   MemtoReg => s_MemtoReg,
-  RegWrite => s_RegWrite,
   MemRead  => s_MemRead,
   MemWrite => s_MemWrite,
   Branch   => s_Branch,
   
-  op_code_alu => op_code_alu
+  ALUcalc_operationcode => ALUcalc_operationcode
 );
 
 
