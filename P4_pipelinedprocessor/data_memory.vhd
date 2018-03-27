@@ -5,7 +5,7 @@ USE ieee.numeric_std.all;
 use STD.textio.all;
 use ieee.std_logic_textio.all;
 
-ENTITY instruction_memory IS
+ENTITY data_memory IS
 	GENERIC(
 		ram_size : INTEGER := 8192;
 		mem_delay : time := 0 ns;
@@ -21,9 +21,9 @@ ENTITY instruction_memory IS
 		waitrequest: OUT STD_LOGIC;
 		write_to_file: in STD_LOGIC
 	);
-END instruction_memory;
+END data_memory;
 
-ARCHITECTURE rtl OF instruction_memory IS
+ARCHITECTURE rtl OF data_memory IS
 	TYPE MEM IS ARRAY(ram_size-1 downto 0) OF STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL ram_block: MEM;
 	SIGNAL read_address_reg: INTEGER RANGE 0 to ram_size-1;
