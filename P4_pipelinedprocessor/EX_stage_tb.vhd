@@ -29,7 +29,7 @@ port(
 	MemRead : in std_logic;
 	MemWrite : in std_logic;
 	
-  ALUOuput :	out STD_LOGIC_VECTOR (31 downto 0);
+  ALUOutput :	out STD_LOGIC_VECTOR (31 downto 0);
   zeroOut :	out STD_LOGIC;
 	
   out_mux3_control : out std_logic;
@@ -66,9 +66,9 @@ port(
 	MemRead : in std_logic;
 	MemWrite : in std_logic;
 	
-  ALUOuput :	out STD_LOGIC_VECTOR (31 downto 0);
+  ALUOutput :	out STD_LOGIC_VECTOR (31 downto 0);
   zeroOut :	out STD_LOGIC;
-	
+	address : out STD_LOGIC_VECTOR (31 downto 0);
   out_mux3_control : out std_logic;
   out_MemRead: out std_logic;
   out_MemWrite: out std_logic
@@ -94,9 +94,9 @@ signal	s_mux3_control : std_logic;
 signal	s_MemRead : std_logic;
 signal	s_MemWrite : std_logic;
 	
-signal s_ALUOuput : STD_LOGIC_VECTOR (31 downto 0);
+signal s_ALUOutput : STD_LOGIC_VECTOR (31 downto 0);
 signal s_zeroOut : STD_LOGIC;
-	
+signal s_address : STD_LOGIC_VECTOR (31 downto 0); 	
 signal s_out_mux3_control : std_logic;
 signal s_out_MemRead: std_logic;
 signal s_out_MemWrite: std_logic;
@@ -114,16 +114,16 @@ port map(
 	shamt =>s_shamt,
 	r_s => s_r_s,
 	pseudo_address =>s_pseudo_address,
-
+  address => s_address,
 	mux1_control =>s_mux1_control,
 	mux2_control =>s_mux2_control,
 	mux3_control =>s_mux3_control,
 	MemRead => s_MemRead,
 	MemWrite => s_MemWrite,
 	
-  ALUOuput =>s_ALUOuput,
+  ALUOutput =>s_ALUOutput,
   zeroOut =>s_zeroOut,
-	
+
   out_mux3_control =>s_out_mux3_control,
   out_MemRead =>s_out_MemRead,
   out_MemWrite=>s_out_MemWrite
@@ -150,11 +150,11 @@ begin
   s_mux3_control<='0';
 	s_MemRead<='0';
 	s_MemWrite<='0';
-	s_data_out_left <= "00000000000000000000000000001000";
+	s_data_out_left <= "00000000000000000000000000000010";
 	s_data_out_right <= "00000000000000000000000000000111";
-	s_ALUcalc_operationcode <= "0000";
+	s_ALUcalc_operationcode <= "0010";
   wait for 1*clk_period;
-  assert(s_ALUOuput = "00000000000000000000000000001111") report "error";
+  assert(s_ALUOutput = "00000000000000000000000000001110") report "error";
   wait;
 
 end process;

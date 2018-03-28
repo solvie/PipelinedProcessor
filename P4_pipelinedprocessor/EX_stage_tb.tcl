@@ -22,12 +22,13 @@ add wave -position end sim:/EX_stage_tb/s_mux3_control
 add wave -position end sim:/EX_stage_tb/s_MemRead
 add wave -position end sim:/EX_stage_tb/s_MemWrite
 	
-add wave -position end sim:/EX_stage_tb/s_ALUOuput
 add wave -position end sim:/EX_stage_tb/s_zeroOut
 	
 add wave -position end sim:/EX_stage_tb/s_out_mux3_control
 add wave -position end sim:/EX_stage_tb/s_out_MemRead
 add wave -position end sim:/EX_stage_tb/s_out_MemWrite
+add wave -position end sim:/EX_stage_tb/s_address
+add wave -position end sim:/EX_stage_tb/s_ALUOutput
 
 }
 

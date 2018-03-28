@@ -17,7 +17,6 @@ port(
 	
 	-- from control
 	d_RegDst   : in std_logic;
-	d_ALUSrc   : in std_logic;
 	d_MemtoReg : in std_logic;
 	d_MemRead  : in std_logic;
 	d_MemWrite : in std_logic;
@@ -35,14 +34,7 @@ port(
 	r_s: out std_logic_vector (4 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0);
 	
-	-- from control
-	--RegDst   : out std_logic;
-	--ALUSrc   : out std_logic;
-	--MemtoReg : out std_logic;
-	--RegWrite : out std_logic;
-	--MemRead  : out std_logic;
-	--MemWrite : out std_logic;
-	--Branch   : out std_logic
+	
 	mux1_control : out std_logic;
 	mux2_control : out std_logic;
 	mux3_control : out std_logic;

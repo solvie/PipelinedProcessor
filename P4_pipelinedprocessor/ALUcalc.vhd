@@ -41,6 +41,10 @@ begin
 	alucalcresult <=STD_LOGIC_VECTOR(signed(A)+signed(B)); 		-- Add
 	elsif(operationcode = "0001") then
 	alucalcresult <=STD_LOGIC_VECTOR(signed(A)-signed(B)); 		-- Subract
+	elsif(operationcode = "0010") then
+	alucalcresult <=lo;		-- Multiply
+	elsif(operationcode = "0011") then
+	alucalcresult <=lo;		-- Multiply
 	elsif (operationcode = "0101") then
 	alucalcresult <=A AND B;   									-- And
 	elsif (operationcode = "0110") then

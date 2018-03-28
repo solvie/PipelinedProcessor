@@ -125,10 +125,12 @@ test_process : process
 begin
 
   rst<='1';
+  
   wait for 1*clk_period;
   rst<='0';
-wait for 1*clk_period;
+  wait for 1*clk_period;
   --s_instruction <= "000011 00001 00001 00001 00001 000000"
+  s_instruction <= "00000000000000000000000000000000";
   s_wb_signal<='1';
   s_wb_addr <="00001";
 	s_wb_data <="11111111111111111111111111111111";

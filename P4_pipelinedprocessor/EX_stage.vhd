@@ -21,9 +21,9 @@ port(
 	MemRead : in std_logic;
 	MemWrite : in std_logic;
 	
-  ALUOuput :	out STD_LOGIC_VECTOR (31 downto 0);
+  ALUOutput :	out STD_LOGIC_VECTOR (31 downto 0);
   zeroOut :	out STD_LOGIC;
-	
+	address : out STD_LOGIC_VECTOR (31 downto 0);
   out_mux3_control : out std_logic;
   out_MemRead: out std_logic;
   out_MemWrite: out std_logic
@@ -55,7 +55,6 @@ signal e_ALUOpCode : std_logic_vector(3 downto 0);
 signal mux1out : std_logic_vector(31 downto 0);
 signal mux2out : std_logic_vector(31 downto 0);
 
-
 begin
 
 
@@ -70,7 +69,7 @@ Port map(
 mux2 : mux_2_to_1 
 Port map( 
     SEL => mux2_control,
-    A  => "00000000000000000000000000000000",
+    A  => data_out_imm,
     B  => data_out_right,
     Output => mux2out 
 );
@@ -82,9 +81,10 @@ port map(
     B =>mux2out,
     operationcode =>ALUcalc_operationcode,
 		zero =>zeroOut,
-		alucalcresult =>ALUOuput
+		alucalcresult =>ALUOutput
+		
  );
- 
+address <= data_out_right;
 out_mux3_control<=mux3_control;
 out_MemRead<=	MemRead;
 out_MemWrite<=	MemWrite;

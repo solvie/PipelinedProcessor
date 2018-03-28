@@ -25,7 +25,6 @@ port(
 	
 	-- from control
 	RegDst   : out std_logic;
-	ALUSrc   : out std_logic;
 	MemtoReg : out std_logic;
 	MemRead  : out std_logic;
 	MemWrite : out std_logic;
