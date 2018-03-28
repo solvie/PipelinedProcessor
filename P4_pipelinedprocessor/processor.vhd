@@ -19,13 +19,9 @@ port(
 	readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
 	waitrequest: OUT STD_LOGIC;
 	
-	-- FOR EX STAGE
-	ALUOutput :	out STD_LOGIC_VECTOR (31 downto 0);
-	zeroOut :	out STD_LOGIC;
-	address_ex : out STD_LOGIC_VECTOR (31 downto 0);
-	out_mux3_control : out std_logic;
-	out_MemRead: out std_logic;
-	out_MemWrite: out std_logic
+	-- FOR MEM
+	readdata_m: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
+	waitrequest_m: OUT STD_LOGIC
 );
 end processor;
 
@@ -165,6 +161,40 @@ PORT(
 );
 end component;
 
+component EX_MEM_pipe is
+port( 
+	reset : IN std_logic;
+	clock : IN std_logic;
+	
+	ALUOuput :	in STD_LOGIC_VECTOR (31 downto 0);
+	zeroOut :	in STD_LOGIC;
+	mux3_control : in std_logic;
+	MemRead : in std_logic;
+	MemWrite : in std_logic;
+	address : in std_logic_vector(31 downto 0);
+	
+	mem_writedata: out STD_LOGIC_VECTOR (31 DOWNTO 0);
+	mem_address: out INTEGER;-- RANGE 0 TO ram_size-1;
+	mem_memwrite: out STD_LOGIC;
+	mem_memread: out STD_LOGIC;
+	
+	mem_write_to_file: out STD_LOGIC
+ );
+end component;
+
+component data_memory is
+	PORT (
+		clock: IN STD_LOGIC;
+		writedata: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
+		address: IN INTEGER;-- RANGE 0 TO ram_size-1;
+		memwrite: IN STD_LOGIC;
+		memread: IN STD_LOGIC;
+		readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
+		waitrequest: OUT STD_LOGIC;
+		write_to_file: in STD_LOGIC
+	);
+end component;
+
 -- signals connecting components together
 -- IF
 signal mux_input_to_stage1: std_logic_vector(31 downto 0);
@@ -214,6 +244,21 @@ signal p_s_3_mux2_control : std_logic;
 signal p_s_3_mux3_control : std_logic;
 signal p_s_3_MemRead : std_logic;
 signal p_s_3_MemWrite : std_logic;
+
+-- EX_MEM
+signal ALUOuput_s_p : STD_LOGIC_VECTOR (31 downto 0);
+signal zeroOut_s_p : STD_LOGIC;
+signal mux3_control_s_p : std_logic;
+signal MemRead_s_p : std_logic;
+signal MemWrite_s_p : std_logic;
+signal address_s_p : std_logic_vector(31 downto 0);
+--MEM
+
+signal writedata_p_s:  STD_LOGIC_VECTOR (31 DOWNTO 0);
+signal address_p_s:  INTEGER;-- RANGE 0 TO ram_size-1;
+signal memwrite_p_s:  STD_LOGIC;
+signal memread_p_s:  STD_LOGIC;
+signal write_to_file_p_s:  STD_LOGIC;
 
 begin
 
@@ -335,13 +380,49 @@ port map(
 	MemRead=>p_s_3_MemRead,
 	MemWrite=>p_s_3_MemWrite,
 	
-	ALUOutput =>ALUOutput,
-	zeroOut =>zeroOut,
-	address =>address_ex,
-	out_mux3_control =>out_mux3_control,
-	out_MemRead=>out_MemRead,
-	out_MemWrite=>out_MemWrite
+	ALUOutput =>ALUOuput_s_p,
+	zeroOut =>zeroOut_s_p,
+	address =>address_s_p,
+	out_mux3_control =>mux3_control_s_p,
+	out_MemRead=>MemRead_s_p,
+	out_MemWrite=>MemWrite_s_p
 );
+
+exmem_pipe: EX_MEM_pipe
+port map(
+	reset =>reset,
+	clock =>clock,
+	
+	ALUOuput=>ALUOuput_s_p,
+	zeroOut =>zeroOut_s_p,
+	mux3_control =>mux3_control_s_p,
+	MemRead =>MemRead_s_p,
+	MemWrite =>MemWrite_s_p,
+	address =>address_s_p,
+	
+	mem_writedata=>writedata_p_s,
+	mem_address=>address_p_s,
+	mem_memwrite=>memwrite_p_s,
+	mem_memread=>memread_p_s,
+	
+	mem_write_to_file=>write_to_file_p_s
+);
+
+mem_s: data_memory
+port map(
+	clock=>clock,
+	
+	writedata=>writedata_p_s,
+	address=>address_p_s,
+	memwrite=>memwrite_p_s,
+	memread=>memread_p_s,
+	write_to_file=>write_to_file_p_s,
+	
+	readdata=>readdata_m,
+	waitrequest=>waitrequest_m
+
+);
+
 
 	
 end;
