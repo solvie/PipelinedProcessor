@@ -11,19 +11,21 @@ GENERIC(
 port(
 	clock : IN std_logic;
 	reset : IN std_logic;
-
-	mux_input_to_stage1 : IN std_logic_vector(31 downto 0); -- temp, should come from ex/mem
-	mux_select_sig_to_stage1 : IN std_logic;-- temp, should come from mem stage
-	instruction_out : OUT std_logic_vector(31 downto 0); -- temp CONNECT TO ID stage
-	instr_loc_out : OUT std_logic_vector(31 downto 0); -- temp CONNECT TO ID stage
-	
 	-- The ports below are only exposed so that instruction memory can be loaded externally before the processor starts its business
 	writedata: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
 	address: IN INTEGER RANGE 0 TO ram_size-1;
-	memwrite: IN STD_LOGIC;
-	memread: IN STD_LOGIC;
+	mem_write: IN STD_LOGIC;
+	mem_read: IN STD_LOGIC;
 	readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-	waitrequest: OUT STD_LOGIC
+	waitrequest: OUT STD_LOGIC;
+	
+	-- FOR EX STAGE
+	ALUOutput :	out STD_LOGIC_VECTOR (31 downto 0);
+	zeroOut :	out STD_LOGIC;
+	address_ex : out STD_LOGIC_VECTOR (31 downto 0);
+	out_mux3_control : out std_logic;
+	out_MemRead: out std_logic;
+	out_MemWrite: out std_logic
 );
 end processor;
 
@@ -42,18 +44,18 @@ port(
 end component;
 
 component instruction_memory IS
-	GENERIC(
-		ram_size : INTEGER := 1024
-	);
-	PORT (
-		clock: IN STD_LOGIC;
-		writedata: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
-		address: IN INTEGER RANGE 0 TO ram_size-1;
-		memwrite: IN STD_LOGIC;
-		memread: IN STD_LOGIC;
-		readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-		waitrequest: OUT STD_LOGIC
-	);
+GENERIC(
+	ram_size : INTEGER := 1024
+);
+PORT (
+	clock: IN STD_LOGIC;
+	writedata: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
+	address: IN INTEGER RANGE 0 TO ram_size-1;
+	memwrite: IN STD_LOGIC;
+	memread: IN STD_LOGIC;
+	readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
+	waitrequest: OUT STD_LOGIC
+);
 END component;
 
 component IF_ID_pipe is
@@ -67,9 +69,151 @@ PORT(
 );
 end component;
 
-signal mux_output_stage_1: std_logic_vector(31 downto 0);
+component ID_stage is
+PORT(
+	clock : IN std_logic;
+	reset : IN std_logic;
+	instruction: in std_logic_vector(31 downto 0);
+	instruction_loc_in : in std_logic_vector(31 downto 0);
+	instruction_loc_out : out std_logic_vector(31 downto 0);
+	-- from registers
+	wb_addr : in std_logic_vector (4 downto 0);
+	wb_data : in std_logic_vector (31 downto 0);
+	data_out_left: out std_logic_vector (31 downto 0);
+	data_out_right: out std_logic_vector (31 downto 0);
+	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
+	funct : out std_logic_vector(5 downto 0);
+	shamt : out std_logic_vector(4 downto 0);
+	r_s: out std_logic_vector (4 downto 0);
+	pseudo_address : out std_logic_vector(25 downto 0);
+	-- from control
+	RegDst   : out std_logic;
+	ALUSrc   : out std_logic;
+	MemtoReg : out std_logic;
+	MemRead  : out std_logic;
+	MemWrite : out std_logic;
+	Branch   : out std_logic;
+	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
+	write_to_file : in std_logic
+);
+end component;
+
+component ID_EX_pipe is
+PORT(
+	clock : IN std_logic;
+	reset : IN std_logic;
+	--id output
+	instruction_loc_in : in std_logic_vector(31 downto 0);
+	instruction_loc_out : out std_logic_vector(31 downto 0);
+	d_data_out_left: in std_logic_vector (31 downto 0);
+	d_data_out_right: in std_logic_vector (31 downto 0);
+	d_data_out_imm: in std_logic_vector (31 downto 0); -- sign/zero extended value will come out
+	d_funct : in std_logic_vector(5 downto 0);
+	d_shamt : in std_logic_vector(4 downto 0);
+	d_r_s: in std_logic_vector (4 downto 0);
+	d_pseudo_address : in std_logic_vector(25 downto 0);
+	-- from control
+	d_RegDst   : in std_logic;
+	d_MemtoReg : in std_logic;
+	d_MemRead  : in std_logic;
+	d_MemWrite : in std_logic;
+	d_Branch   : in std_logic;
+	d_ALUcalc_operationcode : in std_logic_vector(3 downto 0 );
+	-- EX
+	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
+	data_out_left: out std_logic_vector (31 downto 0);
+	data_out_right: out std_logic_vector (31 downto 0);
+	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
+	funct : out std_logic_vector(5 downto 0);
+	shamt : out std_logic_vector(4 downto 0);
+	r_s: out std_logic_vector (4 downto 0);
+	pseudo_address : out std_logic_vector(25 downto 0);
+	-- from control
+	mux1_control : out std_logic;
+	mux2_control : out std_logic;
+	mux3_control : out std_logic;
+	MemRead : out std_logic;
+	MemWrite : out std_logic
+);
+end component;
+
+component EX_stage is
+PORT(
+	clock : IN std_logic;
+	
+	ALUcalc_operationcode : in std_logic_vector(3 downto 0 );
+	data_out_left: in std_logic_vector (31 downto 0);
+	data_out_right: in std_logic_vector (31 downto 0);
+	data_out_imm: in std_logic_vector (31 downto 0); -- sign/zero extended value will come out
+	funct : in std_logic_vector(5 downto 0);
+	shamt : in std_logic_vector(4 downto 0);
+	r_s: in std_logic_vector (4 downto 0);
+	pseudo_address : in std_logic_vector(25 downto 0);
+	
+	mux1_control : in std_logic;
+	mux2_control : in std_logic;
+	mux3_control : in std_logic;
+	MemRead : in std_logic;
+	MemWrite : in std_logic;
+	
+	ALUOutput :	out STD_LOGIC_VECTOR (31 downto 0);
+	zeroOut :	out STD_LOGIC;
+	address : out STD_LOGIC_VECTOR (31 downto 0);
+	out_mux3_control : out std_logic;
+	out_MemRead: out std_logic;
+	out_MemWrite: out std_logic
+);
+end component;
+
+-- signals connecting components together
+-- IF
+signal mux_input_to_stage1: std_logic_vector(31 downto 0);
+signal mux_select_sig_to_stage1: std_logic;
+
+--IF-> IF_ID
+signal instr_loc_s_p: std_logic_vector(31 downto 0);
 signal pc_out_as_int: Integer;
-signal instruction: std_logic_vector(31 downto 0);
+signal instruction_s_p: std_logic_vector(31 downto 0);
+--IF_ID-> ID
+signal instr_loc_p_s: std_logic_vector(31 downto 0);
+signal instruction_out_p_s: std_logic_vector(31 downto 0);
+-- ID 
+signal wb_addr: std_logic_vector(4 downto 0);
+signal wb_data: std_logic_vector(31 downto 0);
+signal write_to_file: std_logic;
+--ID -> ID_EX
+signal instr_loc_p_s_2: std_logic_vector(31 downto 0);
+signal instruction_out_p_s_2: std_logic_vector(31 downto 0);
+
+-- ID_EX
+signal s_p_2_data_out_left:  std_logic_vector (31 downto 0);
+signal s_p_2_data_out_right:  std_logic_vector (31 downto 0);
+signal s_p_2_data_out_imm:  std_logic_vector (31 downto 0); -- sign/zero extended value will come out
+signal s_p_2_funct :  std_logic_vector(5 downto 0);
+signal s_p_2_shamt :  std_logic_vector(4 downto 0);
+signal s_p_2_r_s:  std_logic_vector (4 downto 0);
+signal s_p_2_pseudo_address :  std_logic_vector(25 downto 0);
+signal s_p_2_RegDst   :  std_logic;
+signal s_p_2_MemtoReg :  std_logic;
+signal s_p_2_MemRead  :  std_logic;
+signal s_p_2_MemWrite :  std_logic;
+signal s_p_2_Branch   :  std_logic;
+signal s_p_2_ALUcalc_operationcode :  std_logic_vector(3 downto 0 );
+-- EX
+signal p_s_3_ALUcalc_operationcode : std_logic_vector(3 downto 0 );
+signal p_s_3_data_out_left: std_logic_vector (31 downto 0);
+signal p_s_3_data_out_right: std_logic_vector (31 downto 0);
+signal p_s_3_data_out_imm: std_logic_vector (31 downto 0); -- sign/zero extended value will come out
+signal p_s_3_funct : std_logic_vector(5 downto 0);
+signal p_s_3_shamt : std_logic_vector(4 downto 0);
+signal p_s_3_r_s: std_logic_vector (4 downto 0);
+signal p_s_3_pseudo_address : std_logic_vector(25 downto 0);
+
+signal p_s_3_mux1_control : std_logic;
+signal p_s_3_mux2_control : std_logic;
+signal p_s_3_mux3_control : std_logic;
+signal p_s_3_MemRead : std_logic;
+signal p_s_3_MemWrite : std_logic;
 
 begin
 
@@ -78,9 +222,9 @@ port map(
     clock => clock,
     writedata => writedata,
     address => address,
-    memwrite => memwrite,
-    memread => memread,
-    readdata => instruction,
+    memwrite => mem_write,
+    memread => mem_read,
+    readdata => instruction_s_p,
     waitrequest => waitrequest
 );
 
@@ -90,7 +234,7 @@ port map(
     reset => reset,
     mux_input_to_stage1 => mux_input_to_stage1,
     mux_select_sig_to_stage1 => mux_select_sig_to_stage1,
-    mux_output_stage_1 => mux_output_stage_1,
+    mux_output_stage_1 => instr_loc_s_p,
     pc_out_as_int => pc_out_as_int
 );
 
@@ -98,12 +242,106 @@ ifid_pipe: IF_ID_pipe
 port map(
     clock => clock,
     reset => reset,
-	instruction_in => instruction,
-	instruction_out => instruction_out,
-	instr_loc_in => mux_output_stage_1,
-	instr_loc_out =>instr_loc_out
+	instruction_in => instruction_s_p,
+	instruction_out => instr_loc_p_s,
+	instr_loc_in => instr_loc_s_p,
+	instr_loc_out => instruction_out_p_s
 );
 
+id_s: ID_stage
+port map(
+	-- inputs
+    clock => clock,
+    reset => reset,
+	instruction => instruction_out_p_s,
+	instruction_loc_in => instr_loc_p_s,
+	instruction_loc_out => instruction_out_p_s_2,
+	wb_addr => wb_addr,
+	wb_data => wb_data,
+	-- from registers 
+	data_out_left=>s_p_2_data_out_left,
+	data_out_right=>s_p_2_data_out_right,
+	data_out_imm=>s_p_2_data_out_imm,
+	funct =>s_p_2_funct,
+	shamt =>s_p_2_shamt,
+	r_s=>s_p_2_r_s,
+	pseudo_address=>s_p_2_pseudo_address,
+	-- from control
+	RegDst   =>s_p_2_RegDst,
+	ALUSrc  => s_p_2_MemtoReg,
+	MemtoReg=> s_p_2_MemRead,
+	MemRead  =>s_p_2_MemRead,
+	MemWrite =>s_p_2_MemWrite,
+	Branch   =>s_p_2_Branch,
+	ALUcalc_operationcode =>s_p_2_ALUcalc_operationcode,
+	write_to_file =>write_to_file
+);
+
+idex_pipe: ID_EX_pipe
+port map(
+	clock =>clock,
+	reset=>reset,
+	instruction_loc_in =>instr_loc_p_s_2,
+	instruction_loc_out =>instruction_out_p_s_2,
+	--id output
+    d_data_out_left=>s_p_2_data_out_left,
+	d_data_out_right=>s_p_2_data_out_right,
+	d_data_out_imm=>s_p_2_data_out_imm,
+	d_funct=>s_p_2_funct,
+	d_shamt=>s_p_2_shamt,
+	d_r_s=>s_p_2_r_s,
+	d_pseudo_address=>s_p_2_pseudo_address,
+	-- from control
+	d_RegDst  =>s_p_2_RegDst,
+	d_MemtoReg =>s_p_2_MemtoReg,
+	d_MemRead  =>s_p_2_MemRead,
+	d_MemWrite =>s_p_2_MemWrite,
+	d_Branch=>s_p_2_Branch,
+	d_ALUcalc_operationcode =>s_p_2_ALUcalc_operationcode,
+	-- EX
+	ALUcalc_operationcode =>p_s_3_ALUcalc_operationcode,
+	data_out_left=>p_s_3_data_out_left,
+	data_out_right=>p_s_3_data_out_right,
+	data_out_imm=>p_s_3_data_out_imm,
+	funct =>p_s_3_funct,
+	shamt=>p_s_3_shamt,
+	r_s=>p_s_3_r_s,
+	pseudo_address=>p_s_3_pseudo_address,
+	-- from control
+	mux1_control =>p_s_3_mux1_control,
+	mux2_control =>p_s_3_mux2_control,
+	mux3_control =>p_s_3_mux3_control,
+	MemRead=>p_s_3_MemRead,
+	MemWrite =>p_s_3_MemWrite
+);
+
+
+ex_s: EX_stage
+port map(
+	clock => clock,
+	
+	ALUcalc_operationcode=>p_s_3_ALUcalc_operationcode,
+	data_out_left=>p_s_3_data_out_left,
+	data_out_right=>p_s_3_data_out_right,
+	data_out_imm=>p_s_3_data_out_imm,
+	funct =>p_s_3_funct,
+	shamt =>p_s_3_shamt,
+	r_s=>p_s_3_r_s,
+	pseudo_address=>p_s_3_pseudo_address,
+	
+	mux1_control =>p_s_3_mux1_control,
+	mux2_control =>p_s_3_mux2_control,
+	mux3_control =>p_s_3_mux3_control,
+	MemRead=>p_s_3_MemRead,
+	MemWrite=>p_s_3_MemWrite,
+	
+	ALUOutput =>ALUOutput,
+	zeroOut =>zeroOut,
+	address =>address_ex,
+	out_mux3_control =>out_mux3_control,
+	out_MemRead=>out_MemRead,
+	out_MemWrite=>out_MemWrite
+);
 
 	
 end;
