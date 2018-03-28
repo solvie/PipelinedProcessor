@@ -19,6 +19,7 @@ port(
 	readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
 	waitrequest: OUT STD_LOGIC;
 	
+	write_to_file: IN std_logic;
 	-- FOR MEM
 	readdata_m: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
 	waitrequest_m: OUT STD_LOGIC
@@ -84,7 +85,7 @@ PORT(
 	pseudo_address : out std_logic_vector(25 downto 0);
 	-- from control
 	RegDst   : out std_logic;
-	ALUSrc   : out std_logic;
+	--ALUSrc   : out std_logic;
 	MemtoReg : out std_logic;
 	MemRead  : out std_logic;
 	MemWrite : out std_logic;
@@ -163,7 +164,6 @@ end component;
 
 component EX_MEM_pipe is
 port( 
-	reset : IN std_logic;
 	clock : IN std_logic;
 	
 	ALUOuput :	in STD_LOGIC_VECTOR (31 downto 0);
@@ -177,21 +177,26 @@ port(
 	mem_address: out INTEGER;-- RANGE 0 TO ram_size-1;
 	mem_memwrite: out STD_LOGIC;
 	mem_memread: out STD_LOGIC;
-	
-	mem_write_to_file: out STD_LOGIC
+	mux3_control_out : out std_logic;
+  	zeroOut_out: out std_logic
  );
 end component;
 
-component data_memory is
+component MEM_stage is
 	PORT (
-		clock: IN STD_LOGIC;
-		writedata: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
-		address: IN INTEGER;-- RANGE 0 TO ram_size-1;
-		memwrite: IN STD_LOGIC;
-		memread: IN STD_LOGIC;
-		readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-		waitrequest: OUT STD_LOGIC;
-		write_to_file: in STD_LOGIC
+	clock : IN std_logic;
+	--reset : IN std_logic;
+	ALUOuput_mem_in: in STD_LOGIC_VECTOR (31 downto 0);
+	address: IN INTEGER;
+	MemRead : in std_logic;
+	MemWrite : in std_logic;
+
+	ALUOut: out STD_LOGIC_VECTOR (31 downto 0);
+	mem_out: out STD_LOGIC_VECTOR (31 DOWNTO 0);
+	--instruction_in: IN std_logic_vector(31 downto 0);
+	--instruction_out: OUT std_logic_vector(31 downto 0);
+
+	write_to_file : in std_logic
 	);
 end component;
 
@@ -210,7 +215,7 @@ signal instruction_out_p_s: std_logic_vector(31 downto 0);
 -- ID 
 signal wb_addr: std_logic_vector(4 downto 0);
 signal wb_data: std_logic_vector(31 downto 0);
-signal write_to_file: std_logic;
+--signal write_to_file: std_logic;
 --ID -> ID_EX
 signal instr_loc_p_s_2: std_logic_vector(31 downto 0);
 signal instruction_out_p_s_2: std_logic_vector(31 downto 0);
@@ -259,6 +264,12 @@ signal address_p_s:  INTEGER;-- RANGE 0 TO ram_size-1;
 signal memwrite_p_s:  STD_LOGIC;
 signal memread_p_s:  STD_LOGIC;
 signal write_to_file_p_s:  STD_LOGIC;
+
+--temp 
+signal mux3_control_out_temp: std_logic; 
+signal zeroOut_out_temp: std_logic; 
+signal ALUOut_temp: STD_LOGIC_VECTOR (31 downto 0);
+signal mem_out_temp: STD_LOGIC_VECTOR (31 downto 0);
 
 begin
 
@@ -313,7 +324,7 @@ port map(
 	pseudo_address=>s_p_2_pseudo_address,
 	-- from control
 	RegDst   =>s_p_2_RegDst,
-	ALUSrc  => s_p_2_MemtoReg,
+	--ALUSrc  => s_p_2_MemtoReg,
 	MemtoReg=> s_p_2_MemRead,
 	MemRead  =>s_p_2_MemRead,
 	MemWrite =>s_p_2_MemWrite,
@@ -390,7 +401,7 @@ port map(
 
 exmem_pipe: EX_MEM_pipe
 port map(
-	reset =>reset,
+	--reset =>reset,
 	clock =>clock,
 	
 	ALUOuput=>ALUOuput_s_p,
@@ -404,22 +415,24 @@ port map(
 	mem_address=>address_p_s,
 	mem_memwrite=>memwrite_p_s,
 	mem_memread=>memread_p_s,
-	
-	mem_write_to_file=>write_to_file_p_s
+	mux3_control_out =>mux3_control_out_temp,--does not do anything yet
+  	zeroOut_out => zeroOut_out_temp--does not do anything yet
 );
 
-mem_s: data_memory
+mem_s: MEM_stage
 port map(
-	clock=>clock,
-	
-	writedata=>writedata_p_s,
-	address=>address_p_s,
-	memwrite=>memwrite_p_s,
-	memread=>memread_p_s,
-	write_to_file=>write_to_file_p_s,
-	
-	readdata=>readdata_m,
-	waitrequest=>waitrequest_m
+	clock => clock,	
+	ALUOuput_mem_in => writedata_p_s,
+	address => address_p_s,
+	MemRead => memread_p_s,
+	MemWrite => memwrite_p_s,
+
+	ALUOut => ALUOut_temp,
+	mem_out => mem_out_temp,
+	--instruction_in => write_to_file_p_s
+	--instruction_out => write_to_file_p_s
+
+	write_to_file => write_to_file_p_s
 
 );
 

@@ -70,7 +70,8 @@ process(reset, clock)
 			MemRead <=d_MemRead;
 			MemWrite <=d_MemWrite;
 	        instruction_loc_out<=instruction_loc_in;
-	         
+
+	     
         end if;
     end process;
 end;
