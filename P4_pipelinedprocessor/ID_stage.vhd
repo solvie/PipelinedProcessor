@@ -82,6 +82,7 @@ port(
 end component;
 
 signal	s_opcode: std_logic_vector(5 downto 0);
+signal	s_funct: std_logic_vector(5 downto 0);
 signal	s_regWrite: std_logic;
 
 begin
@@ -89,9 +90,8 @@ ctrl : control
 port map(
 	clock =>clock,
 	reset =>reset,
-	opcode =>s_opcode,
+	opcode =>s_funct,
 	RegDst   =>RegDst,
-	ALUSrc   =>ALUSrc,
 	MemtoReg =>MemtoReg,
 	RegWrite =>s_regWrite,
 	MemRead  =>MemRead,
@@ -115,7 +115,7 @@ port map(
 	data_out_right=>data_out_right,
 	data_out_imm  =>data_out_imm,
 	shamt         =>shamt,
-	funct         =>funct,
+	funct         =>s_funct,
 	r_s           =>r_s,
 	opcode        =>s_opcode,
 	pseudo_address=>pseudo_address,

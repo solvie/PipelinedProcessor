@@ -9,31 +9,34 @@ entity ALUcalc is
     B : in  STD_LOGIC_VECTOR (31 downto 0);
 		operationcode : in STD_LOGIC_VECTOR (3 downto 0);
 		zero : out STD_LOGIC := '0';
-		alucalcresult : out STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000"
+		alucalcresult : out STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000001"
     );
 end ALUcalc;
 
 architecture Behavior of ALUcalc is
 
-	signal long : STD_LOGIC_VECTOR (63 downto 0);
-	signal hi : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
-	signal lo : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
+--	signal long : STD_LOGIC_VECTOR (63 downto 0);
+	signal hi_signal : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
+	signal lo_signal : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
 	
 begin
   process(clock)
+ 	variable long : STD_LOGIC_VECTOR (63 downto 0);
+	variable hi : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
+	variable lo : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
 begin
   if rising_edge(clock) then
-    long <= STD_LOGIC_VECTOR(signed(A)*signed(B));
+    long := STD_LOGIC_VECTOR(signed(A)*signed(B));
 	if (operationcode = "0010") then
-		hi <= long(63 downto 32);	  						-- Multiply
+		hi := long(63 downto 32);	  						-- Multiply
+		lo := long(31 downto 0);								-- Multiply
+		hi_signal <= long(63 downto 32);
+		lo_signal<= long(31 downto 0);
 	elsif(operationcode = "0011") then
-		hi <= STD_LOGIC_VECTOR(signed(A) rem signed(B));		-- Divide
-	end if;
-	
-	if (operationcode = "0010") then
-	lo <= long(31 downto 0);								-- Multiply
-	elsif(operationcode = "0011") then
-	lo <= STD_LOGIC_VECTOR(signed(A) rem signed(B));		-- Divide
+		lo := STD_LOGIC_VECTOR(signed(A) / signed(B));		-- Divide
+		hi := STD_LOGIC_VECTOR(signed(A) rem signed(B));	
+		hi_signal <= hi;
+		lo_signal <= lo;
 	end if;
 
 --Codes from: https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
@@ -41,10 +44,10 @@ begin
 	alucalcresult <=STD_LOGIC_VECTOR(signed(A)+signed(B)); 		-- Add
 	elsif(operationcode = "0001") then
 	alucalcresult <=STD_LOGIC_VECTOR(signed(A)-signed(B)); 		-- Subract
-	elsif(operationcode = "0010") then
-	alucalcresult <=lo;		-- Multiply
+	elsif (operationcode = "0010") then
+		alucalcresult <=lo; 	
 	elsif(operationcode = "0011") then
-	alucalcresult <=lo;		-- Multiply
+		alucalcresult <=lo; 	
 	elsif (operationcode = "0101") then
 	alucalcresult <=A AND B;   									-- And
 	elsif (operationcode = "0110") then

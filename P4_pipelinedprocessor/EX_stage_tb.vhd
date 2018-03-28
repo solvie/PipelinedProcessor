@@ -150,11 +150,25 @@ begin
   s_mux3_control<='0';
 	s_MemRead<='0';
 	s_MemWrite<='0';
-	s_data_out_left <= "00000000000000000000000000000010";
-	s_data_out_right <= "00000000000000000000000000000111";
-	s_ALUcalc_operationcode <= "0010";
+	s_data_out_left <= "00000000000000000000000000000101";
+	s_data_out_right <= "00000000000000000000000000000010";
+	s_ALUcalc_operationcode <= "0011";
   wait for 1*clk_period;
-  assert(s_ALUOutput = "00000000000000000000000000001110") report "error";
+  assert(s_ALUOutput = "00000000000000000000000000000010") report "error";
+  s_ALUcalc_operationcode <= "1001";
+  wait for 1*clk_period;
+  assert(s_ALUOutput = "00000000000000000000000000000001") report "error";
+  s_ALUcalc_operationcode <= "1010";
+  wait for 1*clk_period;
+  assert(s_ALUOutput = "00000000000000000000000000000010") report "error";
+  
+  --slt
+  s_data_out_left <= "00000000000000000000000000000001";
+	s_data_out_right <= "00000000000000000000000000000010";
+  s_ALUcalc_operationcode <= "0100";
+  wait for 1*clk_period;
+  assert(s_ALUOutput = "00000000000000000000000000000001") report "error slt";
+  
   wait;
 
 end process;

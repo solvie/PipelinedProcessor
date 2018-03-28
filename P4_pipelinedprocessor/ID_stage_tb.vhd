@@ -3,10 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity ID_stage_tb is
-port( 
-	clock : IN std_logic;
-	reset : IN std_logic;
-	
+port( 	
 	instruction: in std_logic_vector(31 downto 0);
 	instruction_loc_in : in std_logic_vector(31 downto 0);
 	instruction_loc_out : out std_logic_vector(31 downto 0)
@@ -38,7 +35,6 @@ port(
 	
 	-- from control
 	RegDst   : out std_logic;
-	ALUSrc   : out std_logic;
 	MemtoReg : out std_logic;
 	MemRead  : out std_logic;
 	MemWrite : out std_logic;
@@ -51,7 +47,8 @@ port(
 end component;
 
 signal rst : std_logic := '0';
-signal clk : std_logic := '0';
+signal clock : std_logic := '0';
+
 constant clk_period : time := 1 ns;
 
 signal s_instruction : std_logic_vector(31 downto 0);
@@ -68,7 +65,6 @@ signal	s_r_s: std_logic_vector (4 downto 0);
 signal	s_pseudo_address : std_logic_vector(25 downto 0);
 
 signal s_RegDst   : std_logic;
-signal	s_ALUSrc   : std_logic;
 signal	s_MemtoReg : std_logic;
 signal	s_RegWrite : std_logic;
 signal	s_MemRead  : std_logic;
@@ -83,7 +79,7 @@ begin
 
 id_s : ID_stage
 port map(
-	clock =>clk,
+	clock =>clock,
 	reset =>rst,
 	
 	instruction =>s_instruction,
@@ -102,7 +98,7 @@ port map(
 	pseudo_address=>s_pseudo_address,
 	
   RegDst   => s_RegDst,
-  ALUSrc   => s_ALUSrc,
+
   MemtoReg => s_MemtoReg,
   MemRead  => s_MemRead,
   MemWrite => s_MemWrite,
@@ -113,11 +109,11 @@ port map(
 );
 
 
-clk_process : process
+clock_process : process
 begin
-  clk <= '0';
+  clock <= '0';
   wait for clk_period/2;
-  clk <= '1';
+  clock <= '1';
   wait for clk_period/2;
 end process;
 

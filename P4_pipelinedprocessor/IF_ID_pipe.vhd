@@ -20,7 +20,7 @@ begin
 process(reset, clock)
     begin
         if reset = '1' then
-            instruction_out     <= (others => '0'); 
+            instruction_out  <= (others => '0'); 
             instr_loc_out	 <= (others => '0');
         elsif rising_edge(clock) then
             instruction_out   <= instruction_in;

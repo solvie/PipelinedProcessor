@@ -1,6 +1,6 @@
 proc AddWaves {} {
 	#Add waves we're interested in to the Wave window
-    add wave -position end sim:/ID_stage_tb/clk
+    add wave -position end sim:/ID_stage_tb/clock
     add wave -position end sim:/ID_stage_tb/rst
 		add wave -position end sim:/ID_stage_tb/s_instruction
     add wave -position end sim:/ID_stage_tb/s_data_out_left
@@ -10,7 +10,7 @@ proc AddWaves {} {
     add wave -position end sim:/ID_stage_tb/s_r_s
     add wave -position end sim:/ID_stage_tb/s_pseudo_address
     add wave -position end sim:/ID_stage_tb/s_RegDst
-    add wave -position end sim:/ID_stage_tb/s_ALUSrc
+
     add wave -position end sim:/ID_stage_tb/s_MemtoReg
     add wave -position end sim:/ID_stage_tb/s_MemRead
     add wave -position end sim:/ID_stage_tb/s_MemWrite
@@ -35,7 +35,7 @@ vcom ID_stage_tb.vhd
 vsim ID_stage_tb
 
 ;# Generate a clock with 1ns period
-force -deposit clk 0 0 ns, 1 0.5 ns -repeat 1 ns
+force -deposit clock 0 0 ns, 1 0.5 ns -repeat 1 ns
 
 ;# Add the waves
  AddWaves
