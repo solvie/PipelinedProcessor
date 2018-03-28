@@ -6,7 +6,10 @@ entity ID_EX_pipe is
 port( 
 	clock : IN std_logic;
 	reset : IN std_logic;
---id output
+	--id output
+	instruction_loc_in : in std_logic_vector(31 downto 0);
+	instruction_loc_out: out std_logic_vector(31 downto 0);
+
 	d_data_out_left: in std_logic_vector (31 downto 0);
 	d_data_out_right: in std_logic_vector (31 downto 0);
 	d_data_out_imm: in std_logic_vector (31 downto 0); -- sign/zero extended value will come out
@@ -21,7 +24,6 @@ port(
 	d_MemRead  : in std_logic;
 	d_MemWrite : in std_logic;
 	d_Branch   : in std_logic;
-	
 	d_ALUcalc_operationcode : in std_logic_vector(3 downto 0 );
 	
 	-- EX
@@ -29,7 +31,7 @@ port(
 	data_out_left: out std_logic_vector (31 downto 0);
 	data_out_right: out std_logic_vector (31 downto 0);
 	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
-  funct : out std_logic_vector(5 downto 0);
+	funct : out std_logic_vector(5 downto 0);
 	shamt : out std_logic_vector(4 downto 0);
 	r_s: out std_logic_vector (4 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0);
@@ -63,11 +65,11 @@ process(reset, clock)
             -- from control
 
             mux1_control <= d_Branch;
-	          mux2_control <= d_RegDst;
-	 	        mux3_control <= d_MemtoReg;
-	          MemRead <=d_MemRead;
-	          MemWrite <=d_MemWrite;
-	          
+			mux2_control <= d_RegDst;
+			mux3_control <= d_MemtoReg;
+			MemRead <=d_MemRead;
+			MemWrite <=d_MemWrite;
+	        instruction_loc_out<=instruction_loc_in;
 	         
         end if;
     end process;
