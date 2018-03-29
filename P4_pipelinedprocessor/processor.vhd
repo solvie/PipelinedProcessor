@@ -404,9 +404,9 @@ port map(
     clock => clock,
     reset => reset,
 	instruction_in => instruction_s_p,
-	instruction_out => instr_loc_p_s,
+	instruction_out => instruction_out_p_s,
 	instr_loc_in => instr_loc_s_p,
-	instr_loc_out => instruction_out_p_s
+	instr_loc_out => instr_loc_p_s
 );
 
 id_s: ID_stage
@@ -414,8 +414,8 @@ port map(
 	-- inputs
     clock => clock,
     reset => reset,
-	instruction => instr_loc_p_s,
-	instruction_loc_in => instruction_out_p_s,
+	instruction => instruction_out_p_s,
+	instruction_loc_in => instr_loc_p_s,
 	instruction_loc_out => instruction_out_p_s_2,
 	wb_addr => "00000",
 	wb_data => "00100000000000010000000000000011",
