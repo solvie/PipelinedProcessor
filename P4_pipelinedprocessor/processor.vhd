@@ -160,7 +160,7 @@ PORT(
 	out_MemRead: out std_logic;
 	out_MemWrite: out std_logic;
 	pseudo_address_out: out std_logic_vector(25 downto 0);
-	r_s_out: std_logic_vector (4 downto 0)
+	r_s_out: out std_logic_vector (4 downto 0)
 );
 end component;
 
