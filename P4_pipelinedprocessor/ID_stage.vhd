@@ -12,6 +12,7 @@ port(
 	instruction_loc_out : out std_logic_vector(31 downto 0);
 
 	-- from registers
+	wb_signal : in std_logic;
 	wb_addr : in std_logic_vector (4 downto 0);
 	wb_data : in std_logic_vector (31 downto 0);
 
@@ -45,10 +46,9 @@ port(
 
 	instruction : in std_logic_vector(31 downto 0);
 
-	wb_signal : in std_logic;
 	wb_addr : in std_logic_vector (4 downto 0);
 	wb_data : in std_logic_vector (31 downto 0);
-
+	wb_signal: in std_logic;
 	data_out_left: out std_logic_vector (31 downto 0);
 	data_out_right: out std_logic_vector (31 downto 0);
 	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
@@ -94,7 +94,7 @@ port map(
 	opcode =>s_funct,
 	RegDst   =>RegDst,
 	MemtoReg =>MemtoReg,
-	RegWrite =>s_regWrite,
+
 	MemRead  =>MemRead,
 	MemWrite =>MemWrite,
 	Branch   =>Branch,
@@ -107,8 +107,7 @@ port map(
 	reset =>reset,
 
 	instruction =>instruction,
-
-	wb_signal  =>s_regWrite,
+	wb_signal =>wb_signal,
 	wb_addr    =>wb_addr,
 	wb_data    =>wb_data,
 
