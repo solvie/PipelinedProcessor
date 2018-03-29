@@ -54,7 +54,7 @@ BEGIN
 	else
 		readdata <= ram_block(address);
 	end if;
-	
+
 	END PROCESS;
 
 

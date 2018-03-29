@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity MEM_stage is
-port( 
+port(
 	clock : IN std_logic;
 	ALUOuput_mem_in: in STD_LOGIC_VECTOR (31 downto 0);
 	address: IN INTEGER;
@@ -54,13 +54,12 @@ MEM_s : data_memory
 port map(
 	clock => clock,
 	writedata => ALUOuput_mem_in,
-	address => address, 
+	address => address,
 	memwrite => MemWrite,
 	memread => MemRead,
 	readdata => mem_out,
 	waitrequest => waitrequest,
 	write_to_file => write_to_file
-	
 );
 
 --process (instruction_in) begin
@@ -74,5 +73,9 @@ end process;
 process (r_s_in) begin
 	r_s_out <= r_s_in;
 end process;
-	
+
+process (mux3mux3_control_in) BEGIN
+	mux3_control_out<=mux3_control_in;
+end process;
+
 end;

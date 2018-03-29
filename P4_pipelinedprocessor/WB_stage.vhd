@@ -17,7 +17,7 @@ end WB_stage;
 
 architecture Behavioral of WB_stage is
 begin
-    Output_wb <= memory_input when (SEL = '1') else memory_input;
+    Output_wb <= memory_input when (SEL = '1') else ALU_input;
     pseudo_address_out <= pseudo_address_in;
     r_s_out <= r_s_in;
 end Behavioral;

@@ -54,24 +54,26 @@ process(reset, clock)
         if reset = '1' then
 
         elsif rising_edge(clock) then
-            ALUcalc_operationcode<=d_ALUcalc_operationcode;
-            data_out_left <=d_data_out_left;
-            data_out_right<=d_data_out_right;
-            data_out_imm<=d_data_out_imm;
-            --funct<=d_funct;
-            shamt<=d_shamt;
-            r_s<=d_r_s;
-            pseudo_address<=d_pseudo_address;
-            -- from control
+				else
+				ALUcalc_operationcode<=d_ALUcalc_operationcode;
+				data_out_left <=d_data_out_left;
+				data_out_right<=d_data_out_right;
+				data_out_imm<=d_data_out_imm;
+				--funct<=d_funct;
+				shamt<=d_shamt;
+				r_s<=d_r_s;
+				pseudo_address<=d_pseudo_address;
+				-- from control
 
-            mux1_control <= d_Branch;
-						mux2_control <= d_RegDst;
-						mux3_control <= d_MemtoReg;
-						MemRead <=d_MemRead;
-						MemWrite <=d_MemWrite;
-	        	instruction_loc_out<=instruction_loc_in;
+				mux1_control <= d_Branch;
+				mux2_control <= d_RegDst;
+				mux3_control <= d_MemtoReg;
+				MemRead <=d_MemRead;
+				MemWrite <=d_MemWrite;
+				instruction_loc_out<=instruction_loc_in;
 
 
         end if;
+
     end process;
 end;

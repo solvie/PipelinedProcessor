@@ -47,7 +47,7 @@ begin
 		end if;
 	  if (reset = '1') then
 	    --reset all registers
-			register_block<=(others=>"00000000000000000000000000000000"); 
+			register_block<=(others=>"00000000000000000000000000000000");
 				data_out_left<="00000000000000000000000000000000";
 	      data_out_right<="00000000000000000000000000000000";
        	data_out_imm<="00000000000000000000000000000000";
@@ -90,6 +90,7 @@ end process;
 					writeline(file_Output, v_OLINE);
 					i := i + 1;
 			end loop;
+			file_close(file_Output);
 		end if;
 
 	END PROCESS;

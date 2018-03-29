@@ -222,9 +222,9 @@ component MEM_WB_pipe is
 	reset : IN std_logic;
 	mem_in : IN std_logic_vector(31 downto 0); -- memory from data memory in
 	mem_out : OUT std_logic_vector(31 downto 0); -- memory from data memory out
-	ALU_in : IN std_logic_vector(31 downto 0); -- EX ALU in 
+	ALU_in : IN std_logic_vector(31 downto 0); -- EX ALU in
 	ALU_out : OUT std_logic_vector(31 downto 0); --EX ALU out
-	--instruction_in : IN std_logic_vector(31 downto 0); -- instruction in 
+	--instruction_in : IN std_logic_vector(31 downto 0); -- instruction in
 	--instruction_out : OUT std_logic_vector(31 downto 0); -- instruction out
     --sel_sig_in : IN std_logic; -- select signal for mux in WB stage in
     --sel_sig_out : OUT std_logic; -- select signal for mux in WB stage out
@@ -352,6 +352,8 @@ signal wb_signal_temp: std_logic := '1';
 
 
 
+
+
 --
 begin
 
@@ -427,7 +429,7 @@ port map(
 	-- from control
 	RegDst   =>s_p_2_RegDst,
 	--ALUSrc  => s_p_2_MemtoReg,
-	MemtoReg=> s_p_2_MemRead,
+	MemtoReg=> s_p_2_MemtoReg,
 	MemRead  =>s_p_2_MemRead,
 	MemWrite =>s_p_2_MemWrite,
 	Branch   =>s_p_2_Branch,
@@ -559,9 +561,9 @@ port map(
     mux3_control_out => mux3_control_out_p_s_5,
 	mem_in => mem_out_s_p_4, -- memory from data memory in
 	mem_out => mem_out_p_s_5,  -- memory from data memory out
-	ALU_in => ALUOut_s_p_4, -- EX ALU in 
+	ALU_in => ALUOut_s_p_4, -- EX ALU in
 	ALU_out => ALUOut_p_s_5, --EX ALU out
-	--instruction_in : IN std_logic_vector(31 downto 0); -- instruction in 
+	--instruction_in : IN std_logic_vector(31 downto 0); -- instruction in
 	--instruction_out : OUT std_logic_vector(31 downto 0); -- instruction out
     --sel_sig_in => mux3_control_out_s_p_4, -- select signal for mux in WB stage in
     --sel_sig_out : OUT std_logic -- select signal for mux in WB stage out
