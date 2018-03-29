@@ -16,7 +16,8 @@ ENTITY instruction_memory IS
 		memwrite: IN STD_LOGIC;
 		memread: IN STD_LOGIC;
 		readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-		waitrequest: OUT STD_LOGIC
+		waitrequest: OUT STD_LOGIC;
+		data_ready: in STD_LOGIC
 	);
 END instruction_memory;
 
@@ -38,6 +39,7 @@ BEGIN
 			END LOOP;
 		end if;
 
+
 		--This is the actual synthesizable SRAM block
 		IF (clock'event AND clock = '1') THEN
 			IF (0<=address AND address<=ram_size-1) THEN
@@ -47,8 +49,15 @@ BEGIN
 			END IF;
 		--read_address_reg <= address;
 		END IF;
+	if(data_ready = '0') then
+		readdata <= std_logic_vector(to_unsigned(0,32));
+	else
+		readdata <= ram_block(address);
+	end if;
+	
 	END PROCESS;
-	readdata <= ram_block(address);
+
+
 
 
 	--The waitrequest signal is used to vary response time in simulation

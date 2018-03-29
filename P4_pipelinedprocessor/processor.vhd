@@ -22,7 +22,8 @@ port(
 	write_to_file: IN std_logic;
 	-- FOR MEM
 	readdata_m: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-	waitrequest_m: OUT STD_LOGIC
+	waitrequest_m: OUT STD_LOGIC;
+	data_ready: in STD_LOGIC
 );
 end processor;
 
@@ -51,7 +52,8 @@ PORT (
 	memwrite: IN STD_LOGIC;
 	memread: IN STD_LOGIC;
 	readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-	waitrequest: OUT STD_LOGIC
+	waitrequest: OUT STD_LOGIC;
+	data_ready: in STD_LOGIC
 );
 END component;
 
@@ -336,20 +338,31 @@ signal r_s_p_s_5: std_logic_vector (4 downto 0);
 --temp
 signal zeroOut_out_temp: STD_LOGIC_VECTOR (25 downto 0);
 
+signal mem_address: INTEGER;
+
 
 
 --
 begin
 
+--process
+--begin
+--if(data_ready='1') then
+--mem_address <= pc_out_as_int;
+--else
+--mem_address <= address;
+--end process;
+
 LoadToInstMem: instruction_memory
 port map(
     clock => clock,
     writedata => writedata,
-    address => address,
+    address => mem_address,
     memwrite => mem_write,
     memread => mem_read,
     readdata => instruction_s_p,
-    waitrequest => waitrequest
+    waitrequest => waitrequest,
+    data_ready => data_ready
 );
 
 if_s: IF_stage

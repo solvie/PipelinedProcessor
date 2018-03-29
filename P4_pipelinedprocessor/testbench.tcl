@@ -4,7 +4,7 @@ proc AddWaves {} {
     add wave -position end sim:/testbench/reset
     add wave -position end sim:/testbench/im_read
     #add wave -position end sim:/Overall_tb/im_readdata
-    add wave -position end sim:/testbench/temp_readdata
+    add wave -position end sim:/testbench/im_writedata
     #add wave -position end sim:/testbench/pc_out_as_int
 
 }
@@ -46,8 +46,8 @@ vsim testbench
 force -deposit clock 0 0 ns, 1 0.5 ns -repeat 1 ns
 
 ;# Add the waves
- AddWaves
-;#AddAll
+# AddWaves
+AddAll
 
 ;# Run for 50ns
 run 50ns
