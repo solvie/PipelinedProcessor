@@ -14,8 +14,13 @@ port(
 	mem_out: out STD_LOGIC_VECTOR (31 DOWNTO 0);
 	--instruction_in: IN std_logic_vector(31 downto 0);
 	--instruction_out: OUT std_logic_vector(31 downto 0);
-
-	write_to_file : in std_logic
+	mux3_control_in : in std_logic;
+	mux3_control_out: out std_logic;
+	write_to_file : in std_logic;
+	pseudo_address_in : in std_logic_vector(25 downto 0);
+	pseudo_address_out : out std_logic_vector(25 downto 0);
+	r_s_in: in std_logic_vector(4 downto 0);
+	r_s_out: out std_logic_vector(4 downto 0)
 );
 end MEM_stage;
 
@@ -59,11 +64,15 @@ port map(
 );
 
 --process (instruction_in) begin
---	instruction_out <= instruction_in;
+	--instruction_out <= instruction_in;
 --end process;
 
 process (ALUOuput_mem_in) begin
 	ALUOut <= ALUOuput_mem_in;
+end process;
+
+process (r_s_in) begin
+	r_s_out <= r_s_in;
 end process;
 	
 end;

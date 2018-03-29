@@ -26,7 +26,9 @@ port(
 	address : out STD_LOGIC_VECTOR (31 downto 0);
   out_mux3_control : out std_logic;
   out_MemRead: out std_logic;
-  out_MemWrite: out std_logic
+  out_MemWrite: out std_logic;
+  pseudo_address_out: out std_logic_vector(25 downto 0);
+  r_s_out: out std_logic_vector (4 downto 0)
 );
 end EX_stage;
 
@@ -88,5 +90,8 @@ address <= data_out_right;
 out_mux3_control<=mux3_control;
 out_MemRead<=	MemRead;
 out_MemWrite<=	MemWrite;
+pseudo_address_out <= pseudo_address;
+r_s_out <= r_s;
+
 
 end;

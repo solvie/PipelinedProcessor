@@ -110,7 +110,7 @@ im_read <= '0';
 		i := i + 1;
 		wait for 1*clk_period;
 	end loop;
-
+file_close(file_VECTORS);
 	im_addr <= i;
 	im_writedata <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 
@@ -171,7 +171,7 @@ reset<='0';
 
   wait for 1*clk_period;
   mux_select_sig_to_stage1<= '1';
-
+  im_write_to_file <= '1';
 
 wait;
 end process;

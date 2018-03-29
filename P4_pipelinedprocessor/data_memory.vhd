@@ -86,6 +86,7 @@ BEGIN
 					i := i + 1;
 
 			end loop;
+			file_close(file_Output);
 		end if;
 
 	END PROCESS;

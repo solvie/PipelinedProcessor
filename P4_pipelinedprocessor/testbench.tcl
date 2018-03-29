@@ -4,7 +4,7 @@ proc AddWaves {} {
     add wave -position end sim:/testbench/reset
     add wave -position end sim:/testbench/im_read
     #add wave -position end sim:/Overall_tb/im_readdata
-    #add wave -position end sim:/testbench/verify_pc_out
+    add wave -position end sim:/testbench/temp_readdata
     #add wave -position end sim:/testbench/pc_out_as_int
 
 }
@@ -37,6 +37,7 @@ vcom ID_EX_pipe.vhd
 vcom control.vhd
 vcom processor.vhd
 vcom MEM_stage.vhd
+vcom WB_stage.vhd
 
 ;# Start simulation
 vsim testbench

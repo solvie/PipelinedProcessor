@@ -13,14 +13,18 @@ entity EX_MEM_pipe is
 	MemRead : in std_logic;
 	MemWrite : in std_logic;
 	address : in std_logic_vector(31 downto 0);
+  pseudo_address : in std_logic_vector(25 downto 0);
 
 	mem_writedata: out STD_LOGIC_VECTOR (31 DOWNTO 0);
 	mem_address: out INTEGER range 0 to 8191; -- RANGE 0 TO ram_size-1
 	mem_memwrite: out STD_LOGIC;
 	mem_memread: out STD_LOGIC;
 	mux3_control_out : out std_logic;
-  zeroOut_out: out std_logic;
-	mem_write_to_file: out STD_LOGIC
+ -- zeroOut_out: out std_logic;
+	mem_write_to_file: out STD_LOGIC;
+  mem_pseudo_address : out std_logic_vector(25 downto 0);
+  r_s_in : in std_logic_vector(4 downto 0);
+  r_s_out: out std_logic_vector(4 downto 0)
  );
 end EX_MEM_pipe;
 
@@ -35,7 +39,9 @@ process(clock)
             mem_memwrite<='0';
             mem_memread<='0';
             mux3_control_out <= '0';
-            zeroOut_out <= '0';
+           -- zeroOut_out <= '0';
+            mem_pseudo_address <="00000000000000000000000000";
+            r_s_out <= (others => '0');
         end if;
         if rising_edge(clock) then
             mem_writedata <=ALUOuput;
@@ -43,7 +49,9 @@ process(clock)
            	mem_memwrite<=MemWrite;
            	mem_memread<=MemRead;
             mux3_control_out <= mux3_control;
-            zeroOut_out <= zeroOut;
+         --   zeroOut_out <= zeroOut;
+            mem_pseudo_address <= pseudo_address;
+            r_s_out <= r_s_in;
         end if;
     end process;
 end;
