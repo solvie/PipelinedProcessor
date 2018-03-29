@@ -121,7 +121,7 @@ PORT(
 	data_out_left: out std_logic_vector (31 downto 0);
 	data_out_right: out std_logic_vector (31 downto 0);
 	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
-	funct : out std_logic_vector(5 downto 0);
+--	funct : out std_logic_vector(5 downto 0);
 	shamt : out std_logic_vector(4 downto 0);
 	r_s: out std_logic_vector (4 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0);
