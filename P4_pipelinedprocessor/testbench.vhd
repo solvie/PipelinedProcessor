@@ -70,7 +70,7 @@ port map(
 	address =>im_addr,
 	mem_write => im_write,
 	mem_read => im_read,
-	readdata => im_readdata,
+	readdata => im_writedata,
 	waitrequest => im_waitrequest,
 
 	write_to_file=> im_write_to_file,

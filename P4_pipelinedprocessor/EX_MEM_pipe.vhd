@@ -44,14 +44,15 @@ process(clock)
             r_s_out <= (others => '0');
         end if;
         if rising_edge(clock) then
-            mem_writedata <=ALUOuput;
-	          mem_address<= to_integer(unsigned(address));
-           	mem_memwrite<=MemWrite;
-           	mem_memread<=MemRead;
-            mux3_control_out <= mux3_control;
-         --   zeroOut_out <= zeroOut;
-            mem_pseudo_address <= pseudo_address;
-            r_s_out <= r_s_in;
+
         end if;
+        mem_writedata <=ALUOuput;
+        mem_address<= to_integer(unsigned(address(13 downto 0)));
+        mem_memwrite<=MemWrite;
+        mem_memread<=MemRead;
+        mux3_control_out <= mux3_control;
+     --   zeroOut_out <= zeroOut;
+        mem_pseudo_address <= pseudo_address;
+        r_s_out <= r_s_in;
     end process;
 end;
