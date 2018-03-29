@@ -9,7 +9,7 @@ entity ALUcalc is
     B : in  STD_LOGIC_VECTOR (31 downto 0);
 		operationcode : in STD_LOGIC_VECTOR (3 downto 0);
 		zero : out STD_LOGIC := '0';
-		alucalcresult : out STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000001"
+		alucalcresult : out STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000"
     );
 end ALUcalc;
 

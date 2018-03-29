@@ -79,7 +79,7 @@ PORT(
 	data_out_left: out std_logic_vector (31 downto 0);
 	data_out_right: out std_logic_vector (31 downto 0);
 	data_out_imm: out std_logic_vector (31 downto 0); -- sign/zero extended value will come out
-	funct : out std_logic_vector(5 downto 0);
+	--funct : out std_logic_vector(5 downto 0);
 	shamt : out std_logic_vector(4 downto 0);
 	r_s: out std_logic_vector (4 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0);
@@ -105,7 +105,7 @@ PORT(
 	d_data_out_left: in std_logic_vector (31 downto 0);
 	d_data_out_right: in std_logic_vector (31 downto 0);
 	d_data_out_imm: in std_logic_vector (31 downto 0); -- sign/zero extended value will come out
-	d_funct : in std_logic_vector(5 downto 0);
+	--d_funct : in std_logic_vector(5 downto 0);
 	d_shamt : in std_logic_vector(4 downto 0);
 	d_r_s: in std_logic_vector (4 downto 0);
 	d_pseudo_address : in std_logic_vector(25 downto 0);
@@ -142,7 +142,7 @@ PORT(
 	data_out_left: in std_logic_vector (31 downto 0);
 	data_out_right: in std_logic_vector (31 downto 0);
 	data_out_imm: in std_logic_vector (31 downto 0); -- sign/zero extended value will come out
-	funct : in std_logic_vector(5 downto 0);
+	--funct : in std_logic_vector(5 downto 0);
 	shamt : in std_logic_vector(4 downto 0);
 	r_s: in std_logic_vector (4 downto 0);
 	pseudo_address : in std_logic_vector(25 downto 0);
@@ -224,7 +224,7 @@ signal instruction_out_p_s_2: std_logic_vector(31 downto 0);
 signal s_p_2_data_out_left:  std_logic_vector (31 downto 0);
 signal s_p_2_data_out_right:  std_logic_vector (31 downto 0);
 signal s_p_2_data_out_imm:  std_logic_vector (31 downto 0); -- sign/zero extended value will come out
-signal s_p_2_funct :  std_logic_vector(5 downto 0);
+--signal s_p_2_funct :  std_logic_vector(5 downto 0);
 signal s_p_2_shamt :  std_logic_vector(4 downto 0);
 signal s_p_2_r_s:  std_logic_vector (4 downto 0);
 signal s_p_2_pseudo_address :  std_logic_vector(25 downto 0);
@@ -239,7 +239,7 @@ signal p_s_3_ALUcalc_operationcode : std_logic_vector(3 downto 0 );
 signal p_s_3_data_out_left: std_logic_vector (31 downto 0);
 signal p_s_3_data_out_right: std_logic_vector (31 downto 0);
 signal p_s_3_data_out_imm: std_logic_vector (31 downto 0); -- sign/zero extended value will come out
-signal p_s_3_funct : std_logic_vector(5 downto 0);
+--signal p_s_3_funct : std_logic_vector(5 downto 0);
 signal p_s_3_shamt : std_logic_vector(4 downto 0);
 signal p_s_3_r_s: std_logic_vector (4 downto 0);
 signal p_s_3_pseudo_address : std_logic_vector(25 downto 0);
@@ -318,7 +318,7 @@ port map(
 	data_out_left=>s_p_2_data_out_left,
 	data_out_right=>s_p_2_data_out_right,
 	data_out_imm=>s_p_2_data_out_imm,
-	funct =>s_p_2_funct,
+--	funct =>s_p_2_funct,
 	shamt =>s_p_2_shamt,
 	r_s=>s_p_2_r_s,
 	pseudo_address=>s_p_2_pseudo_address,
@@ -343,7 +343,6 @@ port map(
     d_data_out_left=>s_p_2_data_out_left,
 	d_data_out_right=>s_p_2_data_out_right,
 	d_data_out_imm=>s_p_2_data_out_imm,
-	d_funct=>s_p_2_funct,
 	d_shamt=>s_p_2_shamt,
 	d_r_s=>s_p_2_r_s,
 	d_pseudo_address=>s_p_2_pseudo_address,
@@ -359,7 +358,7 @@ port map(
 	data_out_left=>p_s_3_data_out_left,
 	data_out_right=>p_s_3_data_out_right,
 	data_out_imm=>p_s_3_data_out_imm,
-	funct =>p_s_3_funct,
+	--funct =>p_s_3_funct,
 	shamt=>p_s_3_shamt,
 	r_s=>p_s_3_r_s,
 	pseudo_address=>p_s_3_pseudo_address,
@@ -380,7 +379,7 @@ port map(
 	data_out_left=>p_s_3_data_out_left,
 	data_out_right=>p_s_3_data_out_right,
 	data_out_imm=>p_s_3_data_out_imm,
-	funct =>p_s_3_funct,
+	--funct =>p_s_3_funct,
 	shamt =>p_s_3_shamt,
 	r_s=>p_s_3_r_s,
 	pseudo_address=>p_s_3_pseudo_address,
