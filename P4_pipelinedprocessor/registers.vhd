@@ -56,6 +56,15 @@ begin
        	r_s<="00000";
        	opcode<="000000";
        	pseudo_address <="00000000000000000000000000";
+		elsif ( instruction ="UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU") THEN
+			data_out_left<="00000000000000000000000000000000";
+			data_out_right<="00000000000000000000000000000000";
+			data_out_imm<="00000000000000000000000000000000";
+			shamt <="00000";
+			funct <="000000";
+			r_s<="00000";
+			opcode<="000000";
+			pseudo_address <="00000000000000000000000000";
 		else
 		  opcode <=instruction(31 downto 26);
 		  data_out_left<=register_block(to_integer(unsigned(instruction(20 downto 16))));

@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity IF_stage is
-port( 
+port(
 	clock : IN std_logic;
 	reset : IN std_logic;
 	mux_input_to_stage1 : IN std_logic_vector(31 downto 0); -- this will come from the EX/MEM buffer
@@ -15,7 +15,7 @@ end IF_stage;
 
 architecture behavior of IF_stage is
 component adder32 is
-port( 
+port(
 	input1: in std_logic_vector(31 downto 0); -- input
 	input2: in std_logic_vector(31 downto 0); -- will be hardcoded to 4 from outside
 	result: out std_logic_vector(31 downto 0) -- output
@@ -23,7 +23,7 @@ port(
 end component;
 
 component register32 is
-port( 
+port(
 	rst: in std_logic; -- reset
 	clk: in std_logic;
 	ld: in std_logic; -- load
@@ -32,7 +32,7 @@ port(
 end component;
 
 component mux_2_to_1 is
-Port ( 
+Port (
 	SEL : in  STD_LOGIC;
         A   : in  STD_LOGIC_VECTOR (31 downto 0);
         B   : in  STD_LOGIC_VECTOR (31 downto 0);
@@ -42,12 +42,12 @@ end component;
 
 signal load : std_logic := '1';
 signal adder_out : std_logic_vector(31 downto 0);
---signal four : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(4,32));
-signal one : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(1,32));
+signal four : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(4,32));
+--signal one : std_logic_vector(31 downto 0) := std_logic_vector(to_unsigned(100,32));
 signal pc_out : std_logic_vector(31 downto 0);
 
 begin
-pc: register32 
+pc: register32
 port map(
 	clk => clock,
 	rst => reset,
@@ -56,7 +56,7 @@ port map(
 	q => pc_out
 );
 
-adder: adder32 
+adder: adder32
 port map(
 	input1 => pc_out,
  	input2 => one,
@@ -74,5 +74,5 @@ port map(
 process(pc_out) begin
 	pc_out_as_int<= to_integer(unsigned(pc_out));
 end process;
-	
+
 end;

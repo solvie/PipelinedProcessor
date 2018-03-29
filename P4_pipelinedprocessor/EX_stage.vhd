@@ -53,7 +53,6 @@ component mux_2_to_1 is
     );
 end component;
 
-signal e_ALUOpCode : std_logic_vector(3 downto 0);
 signal mux1out : std_logic_vector(31 downto 0);
 signal mux2out : std_logic_vector(31 downto 0);
 

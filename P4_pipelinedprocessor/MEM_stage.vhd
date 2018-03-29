@@ -74,7 +74,7 @@ process (r_s_in) begin
 	r_s_out <= r_s_in;
 end process;
 
-process (mux3mux3_control_in) BEGIN
+process (mux3_control_in) BEGIN
 	mux3_control_out<=mux3_control_in;
 end process;
 

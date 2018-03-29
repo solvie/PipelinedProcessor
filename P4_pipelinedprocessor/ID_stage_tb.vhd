@@ -22,7 +22,7 @@ port(
 	instruction_loc_out : out std_logic_vector(31 downto 0);
 
 	-- from registers
-	wb_signal : in std_logic; 
+	wb_signal : in std_logic;
 	wb_addr : in std_logic_vector (4 downto 0);
 	wb_data : in std_logic_vector (31 downto 0);
 
@@ -127,41 +127,52 @@ begin
   rst<='0';
 	s_wb_signal<='0';
   --s_instruction <= "000011 00001 00001 00001 00001 000000"
-  s_instruction <= "00000000000000000000000000000000";
+--  s_instruction <= "00000000000000000000000000000000";
 
 
   wait for 1*clk_period;
   s_instruction <= "00001100001000010000100001000000";
-
-
-  wait for 1*clk_period;
-  s_instruction <= "00011100011000110001100011000001";
-
-  wait for 1*clk_period;
-  s_instruction <= "00001100001000010000100001000000";
-
-  wait for 1*clk_period;
-  s_instruction <= "00001100001000010000100001000000";
-
-  wait for 1*clk_period;
-  s_wb_signal<='1';
-  s_wb_addr <="00011";
+	s_wb_signal<='1';
+	s_wb_addr <="00011";
 	s_wb_data <="11111111111111111111111111111111";
-	s_instruction <= "00011100011000110001100011000000";
-  wait for 1*clk_period;
-  s_wb_signal<='0';
-  s_instruction <= "00011100011000110001100011100101";
-  wait for 1*clk_period;
-  s_instruction <= "10001000011000110001100011100101";
+	wait for 1*clk_period;
+  s_instruction <= "00001100001000010000100001000001";
+	s_wb_signal<='1';
+	s_wb_addr <="00100";
+	s_wb_data <="11111111111111111111111111111111";
+	wait for 1*clk_period;
+  s_instruction <= "00001100001000010000100001000010";
+	s_wb_signal<='1';
+	s_wb_addr <="00101";
+	s_wb_data <="11111111111111111111111111111111";
+--  wait for 1*clk_period;
+--  s_instruction <= "00011100011000110001100011000001";
 
-  wait for 1*clk_period;
-  s_instruction <= "00000000011000110001100011100101";
-  wait for 1*clk_period;
-  s_instruction <= "10001100011000110001100011100101";
-  wait for 1*clk_period;
-  s_instruction <= "10101100011000110001100011100101";
-  wait for 1*clk_period;
-  s_instruction <= "00010000011000110001100011100101";
+--  wait for 1*clk_period;
+--  s_instruction <= "00001100001000010000100001000000";
+
+--  wait for 1*clk_period;
+--  s_instruction <= "00001100001000010000100001000000";
+
+--  wait for 1*clk_period;
+--  s_wb_signal<='1';
+--  s_wb_addr <="00011";
+--	s_wb_data <="11111111111111111111111111111111";
+--	s_instruction <= "00011100011000110001100011000000";
+--  wait for 1*clk_period;
+--  s_wb_signal<='0';
+--  s_instruction <= "00011100011000110001100011100101";
+--  wait for 1*clk_period;
+--  s_instruction <= "10001000011000110001100011100101";
+--
+--  wait for 1*clk_period;
+--  s_instruction <= "00000000011000110001100011100101";
+--  wait for 1*clk_period;
+--  s_instruction <= "10001100011000110001100011100101";
+--  wait for 1*clk_period;
+--  s_instruction <= "10101100011000110001100011100101";
+--  wait for 1*clk_period;
+--  s_instruction <= "00010000011000110001100011100101";
   wait for 1*clk_period;
   s_write_to_file <= '1';
 wait;

@@ -29,9 +29,7 @@ port(
 
 	-- FOR MEM
 	readdata_m: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-	waitrequest_m: OUT STD_LOGIC;
-	data_ready: in std_logic
-	
+	waitrequest_m: OUT STD_LOGIC
 );
 end component;
 
@@ -58,8 +56,6 @@ signal temp_readdata: STD_LOGIC_VECTOR (31 DOWNTO 0);
 signal tempp_waitrequest: std_logic;
 
 signal im_write_to_file: std_logic;
-
-signal data_ready_m: std_logic;
 file file_VECTORS : text;
 file file_Output : text;
 
@@ -70,7 +66,7 @@ port map(
 	clock => clock,
 	reset => reset,
 	-- The ports below are only exposed so that instruction memory can be loaded externally before the processor starts its business
-	writedata => im_writedata,
+	writedata => im_readdata,
 	address =>im_addr,
 	mem_write => im_write,
 	mem_read => im_read,
@@ -81,8 +77,7 @@ port map(
 
 	-- FOR MEM
 	readdata_m =>temp_readdata,
-	waitrequest_m => tempp_waitrequest,
-	data_ready => data_ready_m
+	waitrequest_m => tempp_waitrequest
 );
 
 clk_process : process
@@ -101,7 +96,6 @@ variable i: integer := 0;
 variable j: integer := 0;
 
 begin
-data_ready_m <='0';
 wait until rising_edge(clock);
 im_write_to_file <= '0';
 im_read <= '1';
@@ -116,17 +110,12 @@ im_read <= '0';
 		i := i + 1;
 		wait for 1*clk_period;
 	end loop;
-	im_write <= '0';
-	wait for 1*clk_period;
 file_close(file_VECTORS);
-wait for 2*clk_period;
-data_ready_m <='1';
-im_addr <= 0;
-	--im_addr <= i;
-	--im_writedata <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+	im_addr <= i;
+	im_writedata <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 
-	--wait for 1*clk_period;
-	--im_write <= '0';
+	wait for 1*clk_period;
+	im_write <= '0';
 	--i := i - 1;
 --	im_addr <= 0;
 
@@ -144,8 +133,8 @@ im_addr <= 0;
 --reading instructinon mem using pc
 
 reset<='1';
-mux_select_sig_to_stage1<= '1';
-mux_input_to_stage1 <= std_logic_vector(to_unsigned(0,32));
+--mux_select_sig_to_stage1<= '1';
+--mux_input_to_stage1 <= std_logic_vector(to_unsigned(0,32));
 wait for 1*clk_period;
 reset<='0';
 
@@ -175,14 +164,13 @@ reset<='0';
 
 
 -----------------------------------------------
-  --reset<='0';
+  reset<='0';
 
-  --wait for 7*clk_period;
-  --mux_select_sig_to_stage1<= '0';
+  wait for 1*clk_period;
+  mux_select_sig_to_stage1<= '0';
 
-  --wait for 1*clk_period;
-  --mux_select_sig_to_stage1<= '1';
-  wait for 20*clk_period;
+  wait for 1*clk_period;
+  mux_select_sig_to_stage1<= '1';
   im_write_to_file <= '1';
 
 wait;

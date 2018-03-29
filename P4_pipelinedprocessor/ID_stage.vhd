@@ -82,11 +82,19 @@ port(
 end component;
 
 signal	s_opcode: std_logic_vector(5 downto 0) :="000000";
-
+signal s_wb_signal: std_logic;
 signal	s_funct: std_logic_vector(5 downto 0):="000000";
 signal	s_regWrite: std_logic;
 
 begin
+process (clock) begin
+if(wb_signal ='1' or s_RegWrite ='1') then
+  s_wb_signal <= '1';
+else
+	 s_wb_signal <= '0';
+end if;
+end process;
+
 ctrl : control
 port map(
 	clock =>clock,
@@ -107,7 +115,7 @@ port map(
 	reset =>reset,
 
 	instruction =>instruction,
-	wb_signal =>wb_signal,
+	wb_signal =>s_wb_signal,
 	wb_addr    =>wb_addr,
 	wb_data    =>wb_data,
 

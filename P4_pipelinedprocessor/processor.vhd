@@ -22,8 +22,8 @@ port(
 	write_to_file: IN std_logic;
 	-- FOR MEM
 	readdata_m: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-	waitrequest_m: OUT STD_LOGIC;
-	data_ready: in STD_LOGIC
+	waitrequest_m: OUT STD_LOGIC
+
 );
 end processor;
 
@@ -261,8 +261,8 @@ end component;
 
 -- signals connecting components together
 -- IF
-signal mux_input_to_stage1: std_logic_vector(31 downto 0);
-signal mux_select_sig_to_stage1: std_logic;
+signal mux_input_to_stage1: std_logic_vector(31 downto 0) :="00000000000000000000000000000000";
+signal mux_select_sig_to_stage1: std_logic:='0';
 
 --IF-> IF_ID
 signal instr_loc_s_p: std_logic_vector(31 downto 0);
@@ -351,6 +351,8 @@ signal mem_address: INTEGER RANGE 0 to 1023;
 signal wb_signal_temp: std_logic := '1';
 
 
+signal data_ready: STD_LOGIC;
+
 
 
 
@@ -369,8 +371,8 @@ begin
 select_address: mux_2_to_1_int
 port map(
     SEL => data_ready,
-    A => pc_out_as_int,
-    B => address,
+    A => address,
+    B => pc_out_as_int,
     Output =>mem_address
 );
 
@@ -392,7 +394,7 @@ port map(
     clock => clock,
     reset => reset,
     mux_input_to_stage1 => mux_input_to_stage1,
-    mux_select_sig_to_stage1 => mux_select_sig_to_stage1,
+    mux_select_sig_to_stage1 => '0',
     mux_output_stage_1 => instr_loc_s_p,
     pc_out_as_int => pc_out_as_int
 );
@@ -412,8 +414,8 @@ port map(
 	-- inputs
     clock => clock,
     reset => reset,
-	instruction => instruction_out_p_s,
-	instruction_loc_in => instr_loc_p_s,
+	instruction => instr_loc_p_s,
+	instruction_loc_in => instruction_out_p_s,
 	instruction_loc_out => instruction_out_p_s_2,
 	wb_addr => wb_addr,
 	wb_data => wb_data,

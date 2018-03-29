@@ -18,7 +18,7 @@ port(
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
 
-	ALUcalc_operationcode : out  STD_LOGIC_VECTOR (3 downto 0)
+	ALUcalc_operationcode : out  STD_LOGIC_VECTOR (3 downto 0) :="0000"
 
 );
 end control;
@@ -125,6 +125,24 @@ begin
 			Branch <= '0';
 			MemWrite <= '0';
 			ALUOp0<='0';
+		end if;
+		if(opcode ="000000") THEN
+		RegDst  <='0';
+		ALUSrc   <='0';
+		MemtoReg <='0';
+		RegWrite <='0';
+		MemRead  <='0';
+		MemWrite <='0';
+		Branch   <='0';
+		end if;
+		if(opcode = "UUUUUU") THEN
+		RegDst  <='0';
+		ALUSrc   <='0';
+		MemtoReg <='0';
+		RegWrite <='0';
+		MemRead  <='0';
+		MemWrite <='0';
+		Branch   <='0';
 		end if;
 
 	end if;
