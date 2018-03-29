@@ -132,9 +132,9 @@ begin
 	s_wb_data <="11111111111111111111111111111111";
 	
   wait for 1*clk_period;
-  s_wb_signal<='0';
   s_instruction <= "00001100001000010000100001000000";
-   
+  s_wb_signal<='0';
+  
   wait for 1*clk_period;
   s_instruction <= "00011100011000110001100011000001";
   
