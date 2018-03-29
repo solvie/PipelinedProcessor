@@ -65,11 +65,11 @@ process(reset, clock)
             -- from control
 
             mux1_control <= d_Branch;
-			mux2_control <= d_RegDst;
-			mux3_control <= d_MemtoReg;
-			MemRead <=d_MemRead;
-			MemWrite <=d_MemWrite;
-	        instruction_loc_out<=instruction_loc_in;
+						mux2_control <= d_RegDst;
+						mux3_control <= d_MemtoReg;
+						MemRead <=d_MemRead;
+						MemWrite <=d_MemWrite;
+	        	instruction_loc_out<=instruction_loc_in;
 
 
         end if;

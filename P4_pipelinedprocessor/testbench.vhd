@@ -7,7 +7,7 @@ use ieee.std_logic_textio.all;
 entity testbench is
 end testbench;
 
-architecture 
+architecture
 behavior of testbench is
 
 component processor is
@@ -26,7 +26,7 @@ port(
 	waitrequest: OUT STD_LOGIC;
 
 	write_to_file: IN std_logic;
-	
+
 	-- FOR MEM
 	readdata_m: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
 	waitrequest_m: OUT STD_LOGIC
@@ -48,7 +48,7 @@ signal im_read : std_logic;
 signal im_readdata : std_logic_vector (31 downto 0);
 signal im_write : std_logic;
 signal im_writedata : std_logic_vector (31 downto 0);
-signal im_waitrequest : std_logic; 
+signal im_waitrequest : std_logic;
 signal verify_instMem: std_logic_vector (31 downto 0);
 signal verify_pc_out: std_logic_vector (31 downto 0);
 
@@ -61,7 +61,7 @@ file file_Output : text;
 
 begin
 
-real_cpu: processor 
+real_cpu: processor
 port map(
 	clock => clock,
 	reset => reset,
@@ -74,7 +74,7 @@ port map(
 	waitrequest => im_waitrequest,
 
 	write_to_file=> im_write_to_file,
-	
+
 	-- FOR MEM
 	readdata_m =>temp_readdata,
 	waitrequest_m => tempp_waitrequest
@@ -113,7 +113,7 @@ im_read <= '0';
 
 	im_addr <= i;
 	im_writedata <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-	
+
 	wait for 1*clk_period;
 	im_write <= '0';
 	--i := i - 1;
@@ -144,7 +144,7 @@ reset<='0';
 --wait for 1*clk_period;
 --while verify_pc_out /= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" loop
 --	im_addr <= pc_out_as_int;
---	wait for 1*clk_period; 
+--	wait for 1*clk_period;
 --	verify_pc_out <= im_readdata;
 --end loop;
 --verify_pc_out <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
@@ -156,7 +156,7 @@ reset<='0';
 --wait for 1*clk_period;
 --while j < i loop
 --	im_addr <= j;
---	wait for 1*clk_period; 
+--	wait for 1*clk_period;
 --	write(v_OLINE, im_readdata, right, 32);
 --	writeline(file_Output, v_OLINE);
 --	j := j + 1;
@@ -175,5 +175,5 @@ reset<='0';
 
 wait;
 end process;
-	
+
 end;

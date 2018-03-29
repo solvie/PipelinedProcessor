@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity EX_stage is
 port(
 	clock : IN std_logic;
-	
+
 	ALUcalc_operationcode : in std_logic_vector(3 downto 0 );
 	data_out_left: in std_logic_vector (31 downto 0);
 	data_out_right: in std_logic_vector (31 downto 0);
@@ -23,7 +23,7 @@ port(
 
   ALUOutput :	out STD_LOGIC_VECTOR (31 downto 0):="00000000000000000000000000000000";
   zeroOut :	out STD_LOGIC;
-	address : out STD_LOGIC_VECTOR (31 downto 0):="00000000000000000000000000000000";
+	address : out STD_LOGIC_VECTOR (31 downto 0);
   out_mux3_control : out std_logic;
   out_MemRead: out std_logic;
   out_MemWrite: out std_logic
