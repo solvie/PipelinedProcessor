@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity ALUcalc is
-    Port ( 
+    Port (
     clock : in STD_LOGIC;
 		A : in  STD_LOGIC_VECTOR (31 downto 0);
     B : in  STD_LOGIC_VECTOR (31 downto 0);
@@ -18,7 +18,7 @@ architecture Behavior of ALUcalc is
 --	signal long : STD_LOGIC_VECTOR (63 downto 0);
 	signal hi_signal : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
 	signal lo_signal : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
-	
+
 begin
   process(clock)
  	variable long : STD_LOGIC_VECTOR (63 downto 0);
@@ -34,7 +34,7 @@ begin
 		lo_signal<= long(31 downto 0);
 	elsif(operationcode = "0011") then
 		lo := STD_LOGIC_VECTOR(signed(A) / signed(B));		-- Divide
-		hi := STD_LOGIC_VECTOR(signed(A) rem signed(B));	
+		hi := STD_LOGIC_VECTOR(signed(A) rem signed(B));
 		hi_signal <= hi;
 		lo_signal <= lo;
 	end if;
@@ -45,9 +45,9 @@ begin
 	elsif(operationcode = "0001") then
 	alucalcresult <=STD_LOGIC_VECTOR(signed(A)-signed(B)); 		-- Subract
 	elsif (operationcode = "0010") then
-		alucalcresult <=lo; 	
+		alucalcresult <=lo;
 	elsif(operationcode = "0011") then
-		alucalcresult <=lo; 	
+		alucalcresult <=lo;
 	elsif (operationcode = "0101") then
 	alucalcresult <=A AND B;   									-- And
 	elsif (operationcode = "0110") then
@@ -58,7 +58,7 @@ begin
 	alucalcresult <=A XOR B ;  									-- XOR
 	elsif (operationcode = "1001") then
 	alucalcresult <=hi;  										-- Move From Hi
-	elsif (operationcode = "1010") then 
+	elsif (operationcode = "1010") then
 	alucalcresult <=lo; 											-- Move From Lo
 	elsif (operationcode = "1011") then
 	alucalcresult <=STD_LOGIC_VECTOR(shift_left(signed(A), 16)); -- Load Upper Immediate
@@ -73,13 +73,13 @@ begin
 	else
 	alucalcresult <="00000000000000000000000000000000"; -- Default to 0
 	end if;
-	
+
 	if (operationcode = "1111" and A=B) then
 	zero <='1'; 	-- Branch on Equal
 	else
 	zero <='0';
   end if;
-	
+
 end if;
 end process;
 end Behavior;

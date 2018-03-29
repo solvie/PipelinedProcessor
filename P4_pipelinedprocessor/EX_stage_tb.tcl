@@ -1,10 +1,10 @@
 proc AddWaves {} {
 	#Add waves we're interested in to the Wave window
-    add wave -position end sim:/EX_stage_tb/clk
+    add wave -position end sim:/EX_stage_tb/clock
     add wave -position end sim:/EX_stage_tb/rst
 
 add wave -position end sim:/EX_stage_tb/rst
-add wave -position end sim:/EX_stage_tb/clk
+add wave -position end sim:/EX_stage_tb/clock
 
 	
 add wave -position end sim:/EX_stage_tb/s_ALUcalc_operationcode
