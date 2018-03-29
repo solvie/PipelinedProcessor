@@ -76,6 +76,7 @@ PORT(
 	instruction_loc_in : in std_logic_vector(31 downto 0);
 	instruction_loc_out : out std_logic_vector(31 downto 0);
 	-- from registers
+	wb_signal : in std_logic;
 	wb_addr : in std_logic_vector (4 downto 0);
 	wb_data : in std_logic_vector (31 downto 0);
 	data_out_left: out std_logic_vector (31 downto 0);
@@ -250,6 +251,14 @@ component WB_stage is
 	);
 end component;
 
+component mux_2_to_1_int is
+    Port ( SEL : in  STD_LOGIC;
+           A   : in  integer;
+           B   : in  integer;
+           Output   : out integer
+           );
+end component;
+
 -- signals connecting components together
 -- IF
 signal mux_input_to_stage1: std_logic_vector(31 downto 0);
@@ -338,7 +347,8 @@ signal r_s_p_s_5: std_logic_vector (4 downto 0);
 --temp
 signal zeroOut_out_temp: STD_LOGIC_VECTOR (25 downto 0);
 
-signal mem_address: INTEGER;
+signal mem_address: INTEGER RANGE 0 to 1023;
+signal wb_signal_temp: std_logic := '1';
 
 
 
@@ -351,7 +361,17 @@ begin
 --mem_address <= pc_out_as_int;
 --else
 --mem_address <= address;
+--end if;
 --end process;
+
+select_address: mux_2_to_1_int
+port map(
+    SEL => data_ready,
+    A => pc_out_as_int,
+    B => address,
+    Output =>mem_address
+);
+
 
 LoadToInstMem: instruction_memory
 port map(
@@ -395,6 +415,7 @@ port map(
 	instruction_loc_out => instruction_out_p_s_2,
 	wb_addr => wb_addr,
 	wb_data => wb_data,
+	wb_signal => wb_signal_temp,
 	-- from registers
 	data_out_left=>s_p_2_data_out_left,
 	data_out_right=>s_p_2_data_out_right,
