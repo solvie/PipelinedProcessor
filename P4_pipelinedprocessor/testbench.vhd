@@ -111,8 +111,6 @@ im_read <= '0';
 		wait for 1*clk_period;
 	end loop;
 file_close(file_VECTORS);
-	im_addr <= i;
-	im_writedata <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 
 	wait for 1*clk_period;
 	im_write <= '0';
@@ -133,8 +131,8 @@ file_close(file_VECTORS);
 --reading instructinon mem using pc
 
 reset<='1';
---mux_select_sig_to_stage1<= '1';
---mux_input_to_stage1 <= std_logic_vector(to_unsigned(0,32));
+mux_select_sig_to_stage1<= '1';
+mux_input_to_stage1 <= std_logic_vector(to_unsigned(0,32));
 wait for 1*clk_period;
 reset<='0';
 
@@ -164,13 +162,15 @@ reset<='0';
 
 
 -----------------------------------------------
-  reset<='0';
 
-  wait for 1*clk_period;
-  mux_select_sig_to_stage1<= '0';
+  --wait for 1*clk_period;
+  --mux_select_sig_to_stage1<= '0';
 
-  wait for 1*clk_period;
-  mux_select_sig_to_stage1<= '1';
+  --wait for 1*clk_period;
+  --mux_select_sig_to_stage1<= '1';
+
+
+  wait for 100*clk_period;
   im_write_to_file <= '1';
 
 wait;

@@ -15,6 +15,7 @@ port(
 	r_s: in std_logic_vector (4 downto 0);
 	pseudo_address : in std_logic_vector(25 downto 0);
 
+  instruction_location_in : in std_logic_vector(31 downto 0);
 	mux1_control : in std_logic;
 	mux2_control : in std_logic;
 	mux3_control : in std_logic;
@@ -62,7 +63,7 @@ begin
 mux1 : mux_2_to_1
 Port map(
     SEL => mux1_control,
-    A  => "00000000000000000000000000000000",
+    A  => instruction_location_in,
     B  =>  data_out_left,
     Output =>mux1out
 );

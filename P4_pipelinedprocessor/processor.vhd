@@ -149,7 +149,7 @@ PORT(
 	shamt : in std_logic_vector(4 downto 0);
 	r_s: in std_logic_vector (4 downto 0);
 	pseudo_address : in std_logic_vector(25 downto 0);
-
+	instruction_location_in: in std_logic_vector (31 downto 0);
 	mux1_control : in std_logic;
 	mux2_control : in std_logic;
 	mux3_control : in std_logic;
@@ -276,7 +276,7 @@ signal wb_addr: std_logic_vector(4 downto 0);
 signal wb_data: std_logic_vector(31 downto 0);
 --signal write_to_file: std_logic;
 --ID -> ID_EX
-signal instr_loc_p_s_2: std_logic_vector(31 downto 0);
+--signal instr_loc_p_s_2: std_logic_vector(31 downto 0);
 signal instruction_out_p_s_2: std_logic_vector(31 downto 0);
 
 -- ID_EX
@@ -294,6 +294,7 @@ signal s_p_2_MemWrite :  std_logic;
 signal s_p_2_Branch   :  std_logic;
 signal s_p_2_ALUcalc_operationcode :  std_logic_vector(3 downto 0 );
 -- EX
+signal p_s_3_instruction_location_in : std_logic_vector(31 downto 0 ); 
 signal p_s_3_ALUcalc_operationcode : std_logic_vector(3 downto 0 );
 signal p_s_3_data_out_left: std_logic_vector (31 downto 0);
 signal p_s_3_data_out_right: std_logic_vector (31 downto 0);
@@ -371,8 +372,8 @@ begin
 select_address: mux_2_to_1_int
 port map(
     SEL => data_ready,
-    A => address,
-    B => pc_out_as_int,
+    A => pc_out_as_int,
+    B => address,
     Output =>mem_address
 );
 
@@ -388,7 +389,6 @@ port map(
     waitrequest => waitrequest,
     data_ready => data_ready
 );
-
 if_s: IF_stage
 port map(
     clock => clock,
@@ -443,8 +443,8 @@ idex_pipe: ID_EX_pipe
 port map(
 	clock =>clock,
 	reset=>reset,
-	instruction_loc_in =>instr_loc_p_s_2,
-	instruction_loc_out =>instruction_out_p_s_2,
+	instruction_loc_in =>instruction_out_p_s_2,
+	instruction_loc_out =>p_s_3_instruction_location_in,
 	--id output
     d_data_out_left=>s_p_2_data_out_left,
 	d_data_out_right=>s_p_2_data_out_right,
@@ -489,7 +489,7 @@ port map(
 	shamt =>p_s_3_shamt,
 	r_s=>p_s_3_r_s,
 	pseudo_address=>p_s_3_pseudo_address,
-
+	instruction_location_in => p_s_3_instruction_location_in,
 	mux1_control =>p_s_3_mux1_control,
 	mux2_control =>p_s_3_mux2_control,
 	mux3_control =>p_s_3_mux3_control,
