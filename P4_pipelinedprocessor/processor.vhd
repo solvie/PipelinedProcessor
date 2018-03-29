@@ -417,8 +417,8 @@ port map(
 	instruction => instruction_out_p_s,
 	instruction_loc_in => instr_loc_p_s,
 	instruction_loc_out => instruction_out_p_s_2,
-	wb_addr => "00000",
-	wb_data => "00100000000000010000000000000011",
+	wb_addr => wb_addr,
+	wb_data => wb_data,
 	wb_signal => '1',
 	-- from registers
 	data_out_left=>s_p_2_data_out_left,

@@ -115,7 +115,7 @@ port map(
 	reset =>reset,
 
 	instruction =>instruction,
-	wb_signal =>s_wb_signal,
+	wb_signal  =>s_wb_signal,
 	wb_addr    =>wb_addr,
 	wb_data    =>wb_data,
 

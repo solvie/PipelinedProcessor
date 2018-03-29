@@ -66,11 +66,11 @@ port map(
 	clock => clock,
 	reset => reset,
 	-- The ports below are only exposed so that instruction memory can be loaded externally before the processor starts its business
-	writedata => im_readdata,
+	writedata => im_writedata,
 	address =>im_addr,
 	mem_write => im_write,
 	mem_read => im_read,
-	readdata => im_writedata,
+	readdata => im_readdata,
 	waitrequest => im_waitrequest,
 
 	write_to_file=> im_write_to_file,

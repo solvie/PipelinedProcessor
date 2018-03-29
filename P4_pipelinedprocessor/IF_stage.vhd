@@ -66,8 +66,8 @@ port map(
 mux: mux_2_to_1
 port map(
 	SEL => mux_select_sig_to_stage1,
-	A   => adder_out,
-	B   => mux_input_to_stage1,
+	A   => mux_input_to_stage1,
+	B   => adder_out,
 	Output   => mux_output_stage_1
 );
 
