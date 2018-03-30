@@ -23,6 +23,7 @@ port(
 	d_MemtoReg : in std_logic;
 	d_MemRead  : in std_logic;
 	d_MemWrite : in std_logic;
+	d_RegWrite : in std_logic;
 	d_Branch   : in std_logic;
 	d_ALUcalc_operationcode : in std_logic_vector(3 downto 0 );
 
@@ -50,12 +51,11 @@ architecture behavior of ID_EX_pipe is
 
 begin
 
-process(reset, clock)
+process(reset,clock)
     begin
         if reset = '1' then
 
-        elsif rising_edge(clock) then
-			
+        end if;
 				ALUcalc_operationcode<=d_ALUcalc_operationcode;
 				data_out_left <=d_data_out_left;
 				data_out_right<=d_data_out_right;
@@ -65,7 +65,7 @@ process(reset, clock)
 				r_s<=d_r_s;
 				pseudo_address<=d_pseudo_address;
 				-- from control
-        MemToReg <= d_MemtoReg;
+				MemToReg <= d_RegWrite;
 				mux1_control <= d_Branch;
 				mux2_control <= d_RegDst;
 				mux3_control <= d_MemtoReg;
@@ -73,8 +73,6 @@ process(reset, clock)
 				MemWrite <=d_MemWrite;
 				instruction_loc_out<=instruction_loc_in;
 
-
-        end if;
 
     end process;
 end;

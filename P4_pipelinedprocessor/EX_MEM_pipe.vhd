@@ -45,8 +45,8 @@ process(clock)
             r_s_out <= (others => '0');
         end if;
         if rising_edge(clock) then
-
-        end if;
+        else
+         out_MemToReg<= MemToReg;
         mem_writedata <=ALUOuput;
         mem_address<= to_integer(unsigned(address(31 downto 0)));
         mem_memwrite<=MemWrite;
@@ -55,5 +55,7 @@ process(clock)
      --   zeroOut_out <= zeroOut;
         mem_pseudo_address <= pseudo_address;
         r_s_out <= r_s_in;
+        end if;
+
     end process;
 end;

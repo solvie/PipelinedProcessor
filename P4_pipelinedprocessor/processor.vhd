@@ -94,6 +94,7 @@ PORT(
 	MemRead  : out std_logic;
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
+	RegWrite : out std_logic;
 	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
 	write_to_file : in std_logic
 );
@@ -118,6 +119,7 @@ PORT(
 	d_MemtoReg : in std_logic;
 	d_MemRead  : in std_logic;
 	d_MemWrite : in std_logic;
+	d_RegWrite : in std_logic;
 	d_Branch   : in std_logic;
 	d_ALUcalc_operationcode : in std_logic_vector(3 downto 0 );
 	-- EX
@@ -359,6 +361,7 @@ signal pseudo_address_p_s_5: STD_LOGIC_VECTOR (25 downto 0);
 signal r_s_p_s_5: std_logic_vector (4 downto 0);
 
 --wbsignal
+signal wbs_id_pipe: std_logic;
 signal wbs_pipe_ex: std_logic;
 signal wbs_ex_pipe: std_logic;
 signal wbs_pipe_mem: std_logic;
@@ -456,6 +459,7 @@ port map(
 	MemRead  =>s_p_2_MemRead,
 	MemWrite =>s_p_2_MemWrite,
 	Branch   =>s_p_2_Branch,
+	RegWrite =>wbs_id_pipe,
 	ALUcalc_operationcode =>s_p_2_ALUcalc_operationcode,
 	write_to_file =>write_to_file
 );
@@ -478,6 +482,7 @@ port map(
 	d_MemtoReg =>s_p_2_MemtoReg,
 	d_MemRead  =>s_p_2_MemRead,
 	d_MemWrite =>s_p_2_MemWrite,
+	d_RegWrite => wbs_id_pipe,
 	d_Branch=>s_p_2_Branch,
 	d_ALUcalc_operationcode =>s_p_2_ALUcalc_operationcode,
 	-- EX
@@ -495,7 +500,8 @@ port map(
 	mux3_control =>p_s_3_mux3_control,
 	MemRead=>p_s_3_MemRead,
 	MemWrite =>p_s_3_MemWrite,
-	MemToReg=>s_p_3_MemtoReg
+	MemToReg=>wbs_pipe_ex
+	
 );
 
 
@@ -517,7 +523,7 @@ port map(
 	mux3_control =>p_s_3_mux3_control,
 	MemRead=>p_s_3_MemRead,
 	MemWrite=>p_s_3_MemWrite,
-	MemToReg=>s_p_3_MemtoReg,
+	MemToReg=>wbs_pipe_ex,
 	ALUOutput =>ALUOuput_s_p,
 	zeroOut =>zeroOut_s_p,
 	address =>address_s_p,

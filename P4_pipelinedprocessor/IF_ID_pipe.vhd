@@ -17,15 +17,13 @@ architecture behavior of IF_ID_pipe is
 
 begin
 
-process(reset, clock)
+process(reset,clock)
     begin
         if reset = '1' then
-            instruction_out  <= (others => '0'); 
+            instruction_out  <= (others => '0');
             instr_loc_out	 <= (others => '0');
-        elsif rising_edge(clock) then
-				else
-            instruction_out   <= instruction_in;
-            instr_loc_out     <= instr_loc_in;
         end if;
+				instruction_out   <= instruction_in;
+				instr_loc_out     <= instr_loc_in;
     end process;
 end;
