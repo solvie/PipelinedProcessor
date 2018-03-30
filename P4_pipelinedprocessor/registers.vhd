@@ -38,24 +38,24 @@ file file_Output : text;
 begin
 process(clock)
 begin
-	
+	if(rising_edge(clock)) then
     --normal operation for instruction parse
 		if(wb_signal ='1' and (not (wb_addr="00000")))then
-			register_block(to_integer(unsigned(wb_addr)))<= wb_data;
-			data_out_left<="00000000000000000000000000000000";
-	  		data_out_right<="00000000000000000000000000000000";
+    		register_block(to_integer(unsigned(wb_addr)))<= wb_data;
+    		data_out_left<="00000000000000000000000000000000";
+      data_out_right<="00000000000000000000000000000000";
 		end if;
-		if (reset = '1') then
-			--reset all registers
+	  if (reset = '1') then
+	    --reset all registers
 			register_block<=(others=>"00000000000000000000000000000000");
 				data_out_left<="00000000000000000000000000000000";
-			data_out_right<="00000000000000000000000000000000";
-			data_out_imm<="00000000000000000000000000000000";
-			shamt <="00000";
-			funct <="000000";
-			r_s<="00000";
-			opcode<="000000";
-			pseudo_address <="00000000000000000000000000";
+	      data_out_right<="00000000000000000000000000000000";
+       	data_out_imm<="00000000000000000000000000000000";
+       	shamt <="00000";
+       	funct <="000000";
+       	r_s<="00000";
+       	opcode<="000000";
+       	pseudo_address <="00000000000000000000000000";
 		elsif ( instruction ="UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU") THEN
 			data_out_left<="00000000000000000000000000000000";
 			data_out_right<="00000000000000000000000000000000";
@@ -66,38 +66,33 @@ begin
 			opcode<="000000";
 			pseudo_address <="00000000000000000000000000";
 		else
-			if(instruction(31 downto 26) = "000000") then
-				--R Type
-			opcode <=instruction(31 downto 26);
-			data_out_left<=register_block(to_integer(unsigned(instruction(25 downto 21))));
-			data_out_right<=register_block(to_integer(unsigned(instruction(20 downto 16))));
-			r_s<=instruction(15 downto 11); --destination
+		  opcode <=instruction(31 downto 26);
+		    if(instruction(31 downto 26)="000000") then
+				--R type
+				data_out_left<=register_block(to_integer(unsigned(instruction(25 downto 21))));
+				data_out_right<=register_block(to_integer(unsigned(instruction(20 downto 16))));
+				r_s<=instruction(15 downto 11);
+		  else
+			--Itype
+		    data_out_left<=register_block(to_integer(unsigned(instruction(25 downto 21))));
+		    data_out_right<=register_block(to_integer(unsigned(instruction(15 downto 11))));
+		    r_s<=instruction(20 downto 16);
+		  end if;
 
-			shamt<=instruction(10 downto 6);
-			funct<=instruction(5 downto 0);
-			pseudo_address<= instruction(25 downto 0);
-
-			else
-			opcode <=instruction(31 downto 26);
-			data_out_left<=register_block(to_integer(unsigned(instruction(25 downto 21))));
-			data_out_right<=register_block(to_integer(unsigned(instruction(15 downto 11))));
-			r_s<=instruction(20 downto 16); --destination
-
-			shamt<=instruction(10 downto 6);
-			funct<=instruction(5 downto 0);
-			pseudo_address<= instruction(25 downto 0);
-			
-			end if;
-
-			if((instruction(31 downto 26) = "001100")or --andi 
-			instruction(31 downto 26) = "001101") --ori) 
-			then
-		--zero extension
-				data_out_imm <= std_logic_vector(resize(unsigned(instruction(15 downto 0)),32));--zero extend
-			else
-				data_out_imm <= std_logic_vector(resize(signed(instruction(15 downto 0)),32));--sign extend
-			end if;
-		end if;
+		  shamt<=instruction(10 downto 6);
+		  funct<=instruction(5 downto 0);
+		  pseudo_address<= instruction(25 downto 0);
+		  if(
+        (instruction(31 downto 26) = "001100")or --andi
+        instruction(31 downto 26) = "001101" --ori
+      ) then
+      --zero extension
+      data_out_imm <= std_logic_vector(resize(unsigned(instruction(15 downto 0)),32));--zero extend
+      else
+      data_out_imm <= std_logic_vector(resize(signed(instruction(15 downto 0)),32));--sign extend
+      end if;
+    end if;
+end if;
 end process;
 
 	write_file: PROCESS (write_to_file)
