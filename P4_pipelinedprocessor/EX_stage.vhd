@@ -22,6 +22,7 @@ port(
 	MemRead : in std_logic;
 	MemWrite : in std_logic;
 	MemToReg : in std_logic;
+	Jump: in std_logic;
 
   ALUOutput :	out STD_LOGIC_VECTOR (31 downto 0):="00000000000000000000000000000000";
   zeroOut :	out STD_LOGIC;
@@ -39,11 +40,12 @@ architecture behavior of EX_stage is
 component ALUcalc is
 port(
     clock : in STD_LOGIC;
-	  A : in  STD_LOGIC_VECTOR (31 downto 0);
+	A : in  STD_LOGIC_VECTOR (31 downto 0);
     B : in  STD_LOGIC_VECTOR (31 downto 0);
     operationcode : in STD_LOGIC_VECTOR (3 downto 0);
-		zero : out STD_LOGIC := '0';
-		alucalcresult : out STD_LOGIC_VECTOR (31 downto 0)
+	jump : in STD_LOGIC;
+	zero : out STD_LOGIC := '0';
+	alucalcresult : out STD_LOGIC_VECTOR (31 downto 0)
  );
 end component;
 
@@ -81,20 +83,23 @@ Port map(
 ALU : ALUcalc
 port map(
     clock =>clock,
-	  A =>mux1out,
+	A =>mux1out,
     B =>mux2out,
+	Jump => Jump,
     operationcode =>ALUcalc_operationcode,
-		zero =>zeroOut,
-		alucalcresult =>ALUOutput
+	zero =>zeroOut,
+	alucalcresult =>ALUOutput
 
  );
-out_MemToReg <=MemToReg;
-address <= data_out_right;
-out_mux3_control<=mux3_control;
-out_MemRead<=	MemRead;
-out_MemWrite<=	MemWrite;
-pseudo_address_out <= pseudo_address;
-r_s_out <= r_s;
-
+ 
+process(clock) begin 
+	out_MemToReg <=MemToReg;
+	address <= data_out_right;
+	out_mux3_control<=mux3_control;
+	out_MemRead<=	MemRead;
+	out_MemWrite<=	MemWrite;
+	pseudo_address_out <= pseudo_address;
+	r_s_out <= r_s;
+end process;
 
 end;

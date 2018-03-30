@@ -8,8 +8,8 @@ port(
 	clock : in std_logic;
 	reset : in std_logic;
 
-  opcode : in std_logic_vector(5 downto 0);
-  funct : in std_logic_vector(5 downto 0);
+	opcode : in std_logic_vector(5 downto 0);
+	funct : in std_logic_vector(5 downto 0);
 	RegDst   : out std_logic;
 	ALUSrc   : out std_logic;
 	MemtoReg : out std_logic;
@@ -17,6 +17,7 @@ port(
 	MemRead  : out std_logic;
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
+	Jump: out std_logic;
 
 	ALUcalc_operationcode : out  STD_LOGIC_VECTOR (3 downto 0) :="0000"
 
@@ -38,22 +39,22 @@ begin
 	if rising_edge(clock) then
 	   comb := opcode & funct;
 	   case comb is
-	       when "000000" & "100000" => ALUcalc_operationcode <= "0000"; --add
-	       when "000000" & "100010" => ALUcalc_operationcode <= "0001"; --subtract
-	       when "000000" & "011000" => ALUcalc_operationcode <= "0010"; --MULT
-	       when "000000" & "011010" => ALUcalc_operationcode <= "0011"; --div
-	       when "000000" & "100100" => ALUcalc_operationcode <= "0101"; --and
-	       when "000000" & "100101" => ALUcalc_operationcode <= "0110"; --OR
-	       when "000000" & "100111" => ALUcalc_operationcode <= "0111"; --NOR
-	       when "000000" & "100110" => ALUcalc_operationcode <= "1000"; --XOR
-	       when "000000" & "010000" => ALUcalc_operationcode <= "1001"; --MOVE from HI
-	       when "000000" & "010010" => ALUcalc_operationcode <= "1010"; --MOVE from LO
-         when "001111" & "XXXXXX" => ALUcalc_operationcode <= "1011"; --Load Upper Immediate
-         when "000000" & "000000" => ALUcalc_operationcode <= "1100"; --Shift Left Logical
-         when "000000" & "000010" => ALUcalc_operationcode <= "1101"; --Shift right Logical
-         when "000000" & "000011" => ALUcalc_operationcode <= "1110"; --Shift Right Arithmetic
-         when "000000" & "101010" => ALUcalc_operationcode <= "0100"; --Set to 1 if Less Than
-	       when "000100" & "XXXXXX" => ALUcalc_operationcode <= "1111"; --Branch if Equal
+	       when "000000100000" => ALUcalc_operationcode <= "0000"; --add
+	       when "000000100010" => ALUcalc_operationcode <= "0001"; --subtract
+	       when "000000011000" => ALUcalc_operationcode <= "0010"; --MULT
+	       when "000000011010" => ALUcalc_operationcode <= "0011"; --div
+	       when "000000100100" => ALUcalc_operationcode <= "0101"; --and
+	       when "000000100101" => ALUcalc_operationcode <= "0110"; --OR
+	       when "000000100111" => ALUcalc_operationcode <= "0111"; --NOR
+	       when "000000100110" => ALUcalc_operationcode <= "1000"; --XOR
+	       when "000000010000" => ALUcalc_operationcode <= "1001"; --MOVE from HI
+	       when "000000010010" => ALUcalc_operationcode <= "1010"; --MOVE from LO
+         when "001111XXXXXX" => ALUcalc_operationcode <= "1011"; --Load Upper Immediate
+         when "000000000000" => ALUcalc_operationcode <= "1100"; --Shift Left Logical
+         when "000000000010" => ALUcalc_operationcode <= "1101"; --Shift right Logical
+         when "000000000011" => ALUcalc_operationcode <= "1110"; --Shift Right Arithmetic
+         when "000000101010" => ALUcalc_operationcode <= "0100"; --Set to 1 if Less Than
+	       when "000100XXXXXX" => ALUcalc_operationcode <= "1111"; --Branch if Equal
  	       when others => ALUcalc_operationcode <= "0000"; --add
 	   end case;
 --
@@ -110,8 +111,12 @@ begin
 	Branch <= not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
 	ALUOp1 <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
 	ALUOp0<=not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
-
+	if (opcode="000010") then
+		Jump<= '1';
+	else
+		Jump<='0';
 	end if;
+end if;
 
 end process;
 end arch;

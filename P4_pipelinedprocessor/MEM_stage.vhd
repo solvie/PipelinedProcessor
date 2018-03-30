@@ -17,8 +17,6 @@ port(
 	mux3_control_in : in std_logic;
 	mux3_control_out: out std_logic;
 	write_to_file : in std_logic;
-	pseudo_address_in : in std_logic_vector(25 downto 0);
-	pseudo_address_out : out std_logic_vector(25 downto 0);
 	r_s_in: in std_logic_vector(4 downto 0);
 	r_s_out: out std_logic_vector(4 downto 0);
 	MemToReg : in std_logic;
@@ -79,7 +77,5 @@ end process;
 process (mux3_control_in) BEGIN
 	mux3_control_out<=mux3_control_in;
 end process;
-
-
-  out_MemToReg <=	MemToReg ;
+out_MemToReg <=	MemToReg ;
 end;

@@ -32,6 +32,7 @@ port(
 	Branch   : out std_logic;
 	RegWrite : out std_logic;
 	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
+	Jump: out std_logic;
 
 	write_to_file : in std_logic
 );
@@ -76,6 +77,7 @@ port(
 	MemRead  : out std_logic;
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
+	Jump : out std_logic;
 
 	ALUcalc_operationcode : out std_logic_vector(3 downto 0)
 );
@@ -98,7 +100,8 @@ port map(
 	MemRead  =>MemRead,
 	MemWrite =>MemWrite,
 	Branch   =>Branch,
-	ALUcalc_operationcode => ALUcalc_operationcode
+	ALUcalc_operationcode => ALUcalc_operationcode,
+	Jump=> Jump
 );
 
 reg : registers

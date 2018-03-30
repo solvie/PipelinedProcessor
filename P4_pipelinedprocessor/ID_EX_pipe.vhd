@@ -26,7 +26,7 @@ port(
 	d_RegWrite : in std_logic;
 	d_Branch   : in std_logic;
 	d_ALUcalc_operationcode : in std_logic_vector(3 downto 0 );
-
+	d_Jump : in std_logic;
 	-- EX
 	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
 	data_out_left: out std_logic_vector (31 downto 0);
@@ -43,7 +43,8 @@ port(
 	mux3_control : out std_logic;
 	MemRead : out std_logic;
 	MemWrite : out std_logic;
-	MemToReg : out std_logic
+	MemToReg : out std_logic;
+	Jump: out std_logic
  );
 end ID_EX_pipe;
 
@@ -71,6 +72,7 @@ process(reset,clock)
 				MemRead <=d_MemRead;
 				MemWrite <=d_MemWrite;
 				instruction_loc_out<=instruction_loc_in;
+				Jump<=d_Jump;
         end if;
 				
 

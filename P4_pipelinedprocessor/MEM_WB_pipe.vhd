@@ -16,8 +16,6 @@ port(
     --sel_sig_out : OUT std_logic; -- select signal for mux in WB stage out
     mux3_control_in : in std_logic;
     mux3_control_out : out std_logic;
-    pseudo_address_in : in std_logic_vector(25 downto 0);
-    pseudo_address_out : out std_logic_vector(25 downto 0);
     r_s_in: in std_logic_vector(4 downto 0);
     r_s_out: out std_logic_vector(4 downto 0);
     MemToReg : in std_logic;
@@ -35,7 +33,6 @@ process(reset, clock)
             mem_out <= (others => '0');
             ALU_out <= (others => '0');
             --instruction_out <= (others => '0');
-            pseudo_address_out <= (others => '0');
             mux3_control_out <= '0';
             r_s_out <= (others => '0');
         elsif(rising_edge(clock)) then
@@ -44,7 +41,6 @@ process(reset, clock)
 			ALU_out	<= ALU_in;
 			--instruction_out <= instruction_in;
 			--sel_sig_out <= sel_sig_in;
-			pseudo_address_out <= pseudo_address_in;
 			mux3_control_out <= mux3_control_in;
 			r_s_out <=  r_s_in;
 	end if;

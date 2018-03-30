@@ -8,6 +8,7 @@ entity ALUcalc is
 		A : in  STD_LOGIC_VECTOR (31 downto 0);
     B : in  STD_LOGIC_VECTOR (31 downto 0);
 		operationcode : in STD_LOGIC_VECTOR (3 downto 0);
+		jump : in std_logic;
 		zero : out STD_LOGIC := '0';
 		alucalcresult : out STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000"
     );
@@ -75,11 +76,13 @@ begin
 	alucalcresult <="00000000000000000000000000000000"; -- Default to 0
 	end if;
 
-	if (operationcode = "1111" and A=B) then
-	zero <='1'; 	-- Branch on Equal
+	if ((operationcode = "1111" and A=B) or jump='1') then
+		zero <='1'; 	-- Branch on Equal
 	else
-	zero <='0';
-  end if;
+		zero <='0';
+	end if;
+
+	
 
 end if;
 end process;
