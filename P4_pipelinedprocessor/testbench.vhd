@@ -31,7 +31,7 @@ port(
 	readdata_m: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
 	waitrequest_m: OUT STD_LOGIC;
 	data_ready: in std_logic
-	
+
 
 );
 end component;
@@ -177,7 +177,7 @@ reset<='0';
   --mux_select_sig_to_stage1<= '1';
 
 
-  wait for 100*clk_period;
+  wait for i*10*clk_period;
   im_write_to_file <= '1';
 
 wait;
