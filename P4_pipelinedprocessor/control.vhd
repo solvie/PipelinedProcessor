@@ -36,7 +36,6 @@ begin
 	--PLA style,https://cs.nyu.edu/courses/fall00/V22.0436-001/class-notes.html
 	--parsed operation control for ALU
 	-- PLA style control parse.JPG
-	if rising_edge(clock) then
 	   comb := opcode & funct;
 	   case comb is
 	       when "000000100000" => ALUcalc_operationcode <= "0000"; --add
@@ -111,12 +110,14 @@ begin
 	Branch <= not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
 	ALUOp1 <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
 	ALUOp0<=not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
+
 	if (opcode="000010") then
 		Jump<= '1';
 	else
 		Jump<='0';
 	end if;
 end if;
+
 
 end process;
 end arch;

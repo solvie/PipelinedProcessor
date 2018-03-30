@@ -122,7 +122,7 @@ port map(
 	r_s           =>r_s,
 	opcode        =>s_opcode,
 	pseudo_address=>pseudo_address,
-	write_to_file => write_to_file
+	write_to_file =>write_to_file
 );
 
 process (instruction_loc_in) begin
