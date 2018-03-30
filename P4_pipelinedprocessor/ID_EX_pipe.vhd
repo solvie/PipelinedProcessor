@@ -54,9 +54,8 @@ begin
 process(reset,clock)
     begin
         if reset = '1' then
-
-        end if;
-				ALUcalc_operationcode<=d_ALUcalc_operationcode;
+        elsif(rising_edge(clock))then
+        ALUcalc_operationcode<=d_ALUcalc_operationcode;
 				data_out_left <=d_data_out_left;
 				data_out_right<=d_data_out_right;
 				data_out_imm<=d_data_out_imm;
@@ -72,6 +71,8 @@ process(reset,clock)
 				MemRead <=d_MemRead;
 				MemWrite <=d_MemWrite;
 				instruction_loc_out<=instruction_loc_in;
+        end if;
+				
 
 
     end process;

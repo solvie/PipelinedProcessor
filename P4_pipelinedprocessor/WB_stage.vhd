@@ -19,8 +19,17 @@ end WB_stage;
 
 architecture Behavioral of WB_stage is
 begin
-    Output_wb <= memory_input when (SEL = '1') else ALU_input;
+process(clock)
+begin
+  if rising_edge(clock) then
+    if(SEL = '1') then
+    Output_wb <= memory_input;
+    else 
+    Output_wb <= ALU_input;
+    end if;
     pseudo_address_out <= pseudo_address_in;
     r_s_out <= r_s_in;
     wb_signal_out5<=wb_signal_in5;
+  end if;
+  end process;
 end Behavioral;
