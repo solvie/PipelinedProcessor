@@ -22,8 +22,9 @@ process(reset,clock)
         if reset = '1' then
             instruction_out  <= (others => '0');
             instr_loc_out	 <= (others => '0');
-        end if;
+        elsif (rising_edge(clock)) then
 			instruction_out   <= instruction_in;
 			instr_loc_out     <= instr_loc_in;
+		end if;
     end process;
 end;
