@@ -48,11 +48,12 @@ BEGIN
 				IF (memwrite = '1') THEN
 					ram_block(address) <= writedata;
 				END IF;
+				readdata <= ram_block(address);
 			END IF;
 		--read_address_reg <= address;
 		END IF;
 	END PROCESS;
-	readdata <= ram_block(address);
+
 
 
 	--The waitrequest signal is used to vary response time in simulation

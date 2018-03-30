@@ -46,19 +46,15 @@ BEGIN
 				IF (memwrite = '1') THEN
 					ram_block(address) <= writedata;
 				END IF;
+				if(data_ready = '0') then
+					readdata <= std_logic_vector(to_unsigned(0,32));
+				else
+					readdata <= ram_block(address);
+				end if;
 			END IF;
 		--read_address_reg <= address;
 		END IF;
-	if(data_ready = '0') then
-		readdata <= std_logic_vector(to_unsigned(0,32));
-	else
-		readdata <= ram_block(address);
-	end if;
-
 	END PROCESS;
-
-
-
 
 	--The waitrequest signal is used to vary response time in simulation
 	--Read and write should never happen at the same time.
