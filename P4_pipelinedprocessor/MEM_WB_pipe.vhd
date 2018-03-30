@@ -38,14 +38,15 @@ process(reset, clock)
             pseudo_address_out <= (others => '0');
             mux3_control_out <= '0';
             r_s_out <= (others => '0');
-        end if;
-				out_MemToReg <=MemToReg;
-				mem_out	<= mem_in;
-				ALU_out	<= ALU_in;
-				--instruction_out <= instruction_in;
-				--sel_sig_out <= sel_sig_in;
-				pseudo_address_out <= pseudo_address_in;
-				mux3_control_out <= mux3_control_in;
-				r_s_out <=  r_s_in;
+        elsif(rising_edge(clock)) then
+			out_MemToReg <=MemToReg;
+			mem_out	<= mem_in;
+			ALU_out	<= ALU_in;
+			--instruction_out <= instruction_in;
+			--sel_sig_out <= sel_sig_in;
+			pseudo_address_out <= pseudo_address_in;
+			mux3_control_out <= mux3_control_in;
+			r_s_out <=  r_s_in;
+	end if;
     end process;
 end;

@@ -23,7 +23,7 @@ process(reset,clock)
             instruction_out  <= (others => '0');
             instr_loc_out	 <= (others => '0');
         end if;
-				instruction_out   <= instruction_in;
-				instr_loc_out     <= instr_loc_in;
+			instruction_out   <= instruction_in;
+			instr_loc_out     <= instr_loc_in;
     end process;
 end;
