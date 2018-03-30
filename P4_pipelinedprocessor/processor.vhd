@@ -509,7 +509,7 @@ ex_s: EX_stage
 port map(
 	clock => clock,
 
-	ALUcalc_operationcode=>p_s_3_ALUcalc_operationcode,
+	ALUcalc_operationcode=>s_p_2_ALUcalc_operationcode,
 	data_out_left=>p_s_3_data_out_left,
 	data_out_right=>p_s_3_data_out_right,
 	data_out_imm=>p_s_3_data_out_imm,
