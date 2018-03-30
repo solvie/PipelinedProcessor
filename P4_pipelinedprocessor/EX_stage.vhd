@@ -65,8 +65,8 @@ begin
 mux1 : mux_2_to_1
 Port map(
     SEL => mux1_control,
-    A  => data_out_left,
-    B  =>  instruction_location_in,
+    A  =>  instruction_location_in,
+    B  =>  data_out_left,
     Output =>mux1out
 );
 

@@ -593,7 +593,7 @@ port map(
 	mem_in => mem_out_s_p_4, -- memory from data memory in
 	mem_out => mem_out_p_s_5,  -- memory from data memory out
 	ALU_in => ALUOut_s_p_4, -- EX ALU in
-	ALU_out => ALUOut_p_s_5, --EX ALU out
+	ALU_out => wb_data, --EX ALU out
 	--instruction_in : IN std_logic_vector(31 downto 0); -- instruction in
 	--instruction_out : OUT std_logic_vector(31 downto 0); -- instruction out
     --sel_sig_in => mux3_control_out_s_p_4, -- select signal for mux in WB stage in
@@ -612,7 +612,7 @@ port map(
 	SEL => mux3_control_out_p_s_5,
 	memory_input => mem_out_p_s_5,
 	ALU_input => ALUOut_p_s_5,
-	Output_wb => wb_data,
+
 	pseudo_address_in => pseudo_address_p_s_5,
 	pseudo_address_out => zeroOut_out_temp,
 	clock => clock,
