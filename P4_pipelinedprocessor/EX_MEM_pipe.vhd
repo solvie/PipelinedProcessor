@@ -25,7 +25,9 @@ entity EX_MEM_pipe is
 	pseudo_address_converted : out std_logic_vector(31 downto 0);
 	out_MemToReg : out std_logic;
 	r_s_in : in std_logic_vector(4 downto 0);
-	r_s_out: out std_logic_vector(4 downto 0)
+	r_s_out: out std_logic_vector(4 downto 0);
+	
+	test: out std_logic_vector(31 downto 0):="00000000000000000000000000000000"
  );
 end EX_MEM_pipe;
 
@@ -43,6 +45,7 @@ process(reset, clock)
             zeroOut_out <= '0';
             pseudo_address_converted <="00000000000000000000000000000000";
             r_s_out <= (others => '0');
+			test <= "00000000000000000000000000000000";
         elsif rising_edge(clock) then
 			out_MemToReg<= MemToReg;
 			mem_writedata <=ALUOuput;
@@ -52,6 +55,7 @@ process(reset, clock)
 			mux3_control_out <= mux3_control;
 		    zeroOut_out <= zeroOut;
 			pseudo_address_converted <= (31 downto pseudo_address'length => '0') & pseudo_address;
+			test <= (31 downto pseudo_address'length => '0') & pseudo_address;
 			r_s_out <= r_s_in;
         end if;
     end process;
