@@ -30,7 +30,7 @@ port(
 	MemRead  : out std_logic;
 	MemWrite : out std_logic;
 	Branch   : out std_logic;
-  RegWrite : out std_logic;
+	RegWrite : out std_logic;
 	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
 
 	write_to_file : in std_logic
@@ -82,7 +82,6 @@ port(
 end component;
 
 signal	s_opcode: std_logic_vector(5 downto 0) :="000000";
-signal s_wb_signal: std_logic;
 signal	s_funct: std_logic_vector(5 downto 0):="000000";
 
 begin
@@ -108,7 +107,7 @@ port map(
 	reset =>reset,
 
 	instruction =>instruction,
-	wb_signal  =>s_wb_signal,
+	wb_signal  =>wb_signal,
 	wb_addr    =>wb_addr,
 	wb_data    =>wb_data,
 
