@@ -602,7 +602,7 @@ port map(
     pseudo_address_out => pseudo_address_p_s_5,
     MemToReg=>wbs_mem_pipe,
     out_MemToReg=>wb_signal,
-    r_s_in => wb_addr,
+    r_s_in => r_s_s_p_4,
     r_s_out => r_s_p_s_5
 
 );
@@ -617,7 +617,7 @@ port map(
 	pseudo_address_out => zeroOut_out_temp,
 	clock => clock,
 	r_s_in => r_s_p_s_5,
-   
+  r_s_out => wb_addr,
     wb_signal_in5 =>wbs_pipe_wb
 
 );
