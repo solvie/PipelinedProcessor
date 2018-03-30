@@ -118,7 +118,7 @@ im_read <= '0';
 	end loop;
 file_close(file_VECTORS);
 
-	wait for 5*clk_period;
+	wait for 1*clk_period;
 	im_write <= '0';
 	data_ready_m <= '1';
 	--i := i - 1;

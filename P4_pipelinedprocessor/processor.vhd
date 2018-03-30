@@ -601,8 +601,8 @@ port map(
     pseudo_address_in => pseudo_address_s_p_4,
     pseudo_address_out => pseudo_address_p_s_5,
     MemToReg=>wbs_mem_pipe,
-    out_MemToReg=>wbs_pipe_wb,
-    r_s_in => r_s_s_p_4,
+    out_MemToReg=>wb_signal,
+    r_s_in => wb_addr,
     r_s_out => r_s_p_s_5
 
 );
@@ -617,9 +617,8 @@ port map(
 	pseudo_address_out => zeroOut_out_temp,
 	clock => clock,
 	r_s_in => r_s_p_s_5,
-    r_s_out => wb_addr,
-    wb_signal_in5 =>wbs_pipe_wb,
-    wb_signal_out5=>wb_signal
+   
+    wb_signal_in5 =>wbs_pipe_wb
 
 );
 

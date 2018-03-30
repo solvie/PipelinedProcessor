@@ -46,7 +46,7 @@ process(reset, clock)
         elsif rising_edge(clock) then
 			out_MemToReg<= MemToReg;
 			mem_writedata <=ALUOuput;
-			mem_address<= to_integer(unsigned(address(31 downto 0)));
+			mem_address<= to_integer(unsigned(address(12 downto 0)));
 			mem_memwrite<=MemWrite;
 			mem_memread<=MemRead;
 			mux3_control_out <= mux3_control;

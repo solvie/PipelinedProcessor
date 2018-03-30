@@ -29,7 +29,7 @@ begin
     end if;
     pseudo_address_out <= pseudo_address_in;
     r_s_out <= r_s_in;
-    wb_signal_out5<=wb_signal_in5;
+    wb_signal_out5<= wb_signal_in5;
   end if;
   end process;
 end Behavioral;
