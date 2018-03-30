@@ -26,18 +26,14 @@ begin
 	variable lo : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
 begin
   if rising_edge(clock) then
-    
+
 	if (operationcode = "0010") then
 	  long := STD_LOGIC_VECTOR(signed(A)*signed(B));
-		hi := long(63 downto 32);	  						-- Multiply
-		lo := long(31 downto 0);								-- Multiply
-		hi_signal <= hi;
-		lo_signal<= lo;
+		hi_signal <= long(63 downto 32);-- Multiply
+		lo_signal<= long(31 downto 0);
 	elsif(operationcode = "0011") then
-		lo := STD_LOGIC_VECTOR(signed(A) / signed(B));		-- Divide
-		hi := STD_LOGIC_VECTOR(signed(A) rem signed(B));
-		hi_signal <= hi;
-		lo_signal <= lo;
+		hi_signal <= STD_LOGIC_VECTOR(signed(A) / signed(B));-- Divide
+		lo_signal <= STD_LOGIC_VECTOR(signed(A) rem signed(B));
 	end if;
 
 --Codes from: https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
@@ -54,9 +50,9 @@ begin
 	elsif (operationcode = "1000") then
 	alucalcresult <=A XOR B ;  									-- XOR
 	elsif (operationcode = "1001") then
-	alucalcresult <=hi;  										-- Move From Hi
+	alucalcresult <=hi_signal;  										-- Move From Hi
 	elsif (operationcode = "1010") then
-	alucalcresult <=lo; 											-- Move From Lo
+	alucalcresult <=lo_signal; 											-- Move From Lo
 	elsif (operationcode = "1011") then
 	alucalcresult <=STD_LOGIC_VECTOR(shift_left(signed(A), 16)); -- Load Upper Immediate
 	elsif (operationcode = "1100") then

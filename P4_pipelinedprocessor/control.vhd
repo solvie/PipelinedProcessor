@@ -112,7 +112,7 @@ begin
 --	ALUOp0<=not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
 	if(opcode = "000000")then
 		RegDst <= '1';
-		if(funct ="100000" or funct="100010" or funct = "000000" or funct ="000010" or funct ="000011") then
+		if(funct ="100000" or funct="100010" or funct = "000000" or funct ="000010" or funct ="000011" or funct ="010000" or funct="010010") then
 			ALUOp1 <= '1';
 			RegWrite <= '0';
 		else
@@ -164,6 +164,5 @@ begin
 			ALUOp0<='0';
 		end if;
 end if;
-
 end process;
 end arch;

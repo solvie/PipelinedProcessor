@@ -160,7 +160,7 @@ PORT(
 	MemRead : in std_logic;
 	MemWrite : in std_logic;
 	MemToReg : in std_logic;
-  
+
 	ALUOutput :	out STD_LOGIC_VECTOR (31 downto 0);
 	zeroOut :	out STD_LOGIC;
 	address : out STD_LOGIC_VECTOR (31 downto 0);
@@ -309,7 +309,7 @@ signal s_p_2_ALUcalc_operationcode :  std_logic_vector(3 downto 0 );
 
 signal s_p_3_MemtoReg :  std_logic;
 -- EX
-signal p_s_3_instruction_location_in : std_logic_vector(31 downto 0 ); 
+signal p_s_3_instruction_location_in : std_logic_vector(31 downto 0 );
 signal p_s_3_ALUcalc_operationcode : std_logic_vector(3 downto 0 );
 signal p_s_3_data_out_left: std_logic_vector (31 downto 0);
 signal p_s_3_data_out_right: std_logic_vector (31 downto 0);
@@ -501,7 +501,7 @@ port map(
 	MemRead=>p_s_3_MemRead,
 	MemWrite =>p_s_3_MemWrite,
 	MemToReg=>wbs_pipe_ex
-	
+
 );
 
 
@@ -601,7 +601,7 @@ port map(
     pseudo_address_in => pseudo_address_s_p_4,
     pseudo_address_out => pseudo_address_p_s_5,
     MemToReg=>wbs_mem_pipe,
-    out_MemToReg=>temp_wb_signal,
+    out_MemToReg=>wb_signal,
     r_s_in => r_s_s_p_4,
     r_s_out => r_s_p_s_5
 
@@ -618,8 +618,8 @@ port map(
 	clock => clock,
 	r_s_in => r_s_p_s_5,
   r_s_out => wb_addr,
-    wb_signal_in5 =>temp_wb_signal,
-    wb_signal_out5 => wb_signal
+  wb_signal_in5 =>temp_wb_signal
+  --wb_signal_out5 => wb_signal
 
 );
 

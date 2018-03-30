@@ -67,7 +67,7 @@ begin
 			pseudo_address <="00000000000000000000000000";
 		else
 		  opcode <=instruction(31 downto 26);
-		    if(instruction(31 downto 26)="000000") then
+		  if(instruction(31 downto 26)="000000") then
 				--R type
 				data_out_left<=register_block(to_integer(unsigned(instruction(25 downto 21))));
 				data_out_right<=register_block(to_integer(unsigned(instruction(20 downto 16))));

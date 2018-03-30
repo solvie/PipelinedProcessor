@@ -13,7 +13,7 @@ add wave -position end sim:/testbench/real_cpu/p_s_3_mux1_control
 add wave -position end sim:/testbench/real_cpu/p_s_3_data_out_left
 add wave -position end sim:/testbench/real_cpu/p_s_3_data_out_right
 add wave -position end sim:/testbench/real_cpu/p_s_3_ALUcalc_operationcode
-add wave -position end sim:/testbench/real_cpu/out_MemToReg
+
 
 add wave -position end sim:/testbench/real_cpu/id_s/*
 
