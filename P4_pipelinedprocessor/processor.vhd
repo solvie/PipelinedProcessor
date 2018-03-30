@@ -374,7 +374,7 @@ signal zeroOut_out_temp: STD_LOGIC_VECTOR (25 downto 0);
 
 signal mem_address: INTEGER RANGE 0 to 1023;
 
-
+signal temp_wb_signal: std_logic;
 
 --signal data_ready: STD_LOGIC;
 
@@ -518,9 +518,9 @@ port map(
 	r_s=>p_s_3_r_s,
 	pseudo_address=>p_s_3_pseudo_address,
 	instruction_location_in => p_s_3_instruction_location_in,
-	mux1_control =>p_s_3_mux1_control,
-	mux2_control =>p_s_3_mux2_control,
-	mux3_control =>p_s_3_mux3_control,
+	mux1_control =>s_p_2_Branch,
+	mux2_control =>s_p_2_RegDst,
+	mux3_control =>s_p_2_MemtoReg,
 	MemRead=>p_s_3_MemRead,
 	MemWrite=>p_s_3_MemWrite,
 	MemToReg=>wbs_pipe_ex,
@@ -601,7 +601,7 @@ port map(
     pseudo_address_in => pseudo_address_s_p_4,
     pseudo_address_out => pseudo_address_p_s_5,
     MemToReg=>wbs_mem_pipe,
-    out_MemToReg=>wb_signal,
+    out_MemToReg=>temp_wb_signal,
     r_s_in => r_s_s_p_4,
     r_s_out => r_s_p_s_5
 
@@ -618,7 +618,8 @@ port map(
 	clock => clock,
 	r_s_in => r_s_p_s_5,
   r_s_out => wb_addr,
-    wb_signal_in5 =>wbs_pipe_wb
+    wb_signal_in5 =>temp_wb_signal,
+    wb_signal_out5 => wb_signal
 
 );
 
