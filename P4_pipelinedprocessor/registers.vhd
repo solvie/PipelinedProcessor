@@ -67,9 +67,9 @@ begin
 			pseudo_address <="00000000000000000000000000";
 		else
 		  opcode <=instruction(31 downto 26);
-		  data_out_left<=register_block(to_integer(unsigned(instruction(20 downto 16))));
+		  data_out_left<=register_block(to_integer(unsigned(instruction(25 downto 21))));
 		  data_out_right<=register_block(to_integer(unsigned(instruction(15 downto 11))));
-		  r_s<=instruction(25 downto 21);
+		  r_s<=instruction(20 downto 16);
 
 		  shamt<=instruction(10 downto 6);
 		  funct<=instruction(5 downto 0);
