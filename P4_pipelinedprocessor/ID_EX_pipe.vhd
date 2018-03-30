@@ -54,7 +54,7 @@ process(reset, clock)
         if reset = '1' then
 
         elsif rising_edge(clock) then
-				else
+			
 				ALUcalc_operationcode<=d_ALUcalc_operationcode;
 				data_out_left <=d_data_out_left;
 				data_out_right<=d_data_out_right;

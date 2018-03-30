@@ -25,7 +25,6 @@ begin
 	variable hi : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
 	variable lo : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
 begin
-  if rising_edge(clock) then
     long := STD_LOGIC_VECTOR(signed(A)*signed(B));
 	if (operationcode = "0010") then
 		hi := long(63 downto 32);	  						-- Multiply
@@ -79,6 +78,8 @@ begin
 	else
 	zero <='0';
   end if;
+  if rising_edge(clock) then
+  
 
 end if;
 end process;

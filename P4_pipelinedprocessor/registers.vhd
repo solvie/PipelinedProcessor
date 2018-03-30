@@ -40,7 +40,7 @@ process(clock)
 begin
 	if rising_edge(clock) then
     --normal operation for instruction parse
-		if(wb_signal ='1')then
+		if(wb_signal ='1' and not (wb_addr="00000"))then
     		register_block(to_integer(unsigned(wb_addr)))<= wb_data;
     		data_out_left<="00000000000000000000000000000000";
       data_out_right<="00000000000000000000000000000000";

@@ -9,7 +9,7 @@ port(
 	reset : in std_logic;
 
   opcode : in std_logic_vector(5 downto 0);
-
+  funct : in std_logic_vector(5 downto 0);
 	RegDst   : out std_logic;
 	ALUSrc   : out std_logic;
 	MemtoReg : out std_logic;

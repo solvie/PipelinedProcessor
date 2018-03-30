@@ -145,16 +145,12 @@ begin
   wait for 1*clk_period;
 
   --s_instruction <= "000011 00001 00001 00001 00001 000000"
-  s_mux1_control <='0';
-	s_mux2_control<='0';
-  s_mux3_control<='0';
-	s_MemRead<='0';
-	s_MemWrite<='0';
+	s_ALUcalc_operationcode <= "0000";
 	s_data_out_left <= "00000000000000000000000000000101";
 	s_data_out_right <= "00000000000000000000000000000010";
-	s_ALUcalc_operationcode <= "0011";
+	
   wait for 1*clk_period;
-  assert(s_ALUOutput = "00000000000000000000000000000010") report "error";
+  assert(s_ALUOutput = "00000000000000000000000000000111") report "error";
   s_ALUcalc_operationcode <= "1001";
   wait for 1*clk_period;
   assert(s_ALUOutput = "00000000000000000000000000000001") report "error";
@@ -165,7 +161,8 @@ begin
   --slt
   s_data_out_left <= "00000000000000000000000000000001";
 	s_data_out_right <= "00000000000000000000000000000010";
-  s_ALUcalc_operationcode <= "0100";
+  
+s_ALUcalc_operationcode <= "0100";
   wait for 1*clk_period;
   assert(s_ALUOutput = "00000000000000000000000000000001") report "error slt";
 

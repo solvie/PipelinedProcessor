@@ -68,7 +68,7 @@ port(
 	reset : in std_logic;
 
 	opcode : in std_logic_vector(5 downto 0);
-
+  funct : in std_logic_vector(5 downto 0);
 	RegDst   : out std_logic;
 	ALUSrc   : out std_logic;
 	MemtoReg : out std_logic;
@@ -99,10 +99,11 @@ ctrl : control
 port map(
 	clock =>clock,
 	reset =>reset,
-	opcode =>s_funct,
+	opcode =>s_opcode,
 	RegDst   =>RegDst,
 	MemtoReg =>MemtoReg,
-
+	RegWrite =>s_wb_signal,
+  funct =>s_funct,
 	MemRead  =>MemRead,
 	MemWrite =>MemWrite,
 	Branch   =>Branch,
