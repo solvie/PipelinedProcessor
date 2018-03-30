@@ -79,14 +79,14 @@ else
       ALUcalc_operationcode <="0000";
     end if;
 
-	RegDst <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
+	RegDst <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
 	ALUSrc <= (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0)) or (opcode(5) and not opcode(4) and opcode(3) and not opcode(2) and opcode(1) and opcode(0));
 	MemtoReg <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0);
-	RegWrite <= (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0)) or (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0));
+	RegWrite <= (not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0)) or (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0));
 	MemRead <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0);
 	MemWrite <=opcode(5) and not opcode(4) and opcode(3) and not opcode(2) and opcode(1) and opcode(0);
 	Branch <= not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
-	ALUOp1 <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
+	ALUOp1 <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
 	ALUOp0<=not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
 	
 	end if;
