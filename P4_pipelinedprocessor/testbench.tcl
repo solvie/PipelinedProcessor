@@ -13,6 +13,7 @@ add wave -position end sim:/testbench/real_cpu/p_s_3_mux1_control
 add wave -position end sim:/testbench/real_cpu/p_s_3_data_out_left
 add wave -position end sim:/testbench/real_cpu/p_s_3_data_out_right
 add wave -position end sim:/testbench/real_cpu/p_s_3_ALUcalc_operationcode
+add wave -position end sim:/testbench/real_cpu/out_MemToReg
 
 add wave -position end sim:/testbench/real_cpu/id_s/*
 
@@ -55,8 +56,8 @@ vsim testbench
 force -deposit clock 0 0 ns, 1 0.5 ns -repeat 1 ns
 
 ;# Add the waves
-AddWaves
-#AddAll
+#AddWaves
+AddAll
 
 ;# Run for 50ns
 run 200ns
