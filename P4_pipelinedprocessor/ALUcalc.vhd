@@ -26,12 +26,13 @@ begin
 	variable lo : STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000";
 begin
   if rising_edge(clock) then
-    long := STD_LOGIC_VECTOR(signed(A)*signed(B));
+    
 	if (operationcode = "0010") then
+	  long := STD_LOGIC_VECTOR(signed(A)*signed(B));
 		hi := long(63 downto 32);	  						-- Multiply
 		lo := long(31 downto 0);								-- Multiply
-		hi_signal <= long(63 downto 32);
-		lo_signal<= long(31 downto 0);
+		hi_signal <= hi;
+		lo_signal<= lo;
 	elsif(operationcode = "0011") then
 		lo := STD_LOGIC_VECTOR(signed(A) / signed(B));		-- Divide
 		hi := STD_LOGIC_VECTOR(signed(A) rem signed(B));
@@ -44,9 +45,9 @@ begin
 	alucalcresult <=STD_LOGIC_VECTOR(signed(A)+signed(B)); 		-- Add
 	elsif(operationcode = "0001") then
 	alucalcresult <=STD_LOGIC_VECTOR(signed(A)-signed(B)); 		-- Subract
-	elsif (operationcode = "0010") then
+	elsif (operationcode = "0010") then -- mult
 		alucalcresult <=lo;
-	elsif(operationcode = "0011") then
+	elsif(operationcode = "0011") then --div
 		alucalcresult <=lo;
 	elsif (operationcode = "0101") then
 	alucalcresult <=A AND B;   									-- And
