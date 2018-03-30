@@ -29,7 +29,10 @@ port(
 
 	-- FOR MEM
 	readdata_m: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-	waitrequest_m: OUT STD_LOGIC
+	waitrequest_m: OUT STD_LOGIC;
+	data_ready: in std_logic
+	
+
 );
 end component;
 
@@ -59,6 +62,7 @@ signal im_write_to_file: std_logic;
 file file_VECTORS : text;
 file file_Output : text;
 
+signal data_ready_m: std_logic;
 begin
 
 real_cpu: processor
@@ -77,7 +81,8 @@ port map(
 
 	-- FOR MEM
 	readdata_m =>temp_readdata,
-	waitrequest_m => tempp_waitrequest
+	waitrequest_m => tempp_waitrequest,
+	data_ready => data_ready_m
 );
 
 clk_process : process
@@ -96,6 +101,7 @@ variable i: integer := 0;
 variable j: integer := 0;
 
 begin
+data_ready_m <= '0';
 wait until rising_edge(clock);
 im_write_to_file <= '0';
 im_read <= '1';
@@ -112,8 +118,9 @@ im_read <= '0';
 	end loop;
 file_close(file_VECTORS);
 
-	wait for 1*clk_period;
+	wait for 5*clk_period;
 	im_write <= '0';
+	data_ready_m <= '1';
 	--i := i - 1;
 --	im_addr <= 0;
 

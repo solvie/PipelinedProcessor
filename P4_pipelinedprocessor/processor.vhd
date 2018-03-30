@@ -22,7 +22,8 @@ port(
 	write_to_file: IN std_logic;
 	-- FOR MEM
 	readdata_m: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-	waitrequest_m: OUT STD_LOGIC
+	waitrequest_m: OUT STD_LOGIC;
+	data_ready: in std_logic
 
 );
 end processor;
@@ -352,7 +353,7 @@ signal mem_address: INTEGER RANGE 0 to 1023;
 signal wb_signal_temp: std_logic := '1';
 
 
-signal data_ready: STD_LOGIC;
+--signal data_ready: STD_LOGIC;
 
 
 
