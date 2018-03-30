@@ -39,7 +39,7 @@ process(reset, clock)
             mux3_control_out <= '0';
             r_s_out <= (others => '0');
         elsif(rising_edge(clock)) then
-			out_MemToReg <=MemToReg;
+			out_MemToReg <=(not MemToReg);
 			mem_out	<= mem_in;
 			ALU_out	<= ALU_in;
 			--instruction_out <= instruction_in;
