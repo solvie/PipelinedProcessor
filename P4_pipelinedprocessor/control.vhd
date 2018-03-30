@@ -35,7 +35,7 @@ begin
 	--parsed operation control for ALU
 	-- PLA style control parse.JPG
 	if rising_edge(clock) then
-
+else
     if(opcode = "100000" or opcode = "001000" or opcode = "100011" or opcode = "101011") then
       ALUcalc_operationcode <="0000";
     elsif(opcode = "100010") then
@@ -126,15 +126,7 @@ begin
 			MemWrite <= '0';
 			ALUOp0<='0';
 		end if;
-		if(opcode ="000000") THEN
-		RegDst  <='0';
-		ALUSrc   <='0';
-		MemtoReg <='0';
-		RegWrite <='0';
-		MemRead  <='0';
-		MemWrite <='0';
-		Branch   <='0';
-		end if;
+		
 		if(opcode = "UUUUUU") THEN
 		RegDst  <='0';
 		ALUSrc   <='0';

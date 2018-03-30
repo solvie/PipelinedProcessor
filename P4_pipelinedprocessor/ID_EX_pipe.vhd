@@ -41,7 +41,8 @@ port(
 	mux2_control : out std_logic;
 	mux3_control : out std_logic;
 	MemRead : out std_logic;
-	MemWrite : out std_logic
+	MemWrite : out std_logic;
+	MemToReg : out std_logic
  );
 end ID_EX_pipe;
 
@@ -64,7 +65,7 @@ process(reset, clock)
 				r_s<=d_r_s;
 				pseudo_address<=d_pseudo_address;
 				-- from control
-
+        MemToReg <= d_MemtoReg;
 				mux1_control <= d_Branch;
 				mux2_control <= d_RegDst;
 				mux3_control <= d_MemtoReg;

@@ -24,7 +24,7 @@ vcom mux_2_to_1.vhd
 vcom adder32.vhd
 vcom testbench.vhd
 vcom ALUcalc.vhd
-vcom mux_2_to_1.vhd
+vcom mux_2_to_1_int.vhd
 vcom EX_stage.vhd
 vcom registers.vhd
 vcom control.vhd

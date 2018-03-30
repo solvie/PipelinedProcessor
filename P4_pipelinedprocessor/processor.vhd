@@ -23,7 +23,7 @@ port(
 	-- FOR MEM
 	readdata_m: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
 	waitrequest_m: OUT STD_LOGIC;
-	data_ready: in std_logic
+	data_ready: in std_logic :='0'
 
 );
 end processor;
@@ -134,7 +134,8 @@ PORT(
 	mux2_control : out std_logic;
 	mux3_control : out std_logic;
 	MemRead : out std_logic;
-	MemWrite : out std_logic
+	MemWrite : out std_logic;
+	MemToReg : out std_logic
 );
 end component;
 
@@ -156,13 +157,15 @@ PORT(
 	mux3_control : in std_logic;
 	MemRead : in std_logic;
 	MemWrite : in std_logic;
-
+  MemToReg : in std_logic;
+  
 	ALUOutput :	out STD_LOGIC_VECTOR (31 downto 0);
 	zeroOut :	out STD_LOGIC;
 	address : out STD_LOGIC_VECTOR (31 downto 0);
 	out_mux3_control : out std_logic;
 	out_MemRead: out std_logic;
 	out_MemWrite: out std_logic;
+	out_MemToReg : out std_logic;
 	pseudo_address_out: out std_logic_vector(25 downto 0);
 	r_s_out: out std_logic_vector (4 downto 0)
 );
@@ -180,7 +183,7 @@ port(
 	address : in std_logic_vector(31 downto 0);
 
 	mem_writedata: out STD_LOGIC_VECTOR (31 DOWNTO 0);
-	mem_address: out INTEGER;-- RANGE 0 TO ram_size-1;
+	mem_address: out INTEGER RANGE 0 TO ram_size-1;
 	mem_memwrite: out STD_LOGIC;
 	mem_memread: out STD_LOGIC;
 	mux3_control_out : out std_logic;
@@ -189,8 +192,9 @@ port(
   	pseudo_address : in std_logic_vector(25 downto 0);
   	mem_pseudo_address : out std_logic_vector(25 downto 0);
   	r_s_in : in std_logic_vector(4 downto 0);
-  	r_s_out: out std_logic_vector(4 downto 0)
-
+  	r_s_out: out std_logic_vector(4 downto 0);
+  	MemToReg : in std_logic;
+   out_MemToReg : out std_logic
  );
 end component;
 
@@ -202,7 +206,8 @@ component MEM_stage is
 	address: IN INTEGER;
 	MemRead : in std_logic;
 	MemWrite : in std_logic;
-
+ 	MemToReg : in std_logic;
+  out_MemToReg : out std_logic;
 	ALUOut: out STD_LOGIC_VECTOR (31 downto 0);
 	mem_out: out STD_LOGIC_VECTOR (31 DOWNTO 0);
 	--instruction_in: IN std_logic_vector(31 downto 0);
@@ -234,7 +239,9 @@ component MEM_WB_pipe is
     pseudo_address_in : in std_logic_vector(25 downto 0);
     pseudo_address_out : out std_logic_vector(25 downto 0);
     r_s_in: in std_logic_vector(4 downto 0);
-    r_s_out: out std_logic_vector(4 downto 0)
+    r_s_out: out std_logic_vector(4 downto 0);
+    MemToReg : in std_logic;
+   out_MemToReg : out std_logic
 	);
 end component;
 
@@ -248,7 +255,9 @@ component WB_stage is
     pseudo_address_out : out STD_LOGIC_VECTOR (25 downto 0);
     clock : IN std_logic;
 	r_s_in : in STD_LOGIC_VECTOR (4 downto 0);
-    r_s_out : out STD_LOGIC_VECTOR (4 downto 0)
+    r_s_out : out STD_LOGIC_VECTOR (4 downto 0);
+    wb_signal_in5 : in std_logic;
+    wb_signal_out5 : out std_logic
 	);
 end component;
 
@@ -273,6 +282,7 @@ signal instruction_s_p: std_logic_vector(31 downto 0);
 signal instr_loc_p_s: std_logic_vector(31 downto 0);
 signal instruction_out_p_s: std_logic_vector(31 downto 0);
 -- ID
+signal wb_signal: std_logic :='0';
 signal wb_addr: std_logic_vector(4 downto 0);
 signal wb_data: std_logic_vector(31 downto 0);
 --signal write_to_file: std_logic;
@@ -346,11 +356,19 @@ signal ALUOut_p_s_5: STD_LOGIC_VECTOR (31 downto 0);
 signal pseudo_address_p_s_5: STD_LOGIC_VECTOR (25 downto 0);
 signal r_s_p_s_5: std_logic_vector (4 downto 0);
 
+--wbsignal
+signal wbs_pipe_ex: std_logic;
+signal wbs_ex_pipe: std_logic;
+signal wbs_pipe_mem: std_logic;
+signal wbs_mem_pipe: std_logic;
+signal wbs_pipe_wb: std_logic;
+
+
 --temp
 signal zeroOut_out_temp: STD_LOGIC_VECTOR (25 downto 0);
 
 signal mem_address: INTEGER RANGE 0 to 1023;
-signal wb_signal_temp: std_logic := '1';
+
 
 
 --signal data_ready: STD_LOGIC;
@@ -420,7 +438,7 @@ port map(
 	instruction_loc_out => instruction_out_p_s_2,
 	wb_addr => wb_addr,
 	wb_data => wb_data,
-	wb_signal => '1',
+	wb_signal => wb_signal,
 	-- from registers
 	data_out_left=>s_p_2_data_out_left,
 	data_out_right=>s_p_2_data_out_right,
@@ -474,7 +492,8 @@ port map(
 	mux2_control =>p_s_3_mux2_control,
 	mux3_control =>p_s_3_mux3_control,
 	MemRead=>p_s_3_MemRead,
-	MemWrite =>p_s_3_MemWrite
+	MemWrite =>p_s_3_MemWrite,
+	MemToReg=>s_p_2_MemtoReg
 );
 
 
@@ -496,13 +515,14 @@ port map(
 	mux3_control =>p_s_3_mux3_control,
 	MemRead=>p_s_3_MemRead,
 	MemWrite=>p_s_3_MemWrite,
-
+  MemToReg=>s_p_2_MemtoReg,
 	ALUOutput =>ALUOuput_s_p,
 	zeroOut =>zeroOut_s_p,
 	address =>address_s_p,
 	out_mux3_control =>mux3_control_s_p,
 	out_MemRead=>MemRead_s_p,
 	out_MemWrite=>MemWrite_s_p,
+	out_MemToReg=>wbs_ex_pipe,
 	pseudo_address_out => pseudo_address_s_p,
 	r_s_out => r_s_s_p
 );
@@ -518,7 +538,7 @@ port map(
 	MemRead =>MemRead_s_p,
 	MemWrite =>MemWrite_s_p,
 	address =>address_s_p,
-
+  MemToReg=>wbs_ex_pipe,
 	mem_writedata=>writedata_p_s,
 	mem_address=>address_p_s,
 	mem_memwrite=>memwrite_p_s,
@@ -528,7 +548,7 @@ port map(
 
   	pseudo_address => pseudo_address_s_p,
   	mem_pseudo_address => pseudo_address_p_s,
-
+  out_MemToReg =>wbs_pipe_mem,
   	r_s_in => r_s_s_p,
   	r_s_out => r_s_p_s_4
 );
@@ -540,12 +560,12 @@ port map(
 	address => address_p_s,
 	MemRead => memread_p_s,
 	MemWrite => memwrite_p_s,
-
+  MemToReg=>wbs_pipe_mem,
 	ALUOut => ALUOut_s_p_4,
 	mem_out => mem_out_s_p_4,
 	--instruction_in => write_to_file_p_s,
 	--instruction_out => write_to_file_p_s,
-
+  out_MemToReg=>wbs_mem_pipe,
 	write_to_file => write_to_file,
 	mux3_control_in => mux3_control_out_p_s_3,
 	mux3_control_out => mux3_control_out_s_p_4,
@@ -572,6 +592,8 @@ port map(
     --sel_sig_out : OUT std_logic -- select signal for mux in WB stage out
     pseudo_address_in => pseudo_address_s_p_4,
     pseudo_address_out => pseudo_address_p_s_5,
+    MemToReg=>wbs_mem_pipe,
+    out_MemToReg=>wbs_pipe_wb,
     r_s_in => r_s_s_p_4,
     r_s_out => r_s_p_s_5
 
@@ -587,7 +609,9 @@ port map(
 	pseudo_address_out => zeroOut_out_temp,
 	clock => clock,
 	r_s_in => r_s_p_s_5,
-    r_s_out => wb_addr
+    r_s_out => wb_addr,
+    wb_signal_in5 =>wbs_pipe_wb,
+    wb_signal_out5=>wb_signal
 
 );
 

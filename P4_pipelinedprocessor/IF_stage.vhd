@@ -9,7 +9,7 @@ port(
 	mux_input_to_stage1 : IN std_logic_vector(31 downto 0); -- this will come from the EX/MEM buffer
 	mux_select_sig_to_stage1 : IN std_logic;
 	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0);
-	pc_out_as_int : OUT integer
+	pc_out_as_int : OUT integer :=0
  );
 end IF_stage;
 

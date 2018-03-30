@@ -14,7 +14,7 @@ port(
 	shamt : in std_logic_vector(4 downto 0);
 	r_s: in std_logic_vector (4 downto 0);
 	pseudo_address : in std_logic_vector(25 downto 0);
-
+  MemToReg : in std_logic;
   instruction_location_in : in std_logic_vector(31 downto 0);
 	mux1_control : in std_logic;
 	mux2_control : in std_logic;
@@ -28,6 +28,7 @@ port(
   out_mux3_control : out std_logic;
   out_MemRead: out std_logic;
   out_MemWrite: out std_logic;
+  out_MemToReg : out std_logic;
   pseudo_address_out: out std_logic_vector(25 downto 0);
   r_s_out: out std_logic_vector (4 downto 0)
 );
@@ -86,6 +87,7 @@ port map(
 		alucalcresult =>ALUOutput
 
  );
+out_MemToReg <=MemToReg;
 address <= data_out_right;
 out_mux3_control<=mux3_control;
 out_MemRead<=	MemRead;

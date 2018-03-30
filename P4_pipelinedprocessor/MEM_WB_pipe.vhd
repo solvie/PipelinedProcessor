@@ -19,8 +19,9 @@ port(
     pseudo_address_in : in std_logic_vector(25 downto 0);
     pseudo_address_out : out std_logic_vector(25 downto 0);
     r_s_in: in std_logic_vector(4 downto 0);
-    r_s_out: out std_logic_vector(4 downto 0)
-
+    r_s_out: out std_logic_vector(4 downto 0);
+    MemToReg : in std_logic;
+    out_MemToReg : out std_logic
  );
 end MEM_WB_pipe;
 
@@ -38,6 +39,8 @@ process(reset, clock)
             mux3_control_out <= '0';
             r_s_out <= (others => '0');
         elsif rising_edge(clock) then
+          
+            out_MemToReg <=MemToReg;
             mem_out	<= mem_in;
             ALU_out	<= ALU_in;
             --instruction_out <= instruction_in;

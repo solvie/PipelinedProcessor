@@ -5,7 +5,7 @@ entity mux_2_to_1_int is
     Port ( SEL : in  STD_LOGIC;
            A   : in  integer;
            B   : in  integer;
-           Output : in integer 
+           Output : out integer range 0 to 1023 
            );
 end mux_2_to_1_int;
 

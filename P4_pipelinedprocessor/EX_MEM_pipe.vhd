@@ -14,7 +14,7 @@ entity EX_MEM_pipe is
 	MemWrite : in std_logic;
 	address : in std_logic_vector(31 downto 0);
   pseudo_address : in std_logic_vector(25 downto 0);
-
+  MemToReg : in std_logic;
 	mem_writedata: out STD_LOGIC_VECTOR (31 DOWNTO 0);
 	mem_address: out INTEGER range 0 to 8191; -- RANGE 0 TO ram_size-1
 	mem_memwrite: out STD_LOGIC;
@@ -23,6 +23,7 @@ entity EX_MEM_pipe is
  -- zeroOut_out: out std_logic;
 	mem_write_to_file: out STD_LOGIC;
   mem_pseudo_address : out std_logic_vector(25 downto 0);
+  out_MemToReg : out std_logic;
   r_s_in : in std_logic_vector(4 downto 0);
   r_s_out: out std_logic_vector(4 downto 0)
  );
@@ -47,7 +48,7 @@ process(clock)
 
         end if;
         mem_writedata <=ALUOuput;
-        mem_address<= to_integer(unsigned(address(13 downto 0)));
+        mem_address<= to_integer(unsigned(address(31 downto 0)));
         mem_memwrite<=MemWrite;
         mem_memread<=MemRead;
         mux3_control_out <= mux3_control;
