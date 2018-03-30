@@ -20,7 +20,9 @@ port(
 	r_s_in: in std_logic_vector(4 downto 0);
 	r_s_out: out std_logic_vector(4 downto 0);
 	MemToReg : in std_logic;
-  out_MemToReg : out std_logic
+	out_MemToReg : out std_logic;
+	jump_control: in std_logic;
+	jump_control_out: out std_logic
 );
 end MEM_stage;
 
@@ -77,5 +79,7 @@ end process;
 process (mux3_control_in) BEGIN
 	mux3_control_out<=mux3_control_in;
 end process;
+
 out_MemToReg <=	MemToReg ;
+jump_control_out<= jump_control;
 end;

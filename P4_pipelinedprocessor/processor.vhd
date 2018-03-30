@@ -200,7 +200,8 @@ port(
   	r_s_in : in std_logic_vector(4 downto 0);
   	r_s_out: out std_logic_vector(4 downto 0);
   	MemToReg : in std_logic;
-   out_MemToReg : out std_logic
+   out_MemToReg : out std_logic;
+	test: out std_logic_vector(31 downto 0)
  );
 end component;
 
@@ -222,7 +223,9 @@ component MEM_stage is
 	mux3_control_out: out std_logic;
 	write_to_file : in std_logic;
 	r_s_in: in std_logic_vector(4 downto 0);
-	r_s_out: out std_logic_vector(4 downto 0)
+	r_s_out: out std_logic_vector(4 downto 0);
+	jump_control: in std_logic;
+	jump_control_out: out std_logic
 	);
 end component;
 
@@ -342,7 +345,6 @@ signal address_p_s:  INTEGER;-- RANGE 0 TO ram_size-1;
 signal memwrite_p_s:  STD_LOGIC;
 signal memread_p_s:  STD_LOGIC;
 signal write_to_file_p_s:  STD_LOGIC;
-signal p_s_4_pseudo_address: std_logic_vector(25 downto 0);
 signal mux3_control_out_p_s_3: std_logic;
 signal r_s_p_s_4: std_logic_vector (4 downto 0);
 signal pseudo_address_converted: std_logic_vector(31 downto 0);
@@ -357,7 +359,6 @@ signal r_s_s_p_4: std_logic_vector (4 downto 0);
 signal mux3_control_out_p_s_5: std_logic;
 signal mem_out_p_s_5: STD_LOGIC_VECTOR (31 downto 0);
 signal ALUOut_p_s_5: STD_LOGIC_VECTOR (31 downto 0);
-signal pseudo_address_p_s_5: STD_LOGIC_VECTOR (25 downto 0);
 signal r_s_p_s_5: std_logic_vector (4 downto 0);
 
 --wbsignal
@@ -372,9 +373,9 @@ signal wbs_pipe_wb: std_logic;
 --temp
 signal zeroOut_out_temp: STD_LOGIC_VECTOR (25 downto 0);
 signal jump_to_if: STD_LOGIC;
-
+signal testtest: STD_LOGIC_VECTOR (31 downto 0);
 signal mem_address: INTEGER RANGE 0 to 1023;
-
+signal jump_temp: std_logic;
 
 
 --signal data_ready: STD_LOGIC;
@@ -418,7 +419,7 @@ if_s: IF_stage
 port map(
     clock => clock,
     reset => reset,
-    mux_input_to_stage1 => pseudo_address_converted,
+    mux_input_to_stage1 => pseudo_address_p_s,
     mux_select_sig_to_stage1 => jump_to_if,
     mux_output_stage_1 => instr_loc_s_p,
     pc_out_as_int => pc_out_as_int
@@ -521,9 +522,9 @@ port map(
 	r_s=>p_s_3_r_s,
 	pseudo_address=>p_s_3_pseudo_address,
 	instruction_location_in => p_s_3_instruction_location_in,
-	mux1_control =>p_s_3_mux1_control,
-	mux2_control =>p_s_3_mux2_control,
-	mux3_control =>p_s_3_mux3_control,
+	mux1_control =>s_p_2_Jump,
+	mux2_control =>s_p_2_RegDst,
+	mux3_control =>s_p_2_MemtoReg,
 	MemRead=>p_s_3_MemRead,
 	MemWrite=>p_s_3_MemWrite,
 	MemToReg=>wbs_pipe_ex,
@@ -536,7 +537,7 @@ port map(
 	out_MemToReg=>wbs_ex_pipe,
 	pseudo_address_out => pseudo_address_s_p,
 	r_s_out => r_s_s_p,
-	Jump => p_s_3_jump
+	Jump => s_p_2_jump --test p_s_3_jump
 );
 
 exmem_pipe: EX_MEM_pipe
@@ -556,13 +557,15 @@ port map(
 	mem_memwrite=>memwrite_p_s,
 	mem_memread=>memread_p_s,
 	mux3_control_out =>mux3_control_out_p_s_3,--does not do anything yet
-  	zeroOut_out => jump_to_if, --does not do anything yet
+  	zeroOut_out => jump_temp, --does not do anything yet
 
   	pseudo_address => pseudo_address_s_p,
   	pseudo_address_converted => pseudo_address_p_s,
 	out_MemToReg =>wbs_pipe_mem,
   	r_s_in => r_s_s_p,
-  	r_s_out => r_s_p_s_4
+  	r_s_out => r_s_p_s_4,
+	
+	test=>testtest
 );
 
 mem_s: MEM_stage
@@ -581,6 +584,9 @@ port map(
 	write_to_file => write_to_file,
 	mux3_control_in => mux3_control_out_p_s_3,
 	mux3_control_out => mux3_control_out_s_p_4,
+	jump_control_out=> jump_to_if,
+	jump_control=>jump_temp,
+	
 	r_s_in => r_s_p_s_4,
 	r_s_out => r_s_s_p_4
 

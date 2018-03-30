@@ -38,7 +38,7 @@ file file_Output : text;
 begin
 process(clock)
 begin
-	if rising_edge(clock) then
+	--if rising_edge(clock) then
     --normal operation for instruction parse
 		if(wb_signal ='1' and (not (wb_addr="00000")))then
     		register_block(to_integer(unsigned(wb_addr)))<= wb_data;
@@ -84,7 +84,7 @@ begin
       data_out_imm <= std_logic_vector(resize(signed(instruction(15 downto 0)),32));--sign extend
       end if;
     end if;
- end if;
+-- end if;
 end process;
 
 	write_file: PROCESS (write_to_file)

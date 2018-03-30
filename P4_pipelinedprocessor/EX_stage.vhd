@@ -93,13 +93,15 @@ port map(
  );
  
 process(clock) begin 
-	out_MemToReg <=MemToReg;
-	address <= data_out_right;
-	out_mux3_control<=mux3_control;
-	out_MemRead<=	MemRead;
-	out_MemWrite<=	MemWrite;
-	pseudo_address_out <= pseudo_address;
-	r_s_out <= r_s;
+	if (rising_edge(clock)) then 
+		out_MemToReg <=MemToReg;
+		address <= data_out_right;
+		out_mux3_control<=mux3_control;
+		out_MemRead<=	MemRead;
+		out_MemWrite<=	MemWrite;
+		pseudo_address_out <= pseudo_address;
+		r_s_out <= r_s;
+	end if;
 end process;
 
 end;
