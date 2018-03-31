@@ -13,7 +13,7 @@ port(
 	reset : IN std_logic;
 	-- The ports below are only exposed so that instruction memory can be loaded externally before the processor starts its business
 	writedata: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
-	address: IN INTEGER RANGE 0 TO ram_size-1;
+	address: IN INTEGER RANGE 0 TO ram_size-1 := 0;
 	mem_write: IN STD_LOGIC;
 	mem_read: IN STD_LOGIC;
 	readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
@@ -38,7 +38,7 @@ port(
 	mux_input_to_stage1 : IN std_logic_vector(31 downto 0); -- this will come from the EX/MEM buffer
 	mux_select_sig_to_stage1 : IN std_logic;
 	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0);
-	pc_out_as_int : OUT Integer
+	pc_out_as_int : OUT Integer range 0 to 1023 :=0
  );
 end component;
 
@@ -87,6 +87,7 @@ PORT(
 	shamt : out std_logic_vector(4 downto 0);
 	r_s: out std_logic_vector (4 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0);
+	n_pseudo_address : out std_logic_vector(31 downto 0);
 	-- from control
 	RegDst   : out std_logic;
 	--ALUSrc   : out std_logic;
@@ -96,7 +97,9 @@ PORT(
 	Branch   : out std_logic;
 	RegWrite : out std_logic;
 	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
-	write_to_file : in std_logic
+	write_to_file : in std_logic;
+	jumping : out std_logic
+
 );
 end component;
 
@@ -192,7 +195,7 @@ port(
   	--zeroOut_out: out std_logic;
 
   	pseudo_address : in std_logic_vector(25 downto 0);
-  	mem_pseudo_address : out std_logic_vector(25 downto 0);
+  	mem_pseudo_address : out std_logic_vector(31 downto 0);
   	r_s_in : in std_logic_vector(4 downto 0);
   	r_s_out: out std_logic_vector(4 downto 0);
   	MemToReg : in std_logic;
@@ -214,8 +217,6 @@ component MEM_stage is
 	mem_out: out STD_LOGIC_VECTOR (31 DOWNTO 0);
 	--instruction_in: IN std_logic_vector(31 downto 0);
 	--instruction_out: OUT std_logic_vector(31 downto 0);
-	pseudo_address_in: in STD_LOGIC_VECTOR (25 downto 0);
-	pseudo_address_out: out STD_LOGIC_VECTOR (25 downto 0);
 	mux3_control_in : in std_logic;
 	mux3_control_out: out std_logic;
 	write_to_file : in std_logic;
@@ -269,6 +270,13 @@ component mux_2_to_1_int is
            B   : in  integer;
            Output   : out integer
            );
+end component;
+
+component mux_2_to_1 is
+    Port ( SEL : in  STD_LOGIC;
+           A   : in  STD_LOGIC_VECTOR (31 downto 0);
+           B   : in  STD_LOGIC_VECTOR (31 downto 0);
+           Output   : out STD_LOGIC_VECTOR (31 downto 0));
 end component;
 
 -- signals connecting components together
@@ -336,7 +344,7 @@ signal pseudo_address_s_p : std_logic_vector(25 downto 0);
 signal r_s_s_p: std_logic_vector (4 downto 0);
 
 --MEM
-signal pseudo_address_p_s: std_logic_vector(25 downto 0);
+signal pseudo_address_p_s: std_logic_vector(31 downto 0);
 signal writedata_p_s:  STD_LOGIC_VECTOR (31 DOWNTO 0);
 signal address_p_s:  INTEGER;-- RANGE 0 TO ram_size-1;
 signal memwrite_p_s:  STD_LOGIC;
@@ -368,7 +376,10 @@ signal wbs_pipe_mem: std_logic;
 signal wbs_mem_pipe: std_logic;
 signal wbs_pipe_wb: std_logic;
 
-
+--mux_2_to_1
+signal address_b_or_j : STD_LOGIC_VECTOR (31 downto 0);
+signal isJumping : std_logic;
+signal n_pseudo_address :STD_LOGIC_VECTOR (31 downto 0);
 --temp
 signal zeroOut_out_temp: STD_LOGIC_VECTOR (25 downto 0);
 
@@ -377,7 +388,7 @@ signal mem_address: INTEGER RANGE 0 to 1023;
 signal temp_wb_signal: std_logic;
 
 --signal data_ready: STD_LOGIC;
-
+signal pc_mod : std_logic :='0';
 
 
 
@@ -392,6 +403,12 @@ begin
 --mem_address <= address;
 --end if;
 --end process;
+process (clock)
+	BEGIN
+	--if (rising_edge(clock)) then
+		pc_mod <= isJumping;
+	--end if;
+end process;
 
 select_address: mux_2_to_1_int
 port map(
@@ -401,6 +418,14 @@ port map(
     Output =>mem_address
 );
 
+
+b_orj : mux_2_to_1
+	 Port map (
+	 SEL =>isJumping,
+	 A =>n_pseudo_address,
+	 B =>pseudo_address_p_s,
+	 Output => address_b_or_j
+);
 
 LoadToInstMem: instruction_memory
 port map(
@@ -417,8 +442,8 @@ if_s: IF_stage
 port map(
     clock => clock,
     reset => reset,
-    mux_input_to_stage1 => mux_input_to_stage1,
-    mux_select_sig_to_stage1 => '0',
+    mux_input_to_stage1 => address_b_or_j,
+    mux_select_sig_to_stage1 => isJumping,
     mux_output_stage_1 => instr_loc_s_p,
     pc_out_as_int => pc_out_as_int
 );
@@ -452,6 +477,7 @@ port map(
 	shamt =>s_p_2_shamt,
 	r_s=>s_p_2_r_s,
 	pseudo_address=>s_p_2_pseudo_address,
+	n_pseudo_address=> n_pseudo_address,
 	-- from control
 	RegDst   =>s_p_2_RegDst,
 	--ALUSrc  => s_p_2_MemtoReg,
@@ -461,7 +487,8 @@ port map(
 	Branch   =>s_p_2_Branch,
 	RegWrite =>wbs_id_pipe,
 	ALUcalc_operationcode =>s_p_2_ALUcalc_operationcode,
-	write_to_file =>write_to_file
+	write_to_file =>write_to_file,
+	jumping => isJumping
 );
 
 idex_pipe: ID_EX_pipe
@@ -577,8 +604,6 @@ port map(
 	write_to_file => write_to_file,
 	mux3_control_in => mux3_control_out_p_s_3,
 	mux3_control_out => mux3_control_out_s_p_4,
-	pseudo_address_in => pseudo_address_p_s,
-	pseudo_address_out => pseudo_address_s_p_4,
 	r_s_in => r_s_p_s_4,
 	r_s_out => r_s_s_p_4
 

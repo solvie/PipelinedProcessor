@@ -56,8 +56,8 @@ vsim testbench
 force -deposit clock 0 0 ns, 1 0.5 ns -repeat 1 ns
 
 ;# Add the waves
-AddWaves
-;#AddAll
+;#AddWaves
+AddAll
 
 ;# Run for 50ns
 run 200ns

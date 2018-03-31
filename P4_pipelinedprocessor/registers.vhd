@@ -16,7 +16,7 @@ port(
 	wb_signal : in std_logic;
 	wb_addr : in std_logic_vector (4 downto 0);
 	wb_data : in std_logic_vector (31 downto 0);
-
+	jumping : out std_logic;
 	data_out_left: out std_logic_vector (31 downto 0) :="00000000000000000000000000000000";
 	data_out_right: out std_logic_vector (31 downto 0):="00000000000000000000000000000000";
 	data_out_imm: out std_logic_vector (31 downto 0):="00000000000000000000000000000000"; -- sign/zero extended value will come out
@@ -25,7 +25,7 @@ port(
 	r_s: out std_logic_vector (4 downto 0):="00000";
 	opcode: out std_logic_vector(5 downto 0):="000000";
 	pseudo_address : out std_logic_vector(25 downto 0):="00000000000000000000000000";
-
+	n_pseudo_address : out std_logic_vector(31 downto 0):="00000000000000000000000000000000";
 	write_to_file : in std_logic
 );
 end registers;
@@ -33,6 +33,8 @@ end registers;
 architecture arch of registers is
 type registers_body is array(0 to 31) of std_logic_vector(31 downto 0);
 signal register_block : registers_body :=(others=>"00000000000000000000000000000000");
+signal s_jumping : std_logic;
+
 file file_Output : text;
 --https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
 begin
@@ -48,6 +50,7 @@ begin
 	  if (reset = '1') then
 	    --reset all registers
 			register_block<=(others=>"00000000000000000000000000000000");
+				jumping <='0';
 				data_out_left<="00000000000000000000000000000000";
 	      data_out_right<="00000000000000000000000000000000";
        	data_out_imm<="00000000000000000000000000000000";
@@ -56,7 +59,19 @@ begin
        	r_s<="00000";
        	opcode<="000000";
        	pseudo_address <="00000000000000000000000000";
+		elsif( instruction(31 downto 27) ="00001") THEN
+			jumping <='1';
+			data_out_left<="00000000000000000000000000000000";
+			data_out_right<="00000000000000000000000000000000";
+			data_out_imm<="00000000000000000000000000000000";
+			shamt <="00000";
+			funct <="000000";
+			r_s<="00000";
+			opcode<="000000";
+			pseudo_address<= instruction(25 downto 0);
+		  n_pseudo_address<= std_logic_vector(resize(unsigned(instruction(25 downto 0)),32));
 		elsif ( instruction ="UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU") THEN
+			jumping <='0';
 			data_out_left<="00000000000000000000000000000000";
 			data_out_right<="00000000000000000000000000000000";
 			data_out_imm<="00000000000000000000000000000000";
@@ -66,6 +81,7 @@ begin
 			opcode<="000000";
 			pseudo_address <="00000000000000000000000000";
 		else
+			jumping <='0';
 		  opcode <=instruction(31 downto 26);
 		  if(instruction(31 downto 26)="000000") then
 				--R type
@@ -81,7 +97,8 @@ begin
 
 		  shamt<=instruction(10 downto 6);
 		  funct<=instruction(5 downto 0);
-		  pseudo_address<= instruction(25 downto 0);
+			pseudo_address<= instruction(25 downto 0);
+		  n_pseudo_address<= std_logic_vector(resize(unsigned(instruction(25 downto 0)),32));
 		  if(
         (instruction(31 downto 26) = "001100")or --andi
         instruction(31 downto 26) = "001101" --ori

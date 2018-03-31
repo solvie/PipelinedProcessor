@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity ALUctrl is
-    Port ( 
+    Port (
         clock : in STD_LOGIC;
         opcode : in  STD_LOGIC_VECTOR (5 downto 0);
         ALUcalc_operationcode : out  STD_LOGIC_VECTOR (3 downto 0)
@@ -23,25 +23,25 @@ begin
       ALUcalc_operationcode <="0001";
     elsif(opcode = "011000" or opcode = "011001") then
       ALUcalc_operationcode <="0010";
-      
+
     elsif(opcode = "011010" or opcode = "011011") then
       ALUcalc_operationcode <="0011";
-      
+
     elsif(opcode = "101010" or opcode = "001010") then
       ALUcalc_operationcode <="0100";
-      
+
     elsif(opcode = "100100" or opcode = "001100") then
       ALUcalc_operationcode <="0101";
-      
+
     elsif(opcode = "100101" or opcode = "001101") then
       ALUcalc_operationcode <="0110";
-      
+
     elsif(opcode = "100111") then
       ALUcalc_operationcode <="0111";
-      
+
     elsif(opcode = "100110" or opcode = "001110") then
       ALUcalc_operationcode <="1000";
-      
+
     elsif(opcode = "010000") then
       ALUcalc_operationcode <="1001";
     elsif(opcode = "010010") then
@@ -59,7 +59,7 @@ begin
     else
       ALUcalc_operationcode <="0000";
     end if;
-    
+
     --ALUcalc_operationcode <= "0000" when(opcode = "100000" or opcode = "001000" or opcode = "100011" or opcode = "101011") else  -- Add
 		--"0001" when(opcode = "100010") else 						-- Subtract
 		--"0010" when(opcode = "011000" or opcode = "011001") else  	-- Multiply

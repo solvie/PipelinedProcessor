@@ -32,8 +32,9 @@ port(
 	Branch   : out std_logic;
 	RegWrite : out std_logic;
 	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
-
-	write_to_file : in std_logic
+	n_pseudo_address :  out std_logic_vector(31 downto 0);
+	write_to_file : in std_logic;
+	jumping : out std_logic
 );
 end ID_stage;
 
@@ -58,7 +59,9 @@ port(
 	r_s: out std_logic_vector (4 downto 0);
 	opcode: out std_logic_vector(5 downto 0);
 	pseudo_address : out std_logic_vector(25 downto 0);
-	write_to_file : in std_logic
+	n_pseudo_address :  out std_logic_vector(31 downto 0);
+	write_to_file : in std_logic;
+	jumping : out std_logic
  );
 end component;
 
@@ -83,6 +86,7 @@ end component;
 
 signal	s_opcode: std_logic_vector(5 downto 0) :="000000";
 signal	s_funct: std_logic_vector(5 downto 0):="000000";
+
 
 begin
 
@@ -119,7 +123,9 @@ port map(
 	r_s           =>r_s,
 	opcode        =>s_opcode,
 	pseudo_address=>pseudo_address,
-	write_to_file =>write_to_file
+	n_pseudo_address => n_pseudo_address,
+	write_to_file =>write_to_file,
+	jumping =>jumping
 );
 
 process (instruction_loc_in) begin
