@@ -31,7 +31,10 @@ port(
   out_MemWrite: out std_logic;
   out_MemToReg : out std_logic;
   pseudo_address_out: out std_logic_vector(25 downto 0);
-  r_s_out: out std_logic_vector (4 downto 0)
+  r_s_out: out std_logic_vector (4 downto 0);
+    data_memory_data_out: out std_logic_vector (31 downto 0);
+  data_memory_data_in: in std_logic_vector (31 downto 0);
+  data_memory_address_in: in std_logic_vector (31 downto 0)
 );
 end EX_stage;
 
@@ -89,12 +92,12 @@ port map(
 
  );
 out_MemToReg <=MemToReg;
-address <= data_out_right;
+address <= data_memory_address_in;
 out_mux3_control<=mux3_control;
 out_MemRead<=	MemRead;
 out_MemWrite<=	MemWrite;
 pseudo_address_out <= pseudo_address;
 r_s_out <= r_s;
-
+data_memory_data_out <= data_memory_data_in;
 
 end;

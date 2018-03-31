@@ -98,7 +98,9 @@ PORT(
 	RegWrite : out std_logic;
 	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
 	write_to_file : in std_logic;
-	jumping : out std_logic
+	jumping : out std_logic;
+	data_memory_data : out std_logic_vector (31 downto 0);
+	data_memory_address: out std_logic_vector (31 downto 0)
 
 );
 end component;
@@ -140,7 +142,11 @@ PORT(
 	mux3_control : out std_logic;
 	MemRead : out std_logic;
 	MemWrite : out std_logic;
-	MemToReg : out std_logic
+	MemToReg : out std_logic;
+	data_memory_data_out: out std_logic_vector (31 downto 0);
+	data_memory_address_out: out std_logic_vector (31 downto 0);
+	data_memory_data_in: in std_logic_vector (31 downto 0);
+	data_memory_address_in: in std_logic_vector (31 downto 0)
 );
 end component;
 
@@ -172,7 +178,10 @@ PORT(
 	out_MemWrite: out std_logic;
 	out_MemToReg : out std_logic;
 	pseudo_address_out: out std_logic_vector(25 downto 0);
-	r_s_out: out std_logic_vector (4 downto 0)
+	r_s_out: out std_logic_vector (4 downto 0);
+	data_memory_data_out: out std_logic_vector (31 downto 0);
+  data_memory_data_in: in std_logic_vector (31 downto 0);
+  data_memory_address_in: in std_logic_vector (31 downto 0)
 );
 end component;
 
@@ -199,7 +208,8 @@ port(
   	r_s_in : in std_logic_vector(4 downto 0);
   	r_s_out: out std_logic_vector(4 downto 0);
   	MemToReg : in std_logic;
-   out_MemToReg : out std_logic
+   out_MemToReg : out std_logic;
+      data_memory_data_in : in std_logic_vector(31 downto 0)
  );
 end component;
 
@@ -387,8 +397,17 @@ signal mem_address: INTEGER RANGE 0 to 1023;
 
 signal temp_wb_signal: std_logic;
 
+signal data_memory_data_1 : std_logic_vector (31 downto 0);
+signal data_memory_address_1 : std_logic_vector (31 downto 0);
+
+signal data_memory_data_2 : std_logic_vector (31 downto 0);
+signal data_memory_address_2 : std_logic_vector (31 downto 0);
+
+signal data_memory_data_3 : std_logic_vector (31 downto 0);
+
 --signal data_ready: STD_LOGIC;
 signal pc_mod : std_logic :='0';
+
 
 
 
@@ -488,7 +507,9 @@ port map(
 	RegWrite =>wbs_id_pipe,
 	ALUcalc_operationcode =>s_p_2_ALUcalc_operationcode,
 	write_to_file =>write_to_file,
-	jumping => isJumping
+	jumping => isJumping,
+	data_memory_data => data_memory_data_1,
+	data_memory_address => data_memory_address_1
 );
 
 idex_pipe: ID_EX_pipe
@@ -527,7 +548,11 @@ port map(
 	mux3_control =>p_s_3_mux3_control,
 	MemRead=>p_s_3_MemRead,
 	MemWrite =>p_s_3_MemWrite,
-	MemToReg=>wbs_pipe_ex
+	MemToReg=>wbs_pipe_ex,
+	data_memory_data_out=> data_memory_data_2,
+	data_memory_address_out=> data_memory_address_2,
+	data_memory_data_in => data_memory_data_1,
+	data_memory_address_in=> data_memory_address_1
 
 );
 
@@ -559,7 +584,10 @@ port map(
 	out_MemWrite=>MemWrite_s_p,
 	out_MemToReg=>wbs_ex_pipe,
 	pseudo_address_out => pseudo_address_s_p,
-	r_s_out => r_s_s_p
+	r_s_out => r_s_s_p,
+	data_memory_data_out => data_memory_data_3,
+  	data_memory_data_in => data_memory_data_2,
+  	data_memory_address_in => data_memory_address_2
 );
 
 exmem_pipe: EX_MEM_pipe
@@ -585,7 +613,8 @@ port map(
   	mem_pseudo_address => pseudo_address_p_s,
 	out_MemToReg =>wbs_pipe_mem,
   	r_s_in => r_s_s_p,
-  	r_s_out => r_s_p_s_4
+  	r_s_out => r_s_p_s_4,
+  	data_memory_data_in =>  data_memory_data_3
 );
 
 mem_s: MEM_stage

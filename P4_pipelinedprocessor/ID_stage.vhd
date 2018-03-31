@@ -34,7 +34,9 @@ port(
 	ALUcalc_operationcode : out std_logic_vector(3 downto 0 );
 	n_pseudo_address :  out std_logic_vector(31 downto 0);
 	write_to_file : in std_logic;
-	jumping : out std_logic
+	jumping : out std_logic;
+	data_memory_data : out std_logic_vector (31 downto 0);
+	data_memory_address: out std_logic_vector (31 downto 0)
 );
 end ID_stage;
 
@@ -61,7 +63,9 @@ port(
 	pseudo_address : out std_logic_vector(25 downto 0);
 	n_pseudo_address :  out std_logic_vector(31 downto 0);
 	write_to_file : in std_logic;
-	jumping : out std_logic
+	jumping : out std_logic;
+	data_memory_data : out std_logic_vector (31 downto 0);
+	data_memory_address: out std_logic_vector (31 downto 0)
  );
 end component;
 
@@ -125,7 +129,9 @@ port map(
 	pseudo_address=>pseudo_address,
 	n_pseudo_address => n_pseudo_address,
 	write_to_file =>write_to_file,
-	jumping =>jumping
+	jumping =>jumping,
+	data_memory_data => data_memory_data,
+	data_memory_address =>data_memory_address
 );
 
 process (instruction_loc_in) begin

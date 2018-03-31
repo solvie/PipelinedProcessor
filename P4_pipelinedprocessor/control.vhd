@@ -100,15 +100,7 @@ begin
 -- 		  ALUcalc_operationcode <="0000";
 -- 		end if;
 
---	RegDst <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
---	ALUSrc <= (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0)) or (opcode(5) and not opcode(4) and opcode(3) and not opcode(2) and opcode(1) and opcode(0));
---	MemtoReg <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0);
---	RegWrite <= (not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0)) or (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0));
---	MemRead <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0);
---	MemWrite <=opcode(5) and not opcode(4) and opcode(3) and not opcode(2) and opcode(1) and opcode(0);
---	Branch <= not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
---	ALUOp1 <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
---	ALUOp0<=not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
+
 
 	if(opcode = "000000")then
 		RegDst <= '1';
@@ -120,48 +112,15 @@ begin
 			RegWrite <= '1';
 		end if;
 		else
-			if opcode = "100011" then
-				RegWrite <= '1';
-			else
-				RegWrite <= '0';
-			end if;
-			RegDst <= '0';
-			ALUOp1 <= '0';
-		end if;
-
-		if(opcode = "100011")then
-			MemtoReg <= '1';
-			MemRead <= '1';
-			ALUSrc <= '1';
-		else
-			if opcode = "101011" then
-				ALUSrc <= '1';
-			else
-				ALUSrc <= '0';
-			end if;
-			MemtoReg <= '0';
-			MemRead <= '0';
-		end if;
-
-		if(opcode = "101011")then
-			MemWrite <= '1';
-			ALUSrc <= '1';
-		else
-			if opcode = "100011" then
-			else
-				ALUSrc <= '0';
-			end if;
-			MemWrite <= '0';
-		end if;
-
-		if(opcode = "000100")then
-			Branch <= '1';
-			MemWrite <= '1';
-			ALUOp0<='1';
-		else
-			Branch <= '0';
-			MemWrite <= '0';
-			ALUOp0<='0';
+				RegDst <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
+	ALUSrc <= (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0)) or (opcode(5) and not opcode(4) and opcode(3) and not opcode(2) and opcode(1) and opcode(0));
+	MemtoReg <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0);
+	RegWrite <= (not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0)) or (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0));
+	MemRead <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0);
+	MemWrite <=opcode(5) and not opcode(4) and opcode(3) and not opcode(2) and opcode(1) and opcode(0);
+	Branch <= not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
+	ALUOp1 <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
+	ALUOp0<=not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
 		end if;
 end if;
 end process;

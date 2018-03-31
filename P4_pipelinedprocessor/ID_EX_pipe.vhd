@@ -43,7 +43,11 @@ port(
 	mux3_control : out std_logic;
 	MemRead : out std_logic;
 	MemWrite : out std_logic;
-	MemToReg : out std_logic
+	MemToReg : out std_logic;
+	data_memory_data_out: out std_logic_vector (31 downto 0);
+	data_memory_address_out: out std_logic_vector (31 downto 0);
+	data_memory_data_in: in std_logic_vector (31 downto 0);
+	data_memory_address_in: in std_logic_vector (31 downto 0)
  );
 end ID_EX_pipe;
 
@@ -71,6 +75,8 @@ process(reset,clock)
 				MemRead <=d_MemRead;
 				MemWrite <=d_MemWrite;
 				instruction_loc_out<=instruction_loc_in;
+				data_memory_data_out <=	data_memory_data_in;
+				data_memory_address_out <=  data_memory_address_in;
         end if;
 				
 

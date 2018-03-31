@@ -25,7 +25,8 @@ entity EX_MEM_pipe is
 	mem_pseudo_address : out std_logic_vector(31 downto 0);
 	out_MemToReg : out std_logic;
 	r_s_in : in std_logic_vector(4 downto 0);
-	r_s_out: out std_logic_vector(4 downto 0)
+	r_s_out: out std_logic_vector(4 downto 0);
+	data_memory_data_in : in std_logic_vector(31 downto 0)
  );
 end EX_MEM_pipe;
 
@@ -45,7 +46,11 @@ process(reset, clock)
             r_s_out <= (others => '0');
         elsif rising_edge(clock) then
 			out_MemToReg<= MemToReg;
-			mem_writedata <=ALUOuput;
+			if(MemWrite = '1') then 
+				mem_writedata <=data_memory_data_in;
+			else
+				mem_writedata <=ALUOuput;
+			end if;
 			mem_address<= to_integer(unsigned(address(12 downto 0)));
 			mem_memwrite<=MemWrite;
 			mem_memread<=MemRead;
