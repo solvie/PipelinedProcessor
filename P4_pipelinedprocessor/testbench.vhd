@@ -177,7 +177,7 @@ reset<='0';
   --mux_select_sig_to_stage1<= '1';
 
 
-  wait for i*10*clk_period;
+  wait for i*5*clk_period;
   im_write_to_file <= '1';
 
 wait;
