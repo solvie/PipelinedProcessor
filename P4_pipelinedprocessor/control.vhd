@@ -34,6 +34,28 @@ begin
 	--parsed operation control for ALU
 	-- PLA style control parse.JPG
 	if(rising_edge(clock)) then
+
+		RegDst <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
+		ALUSrc <= (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0)) or (opcode(5) and not opcode(4) and opcode(3) and not opcode(2) and opcode(1) and opcode(0));
+		MemtoReg <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0);
+		RegWrite <= (not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0)) or (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0));
+		MemRead <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0);
+		MemWrite <=opcode(5) and not opcode(4) and opcode(3) and not opcode(2) and opcode(1) and opcode(0);
+		Branch <= not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
+		ALUOp1 <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
+		ALUOp0<=not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
+
+		if(opcode = "000000")then
+			RegDst <= '1';
+			if(funct ="100000" or funct="100010" or funct = "000000" or funct ="000010" or funct ="000011" or funct ="010000" or funct="010010") then
+				ALUOp1 <= '1';
+				RegWrite <= '0';
+			else
+				ALUOp1 <= '1';
+				RegWrite <= '1';
+			end if;
+		end if;
+
 	   comb := opcode & funct;
 	   case comb is
 	       when "000000100000" => ALUcalc_operationcode <= "0000"; --add
@@ -52,11 +74,38 @@ begin
          when "000000000011" => ALUcalc_operationcode <= "1110"; --Shift Right Arithmetic
          when "000000101010" => ALUcalc_operationcode <= "0100"; --Set to 1 if Less Than
 	       when "000100XXXXXX" => ALUcalc_operationcode <= "1111"; --Branch if Equal
- 	       when others => ALUcalc_operationcode <= "0000"; --add
+				 when "001110000010" => ALUcalc_operationcode <= "1000"; -- xori
+				 when "001101000010" => ALUcalc_operationcode <= "0110"; -- ori
+				 when "001100000010" => ALUcalc_operationcode <= "0110"; -- andi
+ 	       when others => ALUcalc_operationcode <= "0000"; --andi
 	   end case;
 		 if(opcode = "001010") THEN
-		 	 ALUcalc_operationcode <= "0100";
+		 	 ALUcalc_operationcode <= "0100"; -- stli
+			 RegWrite <= '0';
 		 end if;
+		 if(comb = "000000100000"
+		 or comb = "000000100010"
+		 or comb = "000000011000"
+		 or comb = "000000011010"
+		 or comb = "000000100100"
+		 or comb = "000000100101"
+		 or comb = "000000100111"
+		 or comb = "000000100110"
+		 or comb = "000000010000"
+		 or comb = "000000010010"
+		 or comb = "001111XXXXXX"
+		 or comb = "000000000000"
+		 or comb = "000000000010"
+		 or comb = "000000000011"
+		 or comb = "000000101010"
+		 or comb = "000100XXXXXX"
+		 or comb = "001110000010"
+		 or comb = "001101000010"
+		 or comb = "001100000010"
+		 ) then
+
+		  RegWrite <= '0';
+		end if;
 --
 --
 -- 		if(opcode = "100000" or opcode = "001000" or opcode = "100011" or opcode = "101011") then
@@ -102,26 +151,6 @@ begin
 -- 		  ALUcalc_operationcode <="0000";
 -- 		end if;
 
-	RegDst <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
-	ALUSrc <= (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0)) or (opcode(5) and not opcode(4) and opcode(3) and not opcode(2) and opcode(1) and opcode(0));
-	MemtoReg <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0);
-	RegWrite <= (not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0)) or (opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0));
-	MemRead <= opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and opcode(1) and opcode(0);
-	MemWrite <=opcode(5) and not opcode(4) and opcode(3) and not opcode(2) and opcode(1) and opcode(0);
-	Branch <= not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
-	ALUOp1 <= not opcode(5) and not opcode(4) and not opcode(3) and not opcode(2) and not opcode(1) and not opcode(0);
-	ALUOp0<=not opcode(5) and not opcode(4) and not opcode(3) and opcode(2) and not opcode(1) and not opcode(0);
-
-	if(opcode = "000000")then
-		RegDst <= '1';
-		if(funct ="100000" or funct="100010" or funct = "000000" or funct ="000010" or funct ="000011" or funct ="010000" or funct="010010") then
-			ALUOp1 <= '1';
-			RegWrite <= '0';
-		else
-			ALUOp1 <= '1';
-			RegWrite <= '1';
-		end if;
-	end if;
 
 end if;
 end process;
