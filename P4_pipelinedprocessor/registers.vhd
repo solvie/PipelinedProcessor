@@ -83,6 +83,33 @@ begin
 			pseudo_address<= instruction(25 downto 0);
 		    n_pseudo_address<= std_logic_vector(resize(unsigned(instruction(25 downto 0)),32));
 		    stall_r <= 3;
+		elsif (instruction(31 downto 26) = "000100") THEN
+			if(instruction(25 downto 21) = instruction(20 downto 16)) then
+				jumping <='1';
+				data_out_left<="00000000000000000000000000000000";
+				data_out_right<="00000000000000000000000000000000";
+				data_out_imm<="00000000000000000000000000000000";
+				shamt <="00000";
+				funct <="000000";
+				r_s<="00000";
+				opcode<="000000";
+				pseudo_address<=std_logic_vector(to_unsigned(13,26));
+				-- std_logic_vector(unsigned(("0000000000" & instruction(15 downto 0))) + 7);
+			    n_pseudo_address<= std_logic_vector(to_unsigned(13,32));
+			    --std_logic_vector(resize(unsigned(instruction(15 downto 0)),32));
+			    stall_r <= 3;
+			else
+				jumping <='0';
+				data_out_left<="00000000000000000000000000000000";
+				data_out_right<="00000000000000000000000000000000";
+				data_out_imm<="00000000000000000000000000000000";
+				shamt <="00000";
+				funct <="000000";
+				r_s<="00000";
+				opcode<="000000";
+				pseudo_address <="00000000000000000000000000";
+			end if;
+
 		elsif ( instruction ="UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU") THEN
 			jumping <='0';
 			data_out_left<="00000000000000000000000000000000";
