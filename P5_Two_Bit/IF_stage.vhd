@@ -9,7 +9,9 @@ port(
 	mux_input_to_stage1 : IN std_logic_vector(31 downto 0); -- this will come from the EX/MEM buffer
 	mux_select_sig_to_stage1 : IN std_logic;
 	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0);
-	pc_out_as_int : OUT integer :=0
+	pc_out_as_int : OUT integer :=0;
+	predict_taken : in std_logic;
+	address_output : IN std_logic_vector(31 downto 0)
  );
 end IF_stage;
 
@@ -31,14 +33,23 @@ port(
 	q: out std_logic_vector(31 downto 0) ); -- output
 end component;
 
-component mux_2_to_1 is
-Port (
-	SEL : in  STD_LOGIC;
-        A   : in  STD_LOGIC_VECTOR (31 downto 0);
-        B   : in  STD_LOGIC_VECTOR (31 downto 0);
-        Output   : out STD_LOGIC_VECTOR (31 downto 0)
-);
+--component mux_2_to_1 is
+--Port (
+--	SEL : in  STD_LOGIC;
+--        A   : in  STD_LOGIC_VECTOR (31 downto 0);
+--        B   : in  STD_LOGIC_VECTOR (31 downto 0);
+--        Output   : out STD_LOGIC_VECTOR (31 downto 0)
+--);
+--end component;
+component mux_3_to_1 is
+    Port ( SEL_Jump : in  STD_LOGIC;
+    	   SEL_Predictor : in STD_LOGIC;
+           A   : in  STD_LOGIC_VECTOR (31 downto 0);
+           B   : in  STD_LOGIC_VECTOR (31 downto 0);
+           C   : in STD_LOGIC_VECTOR(31 downto 0);
+           Output   : out STD_LOGIC_VECTOR (31 downto 0));
 end component;
+
 
 signal load : std_logic := '1';
 signal adder_out : std_logic_vector(31 downto 0);
@@ -63,12 +74,22 @@ port map(
 	result => adder_out
 );
 
-mux: mux_2_to_1
-port map(
-	SEL => mux_select_sig_to_stage1,
-	A   => mux_input_to_stage1,
-	B   => adder_out,
-	Output   => mux_output_stage_1
+--mux: mux_2_to_1
+--port map(
+--	SEL => mux_select_sig_to_stage1,
+--	A   => mux_input_to_stage1,
+--	B   => adder_out,
+--	Output   => mux_output_stage_1
+--);
+
+mux : mux_3_to_1
+	 Port map (
+	SEL_Jump => mux_select_sig_to_stage1,
+	SEL_Predictor => predict_taken,
+	A => mux_input_to_stage1,
+	B => adder_out,
+	C => address_output,
+	Output=>mux_output_stage_1
 );
 
 process(pc_out) begin

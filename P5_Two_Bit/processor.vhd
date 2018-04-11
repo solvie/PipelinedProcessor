@@ -38,7 +38,9 @@ port(
 	mux_input_to_stage1 : IN std_logic_vector(31 downto 0); -- this will come from the EX/MEM buffer
 	mux_select_sig_to_stage1 : IN std_logic;
 	mux_output_stage_1 : INOUT std_logic_vector(31 downto 0);
-	pc_out_as_int : OUT Integer range 0 to 1023 :=0
+	pc_out_as_int : OUT Integer range 0 to 1023 :=0;
+	predict_taken : in std_logic;
+	address_output : IN std_logic_vector(31 downto 0)
  );
 end component;
 
@@ -65,7 +67,15 @@ PORT(
 	instruction_in : IN std_logic_vector(31 downto 0);
 	instruction_out : OUT std_logic_vector(31 downto 0);
 	instr_loc_in : IN std_logic_vector(31 downto 0);
-	instr_loc_out : OUT std_logic_vector(31 downto 0)
+	instr_loc_out : OUT std_logic_vector(31 downto 0);
+	previous_pc_in : in integer;
+	previous_pc_out : out integer;
+	branch_outcome_in : in std_logic;
+	branch_outcome_out : out std_logic;
+	branch_index_in : in integer;
+	branch_index_out : out integer;
+	predict_taken_in : in std_logic;
+	predict_taken_out : out std_logic
 );
 end component;
 
@@ -100,7 +110,11 @@ PORT(
 	write_to_file : in std_logic;
 	jumping : out std_logic;
 	data_memory_data : out std_logic_vector (31 downto 0);
-	data_memory_address: out std_logic_vector (31 downto 0)
+	data_memory_address: out std_logic_vector (31 downto 0);
+	previous_pc_output_in : in integer;
+	branch_outcome_out : out std_logic;
+	branch_index_out : out integer;
+	predict_taken_in : in std_logic
 
 );
 end component;
@@ -289,6 +303,26 @@ component mux_2_to_1 is
            Output   : out STD_LOGIC_VECTOR (31 downto 0));
 end component;
 
+component mux_3_to_1 is
+    Port ( SEL_Jump : in  STD_LOGIC;
+    	   SEL_Predictor : in STD_LOGIC;
+           A   : in  STD_LOGIC_VECTOR (31 downto 0);
+           B   : in  STD_LOGIC_VECTOR (31 downto 0);
+           C   : in STD_LOGIC_VECTOR(31 downto 0);
+           Output   : out STD_LOGIC_VECTOR (31 downto 0));
+end component;
+
+component one_bit_predictor is
+    Port ( instruction : IN STD_LOGIC_VECTOR (31 downto 0);
+    	   pc_as_int_input: in integer;
+    	   clock : IN std_logic;
+    	   previous_pc_output: out integer;
+    	   address_output : out STD_LOGIC_VECTOR(31 downto 0);
+    	   branch_outcome : in std_logic;
+    	   branch_index : in integer;
+           predict_taken   : out STD_LOGIC);
+end component;
+
 -- signals connecting components together
 -- IF
 signal mux_input_to_stage1: std_logic_vector(31 downto 0) :="00000000000000000000000000000000";
@@ -409,8 +443,20 @@ signal data_memory_data_3 : std_logic_vector (31 downto 0);
 signal pc_mod : std_logic :='0';
 
 
+signal predict_taken : std_logic;
+signal address_output : STD_LOGIC_VECTOR(31 downto 0);
+signal previous_pc_output_1 : integer;
+signal previous_pc_output_2 : integer;
+signal branch_outcome_1 : std_logic;
+signal branch_index_1 : integer;
 
 
+
+signal branch_outcome_temp_1 : std_logic;
+signal branch_outcome_temp_2 : std_logic;
+signal branch_index_in_temp_3 : integer;
+signal branch_index_out_temp_4 : integer;
+signal predict_taken_1 : std_logic;
 --
 begin
 
@@ -446,6 +492,28 @@ b_orj : mux_2_to_1
 	 Output => address_b_or_j
 );
 
+--b_orj : mux_3_to_1
+--	 Port map (
+--	SEL_Jump => isJumping,
+--	SEL_Predictor => predict_taken,
+--	A => n_pseudo_address,
+--	B => pseudo_address_p_s,
+--	C => address_output,
+--	Output=>address_b_or_j
+--);
+
+one_bit_pred: one_bit_predictor
+port map(
+	clock => clock,
+	instruction => instruction_s_p,
+   	pc_as_int_input => pc_out_as_int,
+   	previous_pc_output => previous_pc_output_1,
+   	address_output =>address_output,
+   	branch_outcome => branch_outcome_1,
+   	branch_index => branch_index_1,
+   	predict_taken=>predict_taken
+);
+
 LoadToInstMem: instruction_memory
 port map(
     clock => clock,
@@ -464,7 +532,9 @@ port map(
     mux_input_to_stage1 => address_b_or_j,
     mux_select_sig_to_stage1 => isJumping,
     mux_output_stage_1 => instr_loc_s_p,
-    pc_out_as_int => pc_out_as_int
+    pc_out_as_int => pc_out_as_int,
+    predict_taken => predict_taken,
+	address_output => address_output
 );
 
 ifid_pipe: IF_ID_pipe
@@ -474,7 +544,15 @@ port map(
 	instruction_in => instruction_s_p,
 	instruction_out => instruction_out_p_s,
 	instr_loc_in => instr_loc_s_p,
-	instr_loc_out => instr_loc_p_s
+	instr_loc_out => instr_loc_p_s,
+	previous_pc_in => previous_pc_output_1,
+	previous_pc_out => previous_pc_output_2,
+	branch_outcome_in => branch_outcome_temp_1,
+	branch_outcome_out => branch_outcome_1,
+	branch_index_in => branch_index_in_temp_3,
+	branch_index_out => branch_index_1,
+	predict_taken_in => predict_taken,
+	predict_taken_out => predict_taken_1
 );
 
 id_s: ID_stage
@@ -509,7 +587,11 @@ port map(
 	write_to_file =>write_to_file,
 	jumping => isJumping,
 	data_memory_data => data_memory_data_1,
-	data_memory_address => data_memory_address_1
+	data_memory_address => data_memory_address_1,
+	previous_pc_output_in => previous_pc_output_2,
+	branch_outcome_out => branch_outcome_temp_1,
+	branch_index_out => branch_index_in_temp_3,
+	predict_taken_in => predict_taken_1
 );
 
 idex_pipe: ID_EX_pipe

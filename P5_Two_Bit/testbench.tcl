@@ -48,6 +48,8 @@ vcom control.vhd
 vcom processor.vhd
 vcom MEM_stage.vhd
 vcom WB_stage.vhd
+vcom one_bit_predictor.vhd
+vcom mux_3_to_1.vhd
 
 ;# Start simulation
 vsim testbench

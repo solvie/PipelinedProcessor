@@ -36,7 +36,14 @@ port(
 	write_to_file : in std_logic;
 	jumping : out std_logic;
 	data_memory_data : out std_logic_vector (31 downto 0);
-	data_memory_address: out std_logic_vector (31 downto 0)
+	data_memory_address: out std_logic_vector (31 downto 0);
+
+	--R
+	previous_pc_output_in : in integer;
+	branch_outcome_out : out std_logic;
+	branch_index_out : out integer;
+	predict_taken_in : in std_logic
+
 );
 end ID_stage;
 
@@ -65,7 +72,11 @@ port(
 	write_to_file : in std_logic;
 	jumping : out std_logic;
 	data_memory_data : out std_logic_vector (31 downto 0);
-	data_memory_address: out std_logic_vector (31 downto 0)
+	data_memory_address: out std_logic_vector (31 downto 0);
+	previous_pc : in integer;
+	branch_outcome_out : out std_logic;
+	branch_index_out : out integer;
+	predict_taken_in : in std_logic
  );
 end component;
 
@@ -131,9 +142,12 @@ port map(
 	write_to_file =>write_to_file,
 	jumping =>jumping,
 	data_memory_data => data_memory_data,
-	data_memory_address =>data_memory_address
+	data_memory_address =>data_memory_address,
+	previous_pc => previous_pc_output_in,
+	branch_outcome_out => branch_outcome_out,
+	branch_index_out => branch_index_out,
+	predict_taken_in => predict_taken_in
 );
-
 process (instruction_loc_in) begin
   instruction_loc_out <= instruction_loc_in;
 end process;
