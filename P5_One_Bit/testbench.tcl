@@ -8,6 +8,7 @@ proc AddWaves {} {
     #add wave -position end sim:/testbench/pc_out_as_int
 add wave -position end sim:/testbench/real_cpu/if_s/pc_out_as_int 
 add wave -position end sim:/testbench/real_cpu/id_s/s_opcode 
+add wave -position end sim:/testbench/real_cpu/id_s/jumping 
 add wave -position end sim:/testbench/real_cpu/one_bit_pred/*
 
 }
@@ -52,7 +53,7 @@ force -deposit clock 0 0 ns, 1 0.5 ns -repeat 1 ns
 
 ;# Add the waves
 AddWaves
-;#AddAll
+AddAll
 
 ;# Run for 50ns
 run 500ns

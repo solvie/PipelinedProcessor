@@ -41,7 +41,8 @@ type registers_body is array(0 to 31) of std_logic_vector(31 downto 0);
 signal register_block : registers_body :=(others=>"00000000000000000000000000000000");
 signal s_jumping : std_logic;
 signal stall_r : integer := 0;
-
+signal temp_r1 : std_logic_vector(31 downto 0);
+signal temp_r2 : std_logic_vector(31 downto 0);
 file file_Output : text;
 --https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
 begin
@@ -89,6 +90,8 @@ begin
 		    n_pseudo_address<= std_logic_vector(resize(unsigned(instruction(25 downto 0)),32));
 		    stall_r <= 3;
 		elsif (instruction(31 downto 26) = "000100") THEN
+		temp_r1 <= register_block(to_integer(unsigned(instruction(25 downto 21))));
+		temp_r2 <= register_block(to_integer(unsigned(instruction(20 downto 16))));
 			if(register_block(to_integer(unsigned(instruction(25 downto 21)))) = register_block(to_integer(unsigned(instruction(20 downto 16))))) then
 				if(predict_taken_in = '0') then 
 					jumping <='1';

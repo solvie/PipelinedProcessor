@@ -28,14 +28,8 @@ begin
     if(instruction(31 downto 26) = "000100") then
         if(btb1(to_integer(unsigned(instruction(3 downto 0)))) = '0') then
             predict_taken <= '0';
-        else
-            predict_taken <= '1';
             address_output <= std_logic_vector(resize(unsigned(instruction(15 downto 0)),32) + pc_as_int_input);
             previous_pc_output <= pc_as_int_input;
-        end if;
-      elsif (instruction(31 downto 26) = "000101") then --bne
-        if(btb1(to_integer(unsigned(instruction(3 downto 0)))) = '0') then
-            predict_taken <= '0';
         else
             predict_taken <= '1';
             address_output <= std_logic_vector(resize(unsigned(instruction(15 downto 0)),32) + pc_as_int_input);
