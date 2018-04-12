@@ -89,7 +89,7 @@ begin
 			pseudo_address<= instruction(25 downto 0);
 		    n_pseudo_address<= std_logic_vector(resize(unsigned(instruction(25 downto 0)),32));
 		    stall_r <= 3;
-		elsif (instruction(31 downto 26) = "000100") THEN
+		elsif (instruction(31 downto 26) = "000100") THEN -- beq
 		temp_r1 <= register_block(to_integer(unsigned(instruction(25 downto 21))));
 		temp_r2 <= register_block(to_integer(unsigned(instruction(20 downto 16))));
 			if(register_block(to_integer(unsigned(instruction(25 downto 21)))) = register_block(to_integer(unsigned(instruction(20 downto 16))))) then
@@ -143,6 +143,59 @@ begin
 				branch_index_out <= to_integer(unsigned(instruction(3 downto 0)));
 			end if;
 
+		elsif (instruction(31 downto 26) = "000101") THEN --bne
+		temp_r1 <= register_block(to_integer(unsigned(instruction(25 downto 21))));
+		temp_r2 <= register_block(to_integer(unsigned(instruction(20 downto 16))));
+			if(not(register_block(to_integer(unsigned(instruction(25 downto 21)))) = register_block(to_integer(unsigned(instruction(20 downto 16)))))) then
+				if(predict_taken_in = '0') then 
+					jumping <='1';
+					data_out_left<="00000000000000000000000000000000";
+					data_out_right<="00000000000000000000000000000000";
+					data_out_imm<="00000000000000000000000000000000";
+					shamt <="00000";
+					funct <="000000";
+					r_s<="00000";
+					opcode<="000000";
+
+
+				    temp := "0000000000" & instruction(15 downto 0);
+					pseudo_address<=std_logic_vector(unsigned(temp) + previous_pc);
+					-- 
+				    n_pseudo_address<= std_logic_vector(resize(unsigned(instruction(15 downto 0) + previous_pc),32));
+
+					
+				    --std_logic_vector(resize(unsigned(instruction(15 downto 0)),32));
+				    stall_r <= 3;
+				    branch_outcome_out <= '1';
+					branch_index_out <= to_integer(unsigned(instruction(3 downto 0)));
+				else 
+					branch_outcome_out <= '1';
+					branch_index_out <= to_integer(unsigned(instruction(3 downto 0)));
+					stall_r <= 1;
+				end if;
+			else 
+				if(predict_taken_in = '1') then
+					jumping <='1';
+					data_out_left<="00000000000000000000000000000000";
+					data_out_right<="00000000000000000000000000000000";
+					data_out_imm<="00000000000000000000000000000000";
+					shamt <="00000";
+					funct <="000000";
+					r_s<="00000";
+					opcode<="000000";
+
+					pseudo_address<=std_logic_vector(to_unsigned(previous_pc,26));
+					-- std_logic_vector(unsigned(("0000000000" & instruction(15 downto 0))) + 7);
+				    n_pseudo_address<= std_logic_vector(to_unsigned(previous_pc,32));
+				    --
+				    stall_r <= 3;
+				    branch_outcome_out <= '0';
+					branch_index_out <= to_integer(unsigned(instruction(3 downto 0)));
+
+				end if;
+			    branch_outcome_out <= '0';
+				branch_index_out <= to_integer(unsigned(instruction(3 downto 0)));
+			end if;
 
 			--else
 			--	jumping <='0';

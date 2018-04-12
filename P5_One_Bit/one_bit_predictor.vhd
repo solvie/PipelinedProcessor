@@ -35,6 +35,16 @@ begin
             address_output <= std_logic_vector(resize(unsigned(instruction(15 downto 0)),32) + pc_as_int_input);
             previous_pc_output <= pc_as_int_input;
         end if;
+    elsif(instruction(31 downto 26) = "000101") then
+    if(btb1(to_integer(unsigned(instruction(3 downto 0)))) = '0') then
+        predict_taken <= '0';
+        address_output <= std_logic_vector(resize(unsigned(instruction(15 downto 0)),32) + pc_as_int_input);
+        previous_pc_output <= pc_as_int_input;
+    else
+        predict_taken <= '1';
+        address_output <= std_logic_vector(resize(unsigned(instruction(15 downto 0)),32) + pc_as_int_input);
+        previous_pc_output <= pc_as_int_input;
+    end if;
     else
         predict_taken <= '0';
     end if;
