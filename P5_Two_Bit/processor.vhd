@@ -502,7 +502,7 @@ b_orj : mux_2_to_1
 --	Output=>address_b_or_j
 --);
 
-one_bit_pred: two_bit_predictor
+two_bit_pred: two_bit_predictor
 port map(
 	clock => clock,
 	instruction => instruction_s_p,
