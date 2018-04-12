@@ -15,7 +15,7 @@ end one_bit_predictor;
 
 architecture Behavioral of one_bit_predictor is
 type one_bit_bpb is array(15 downto 0) of std_logic;
-signal btb1: one_bit_bpb := (others => '1');
+signal btb1: one_bit_bpb := (others => '0');
 begin
 
 process(branch_index)

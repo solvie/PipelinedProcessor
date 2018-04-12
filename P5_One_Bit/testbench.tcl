@@ -6,16 +6,9 @@ proc AddWaves {} {
     #add wave -position end sim:/Overall_tb/im_readdata
     #add wave -position end sim:/testbench/im_writedata
     #add wave -position end sim:/testbench/pc_out_as_int
-add wave -position end sim:/testbench/real_cpu/s_p_2_r_s
-add wave -position end sim:/testbench/real_cpu/ALUOuput_s_p
-add wave -position end sim:/testbench/real_cpu/p_s_3_mux2_control
-add wave -position end sim:/testbench/real_cpu/p_s_3_mux1_control
-add wave -position end sim:/testbench/real_cpu/p_s_3_data_out_left
-add wave -position end sim:/testbench/real_cpu/p_s_3_data_out_right
-add wave -position end sim:/testbench/real_cpu/p_s_3_ALUcalc_operationcode
-
-
-add wave -position end sim:/testbench/real_cpu/id_s/*
+add wave -position end sim:/testbench/real_cpu/if_s/pc_out_as_int 
+add wave -position end sim:/testbench/real_cpu/id_s/s_opcode 
+add wave -position end sim:/testbench/real_cpu/one_bit_pred/*
 
 }
 
@@ -58,8 +51,8 @@ vsim testbench
 force -deposit clock 0 0 ns, 1 0.5 ns -repeat 1 ns
 
 ;# Add the waves
-;#AddWaves
-AddAll
+AddWaves
+;#AddAll
 
 ;# Run for 50ns
 run 500ns
