@@ -13,9 +13,9 @@ port(
 	previous_pc_in : in integer;
 	previous_pc_out : out integer;
 	branch_outcome_in : in std_logic;
-	branch_outcome_out : out std_logic;
+	branch_outcome_out : out std_logic := '0';
 	branch_index_in : in integer;
-	branch_index_out : out integer;
+	branch_index_out : out integer  := 0;
 	predict_taken_in : in std_logic;
 	predict_taken_out : out std_logic
  );

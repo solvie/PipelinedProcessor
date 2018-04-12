@@ -1,5 +1,7 @@
 P3_cache/work/
 P4_pipelinedprocessor/work/
+P5_One_Bit/work/
+P5_Two_Bit/work/
 *.bak
 *.opt
 *.wlf

@@ -40,8 +40,8 @@ port(
 
 	--R
 	previous_pc_output_in : in integer;
-	branch_outcome_out : out std_logic;
-	branch_index_out : out integer;
+	branch_outcome_out : out std_logic := '0';
+	branch_index_out : out integer := 0;
 	predict_taken_in : in std_logic
 
 );

@@ -312,14 +312,14 @@ component mux_3_to_1 is
            Output   : out STD_LOGIC_VECTOR (31 downto 0));
 end component;
 
-component one_bit_predictor is
+component two_bit_predictor is
     Port ( instruction : IN STD_LOGIC_VECTOR (31 downto 0);
     	   pc_as_int_input: in integer;
     	   clock : IN std_logic;
     	   previous_pc_output: out integer;
     	   address_output : out STD_LOGIC_VECTOR(31 downto 0);
-    	   branch_outcome : in std_logic;
-    	   branch_index : in integer;
+    	   branch_outcome : in std_logic := '0';
+    	   branch_index : in integer := 0;
            predict_taken   : out STD_LOGIC);
 end component;
 
@@ -502,7 +502,7 @@ b_orj : mux_2_to_1
 --	Output=>address_b_or_j
 --);
 
-one_bit_pred: one_bit_predictor
+one_bit_pred: two_bit_predictor
 port map(
 	clock => clock,
 	instruction => instruction_s_p,
